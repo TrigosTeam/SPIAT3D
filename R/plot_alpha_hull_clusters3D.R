@@ -76,8 +76,7 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
     ## Ignore the weird cases where some cells represent clusters, but no faces are associated with them??
     if (nrow(faces_temp) == 0) next
     
-    # Large alpha hulls should have a lower opacity so they are more visible
-    opacity_level <- ifelse(nrow(faces_temp) > 50, 0.05, 0.25)
+    opacity_level <- 0.20
     
     fig <- fig %>%
       add_trace(

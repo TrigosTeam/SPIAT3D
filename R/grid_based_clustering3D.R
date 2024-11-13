@@ -1,6 +1,7 @@
 grid_based_clustering3D <- function(spe,
                                     cell_types_of_interest,
                                     n_splits,
+                                    minimum_cells_in_cluster,
                                     feature_colname = "Cell.Type",
                                     plot_image = TRUE) {
   
@@ -14,11 +15,11 @@ grid_based_clustering3D <- function(spe,
     stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
                paste(unknown_cell_types, collapse = ", ")))
   }
-  if (!(is.numeric(radius) && length(radius) == 1 && radius > 0)) {
-    stop("`radius` is not a positive numeric.")
-  }
   if (!(is.integer(n_splits) && length(n_splits) == 1 || (is.numeric(n_splits) && length(n_splits) == 1 && n_splits > 0 && n_splits%%1 == 0))) {
     stop("`n_splits` is not a positive integer.")
+  }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
   }
   if (!is.character(feature_colname)) {
     stop("`feature_colname` is not a character.")
@@ -122,20 +123,22 @@ grid_based_clustering3D <- function(spe,
                                                                        grid_prisms_in_cluster)]
     
   }
+  # Name each grid_based cluster
+  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
   
-  ## Add all the information to the spe
-  spe@metadata[["grid_prisms"]] <- result
+  ## Add grid_based_cluster column to spe, indicating which cluster each cell belongs to
   spe$grid_based_cluster <- 0
   cluster_number <- 1
   
-  for (cluster_info in result) {
-    for (i in seq(nrow(cluster_info))) {
-      x <- cluster_info$x[i]
-      y <- cluster_info$y[i]
-      z <- cluster_info$z[i]
-      l <- cluster_info$l[i]
-      w <- cluster_info$w[i]
-      h <- cluster_info$h[i]
+  for (i in seq_len(length(result))) {
+    cluster_info <- result[[paste("cluster", i, sep = "_")]]
+    for (j in seq(nrow(cluster_info))) {
+      x <- cluster_info$x[j]
+      y <- cluster_info$y[j]
+      z <- cluster_info$z[j]
+      l <- cluster_info$l[j]
+      w <- cluster_info$w[j]
+      h <- cluster_info$h[j]
       
       spe$grid_based_cluster <- ifelse(spe_coords$Cell.X.Position >= x &
                                          spe_coords$Cell.X.Position < (x + l) &
@@ -146,10 +149,29 @@ grid_based_clustering3D <- function(spe,
                                          spe[[feature_colname]] %in% cell_types_of_interest, 
                                        cluster_number, 
                                        spe$grid_based_cluster)
+      
     }
-    cluster_number <- cluster_number + 1
+    # Check if current cluster surpasses the minimum_cells_in_cluster threshold
+    if (sum(spe$grid_based_cluster == cluster_number) < minimum_cells_in_cluster) {
+      spe$grid_based_cluster[spe$grid_based_cluster == cluster_number] <- 0
+      result[[paste("cluster", i, sep = "_")]] <- NULL
+      
+    }
+    else {
+      cluster_number <- cluster_number + 1 
+    }
   }
   
+  n_clusters <- max(spe$grid_based_cluster)
+  if (n_clusters == 0) {
+    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
+  }
+  
+  # re-name each grid_based cluster
+  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
+  
+  # Add grid_clustering result to spe metadata
+  spe@metadata[["grid_prisms"]] <- result
   
   ## Plot
   if (plot_image) {

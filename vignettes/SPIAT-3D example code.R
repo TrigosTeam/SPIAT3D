@@ -1,4 +1,4 @@
-spe1 <- spe_cluster
+spe1 <- spe_clusters
 
 
 ### 1. Basic Metrics ----------------------------------------------------------
@@ -168,7 +168,7 @@ print(cell_proportion_spatial_autocorrelation)
 
 
 ### 4. Clustering algorithms --------------------------------------------------
-spe_alpha_hull <- alpha_hull_clustering3D(spe1, c("Tumour", "Immune"), alpha = 4.2, minimum_cells_in_alpha_hull = 15)
+spe_alpha_hull <- alpha_hull_clustering3D(spe1, c("Tumour", "Immune"), alpha = 15, minimum_cells_in_alpha_hull = 30)
 
 plot_alpha_hull_clusters3D(spe_alpha_hull, c("Tumour", "Immune", "Others"), c("orange", "skyblue", "lightgray"))
 
@@ -182,10 +182,10 @@ calculate_volume_of_clusters3D(spe_alpha_hull, cluster_colname = "alpha_hull_clu
 
 calculate_center_of_clusters3D(spe_alpha_hull, "alpha_hull_cluster")
 
-spe_alpha_hull <- calculate_border_of_clusters3D(spe_alpha_hull, 7, "alpha_hull_cluster")
+spe_alpha_hull <- calculate_border_of_clusters3D(spe_alpha_hull, 15, "alpha_hull_cluster")
 
 
-spe_dbscan <- dbscan_clustering3D(spe1, c("Tumour", "Immune"), radius = 10, minimum_cells_in_radius = 20)
+spe_dbscan <- dbscan_clustering3D(spe1, c("Tumour", "Immune"), radius = 30, minimum_cells_in_radius = 20, minimum_cells_in_cluster = 30)
 
 dbscan_props <- calculate_cell_proportions_of_clusters3D(spe_dbscan, cluster_colname = "dbscan_cluster")
 
@@ -200,7 +200,7 @@ calculate_center_of_clusters3D(spe_dbscan, "dbscan_cluster")
 spe_dbscan <- calculate_border_of_clusters3D(spe_dbscan, 6, "dbscan_cluster")
 
 
-spe_grid <- grid_based_clustering3D(spe1, cell_types_of_interest = c("Tumour", "Immune"), n_splits = 10)
+spe_grid <- grid_based_clustering3D(spe1, cell_types_of_interest = c("Tumour", "Immune"), n_splits = 10, minimum_cells_in_cluster = 30)
 
 plot_grid_based_clusters3D(spe_grid, c("Tumour", "Immune", "Others"), c("orange", "skyblue", "lightgray"))
 

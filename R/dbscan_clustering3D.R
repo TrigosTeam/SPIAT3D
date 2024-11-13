@@ -4,6 +4,7 @@ dbscan_clustering3D <- function(spe,
                                 cell_types_of_interest,
                                 radius,
                                 minimum_cells_in_radius,
+                                minimum_cells_in_cluster,
                                 feature_colname = "Cell.Type",
                                 plot_image = T) {
   
@@ -23,6 +24,9 @@ dbscan_clustering3D <- function(spe,
   if (!(is.integer(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 || (is.numeric(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 && minimum_cells_in_radius > 0 && minimum_cells_in_radius%%1 == 0))) {
     stop("`minimum_cells_in_radius` is not a positive integer.")
   }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
+  }
   if (!is.character(feature_colname)) {
     stop("`feature_colname` is not a character.")
   }
@@ -37,6 +41,25 @@ dbscan_clustering3D <- function(spe,
   spe_subset_coords <- spatialCoords(spe_subset)
   
   db <- dbscan::dbscan(spe_subset_coords, eps = radius, minPts = minimum_cells_in_radius, borderPoints = F)
+  n_clusters <- max(db$cluster)
+  if (n_clusters == 0) {
+    stop("No clusters identified. Consider increasing `radius` and/or decreasing `minimum_cells_in_radius`.")
+  }
+  
+  ## Cell types of interest have a 'cluster' value of 0 if they are noise, 1 if they belong to cluster 1, ...
+  ## Check if number of cells in cluster 1, cluster 2, ... is larger than minimum_cells_in_cluster, if they don't, these cells are also assigned a value of 0.
+  for (i in seq_len(n_clusters)) {
+    if (sum(db$cluster == i) < minimum_cells_in_cluster) {
+      db$cluster[db$cluster == i] <- 0
+      
+      ## Re-number the clusters
+      db$cluster[db$cluster > i] <- db$cluster[db$cluster > i] - 1
+    }
+  }
+  n_clusters <- max(db$cluster)
+  if (n_clusters == 0) {
+    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
+  }
   
   ## Convert spe object to data frame
   df <- data.frame(spatialCoords(spe), colData(spe))

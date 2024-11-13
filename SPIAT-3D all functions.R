@@ -1681,20 +1681,39 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
 
 
 ### Clustering algorithms ----------------------------------------------------
+library(alphashape3d)
+
 alpha_hull_clustering3D <- function(spe, 
                                     cell_types_of_interest, 
                                     alpha, 
-                                    minimum_cells_in_alpha_hull,
+                                    minimum_cells_in_cluster,
                                     feature_colname = "Cell.Type", 
                                     plot_image = T) {
   
-  if (is.null(spe[[feature_colname]])) stop(paste("No column called", feature_colname, "found in spe object"))
-  
+  # Check input parameters
+  if (class(spe) != "SpatialExperiment") {
+    stop("`spe` is not a SpatialExperiment object.")
+  }
   ## Check cell types of interst are found in the spe object
   unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
                paste(unknown_cell_types, collapse = ", ")))
+  }
+  if (!(is.numeric(alpha) && length(alpha) == 1 && alpha > 0)) {
+    stop("`alpha` is not a positive numeric.")
+  }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
+  }
+  if (!is.character(feature_colname)) {
+    stop("`feature_colname` is not a character.")
+  }
+  if (is.null(spe[[feature_colname]])) {
+    stop(paste("No column called", feature_colname, "found in spe object."))
+  }
+  if (!is.logical(plot_image)) {
+    stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
   
   ## Subset for the chosen cell_types_of_interest
@@ -1718,9 +1737,9 @@ alpha_hull_clustering3D <- function(spe,
   df_cell_types_of_interest$alpha_hull_cluster <- alpha_hull_clusters
   df_other_cell_types$alpha_hull_cluster <- 0
   
-  ## Ignore cell_types_of_interest which belong to an alpha hull cluster with less than minimum_cells_in_alpha_hull
+  ## Ignore cell_types_of_interest which belong to an alpha hull cluster with less than minimum_cells_in_cluster
   alpha_hull_clusters_table <- table(alpha_hull_clusters)
-  maximium_alpha_hull_cluster <- Position(function(x) x < minimum_cells_in_alpha_hull, alpha_hull_clusters_table)
+  maximium_alpha_hull_cluster <- Position(function(x) x < minimum_cells_in_cluster, alpha_hull_clusters_table)
   maximium_alpha_hull_cluster <- as.numeric(names(alpha_hull_clusters_table[maximium_alpha_hull_cluster]))
   
   if (!is.na(maximium_alpha_hull_cluster) && maximium_alpha_hull_cluster != -1) {
@@ -1758,14 +1777,21 @@ alpha_hull_clustering3D <- function(spe,
 
 
 
-
 plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull, 
                                        plot_cell_types = NULL,
                                        plot_colours = NULL,
                                        feature_colname = "Cell.Type") {
   
-  # Check
-  if (is.null(spe_with_alpha_hull[[feature_colname]])) stop(paste("No column called", feature_colname, "found in spe object"))
+  # Check input parameters
+  if (class(spe_with_alpha_hull) != "SpatialExperiment") {
+    stop("`spe_with_alpha_hull` is not a SpatialExperiment object.")
+  }
+  if (!is.character(feature_colname)) {
+    stop("`feature_colname` is not a character.")
+  }
+  if (is.null(spe_with_alpha_hull[[feature_colname]])) {
+    stop(paste("No column called", feature_colname, "found in spe object."))
+  }
   
   ## If no cell types chosen, use all cell types found in data frame
   if (is.null(plot_cell_types)) plot_cell_types <- unique(spe_with_alpha_hull[[feature_colname]])
@@ -1829,8 +1855,7 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
     ## Ignore the weird cases where some cells represent clusters, but no faces are associated with them??
     if (nrow(faces_temp) == 0) next
     
-    # Large alpha hulls should have a lower opacity so they are more visible
-    opacity_level <- ifelse(nrow(faces_temp) > 50, 0.05, 0.25)
+    opacity_level <- 0.20
     
     fig <- fig %>%
       add_trace(
@@ -1851,21 +1876,68 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
 
 
 
-
+library(dbscan)
 
 dbscan_clustering3D <- function(spe,
                                 cell_types_of_interest,
                                 radius,
                                 minimum_cells_in_radius,
+                                minimum_cells_in_cluster,
                                 feature_colname = "Cell.Type",
                                 plot_image = T) {
   
-  if (is.null(spe[[feature_colname]])) stop(paste("No column called", feature_colname, "found in spe object"))
+  # Check input parameters
+  if (class(spe) != "SpatialExperiment") {
+    stop("`spe` is not a SpatialExperiment object.")
+  }
+  ## Check cell types of interst are found in the spe object
+  unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
+  if (length(unknown_cell_types) != 0) {
+    stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
+               paste(unknown_cell_types, collapse = ", ")))
+  }
+  if (!(is.numeric(radius) && length(radius) == 1 && radius > 0)) {
+    stop("`radius` is not a positive numeric.")
+  }
+  if (!(is.integer(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 || (is.numeric(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 && minimum_cells_in_radius > 0 && minimum_cells_in_radius%%1 == 0))) {
+    stop("`minimum_cells_in_radius` is not a positive integer.")
+  }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
+  }
+  if (!is.character(feature_colname)) {
+    stop("`feature_colname` is not a character.")
+  }
+  if (is.null(spe[[feature_colname]])) {
+    stop(paste("No column called", feature_colname, "found in spe object."))
+  }
+  if (!is.logical(plot_image)) {
+    stop("`plot_image` is not a logical (TRUE or FALSE).")
+  }
   
   spe_subset <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
   spe_subset_coords <- spatialCoords(spe_subset)
   
   db <- dbscan::dbscan(spe_subset_coords, eps = radius, minPts = minimum_cells_in_radius, borderPoints = F)
+  n_clusters <- max(db$cluster)
+  if (n_clusters == 0) {
+    stop("No clusters identified. Consider increasing `radius` and/or decreasing `minimum_cells_in_radius`.")
+  }
+  
+  ## Cell types of interest have a 'cluster' value of 0 if they are noise, 1 if they belong to cluster 1, ...
+  ## Check if number of cells in cluster 1, cluster 2, ... is larger than minimum_cells_in_cluster, if they don't, these cells are also assigned a value of 0.
+  for (i in seq_len(n_clusters)) {
+    if (sum(db$cluster == i) < minimum_cells_in_cluster) {
+      db$cluster[db$cluster == i] <- 0
+      
+      ## Re-number the clusters
+      db$cluster[db$cluster > i] <- db$cluster[db$cluster > i] - 1
+    }
+  }
+  n_clusters <- max(db$cluster)
+  if (n_clusters == 0) {
+    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
+  }
   
   ## Convert spe object to data frame
   df <- data.frame(spatialCoords(spe), colData(spe))
@@ -1908,24 +1980,38 @@ dbscan_clustering3D <- function(spe,
   return(spe)
 }
 
+
 grid_based_clustering3D <- function(spe,
                                     cell_types_of_interest,
                                     n_splits,
+                                    minimum_cells_in_cluster,
                                     feature_colname = "Cell.Type",
                                     plot_image = TRUE) {
   
-  if (is.null(spe[[feature_colname]])) stop(paste("No column called", feature_colname, "found in spe object"))
-  
-  # Check if n_splits is numeric
-  if (!is.numeric(n_splits)) {
-    stop(paste(n_splits, " n_splits is not of type 'numeric'"))
+  # Check input parameters
+  if (class(spe) != "SpatialExperiment") {
+    stop("`spe` is not a SpatialExperiment object.")
   }
-  
-  ## Check cell_types_of_interest are found in the spe object
+  ## Check cell types of interst are found in the spe object
   unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
                paste(unknown_cell_types, collapse = ", ")))
+  }
+  if (!(is.integer(n_splits) && length(n_splits) == 1 || (is.numeric(n_splits) && length(n_splits) == 1 && n_splits > 0 && n_splits%%1 == 0))) {
+    stop("`n_splits` is not a positive integer.")
+  }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
+  }
+  if (!is.character(feature_colname)) {
+    stop("`feature_colname` is not a character.")
+  }
+  if (is.null(spe[[feature_colname]])) {
+    stop(paste("No column called", feature_colname, "found in spe object."))
+  }
+  if (!is.logical(plot_image)) {
+    stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
   
   # Add grid metrics to spe
@@ -2020,20 +2106,22 @@ grid_based_clustering3D <- function(spe,
                                                                        grid_prisms_in_cluster)]
     
   }
+  # Name each grid_based cluster
+  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
   
-  ## Add all the information to the spe
-  spe@metadata[["grid_prisms"]] <- result
+  ## Add grid_based_cluster column to spe, indicating which cluster each cell belongs to
   spe$grid_based_cluster <- 0
   cluster_number <- 1
   
-  for (cluster_info in result) {
-    for (i in seq(nrow(cluster_info))) {
-      x <- cluster_info$x[i]
-      y <- cluster_info$y[i]
-      z <- cluster_info$z[i]
-      l <- cluster_info$l[i]
-      w <- cluster_info$w[i]
-      h <- cluster_info$h[i]
+  for (i in seq_len(length(result))) {
+    cluster_info <- result[[paste("cluster", i, sep = "_")]]
+    for (j in seq(nrow(cluster_info))) {
+      x <- cluster_info$x[j]
+      y <- cluster_info$y[j]
+      z <- cluster_info$z[j]
+      l <- cluster_info$l[j]
+      w <- cluster_info$w[j]
+      h <- cluster_info$h[j]
       
       spe$grid_based_cluster <- ifelse(spe_coords$Cell.X.Position >= x &
                                          spe_coords$Cell.X.Position < (x + l) &
@@ -2044,10 +2132,29 @@ grid_based_clustering3D <- function(spe,
                                          spe[[feature_colname]] %in% cell_types_of_interest, 
                                        cluster_number, 
                                        spe$grid_based_cluster)
+      
     }
-    cluster_number <- cluster_number + 1
+    # Check if current cluster surpasses the minimum_cells_in_cluster threshold
+    if (sum(spe$grid_based_cluster == cluster_number) < minimum_cells_in_cluster) {
+      spe$grid_based_cluster[spe$grid_based_cluster == cluster_number] <- 0
+      result[[paste("cluster", i, sep = "_")]] <- NULL
+      
+    }
+    else {
+      cluster_number <- cluster_number + 1 
+    }
   }
   
+  n_clusters <- max(spe$grid_based_cluster)
+  if (n_clusters == 0) {
+    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
+  }
+  
+  # re-name each grid_based cluster
+  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
+  
+  # Add grid_clustering result to spe metadata
+  spe@metadata[["grid_prisms"]] <- result
   
   ## Plot
   if (plot_image) {

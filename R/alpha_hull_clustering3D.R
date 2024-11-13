@@ -20,6 +20,9 @@ alpha_hull_clustering3D <- function(spe,
   if (!(is.numeric(alpha) && length(alpha) == 1 && alpha > 0)) {
     stop("`alpha` is not a positive numeric.")
   }
+  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
+    stop("`minimum_cells_in_cluster` is not a positive integer.")
+  }
   if (!is.character(feature_colname)) {
     stop("`feature_colname` is not a character.")
   }
