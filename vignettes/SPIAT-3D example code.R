@@ -217,19 +217,6 @@ calculate_center_of_clusters3D(spe_grid, "grid_based_cluster")
 spe_grid <- calculate_border_of_clusters3D(spe_grid, 8, "grid_based_cluster")
 
 
-### 5. Presence of cluster metrics --------------------------------------------
-ANNI_result <- average_nearest_neighbor_index3D(data,
-                                                cell_types_of_interest = c("Tumour", "Immune"),
-                                                n_simulations = 10)
-
-library(ggplot2)
-df <- data.frame(x = 0,
-                 y = ANNI_result$ANNI_mean,
-                 low = ANNI_result$ANNI_95confidence_interval[1],
-                 up = ANNI_result$ANNI_95confidence_interval[2])
-
-ggplot(df, aes(x, y)) + geom_point() + geom_errorbar(aes(ymin = low, ymax = up))
-
 
 
 ### 6. Plot data -------------------------------------------------------------
