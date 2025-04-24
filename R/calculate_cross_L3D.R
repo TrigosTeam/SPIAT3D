@@ -1,4 +1,4 @@
-calculate_Lcross3D <- function(spe, 
+calculate_cross_L3D <- function(spe, 
                                reference_cell_type, 
                                target_cell_type, 
                                radius, 
@@ -10,7 +10,7 @@ calculate_Lcross3D <- function(spe,
                                 radius = radius,
                                 feature_colname = feature_colname)
   
-  colnames(result) <- c("observed_Lcross", "expected_Lcross", "Lcross_ratio")
+  colnames(result) <- c("observed_cross_L", "expected_cross_L", "cross_L_ratio")
   result <- (result / (4 * pi / 3)) ^ (1/3)
   
   return(result)
