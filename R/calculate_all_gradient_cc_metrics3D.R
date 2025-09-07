@@ -65,6 +65,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
     result[["entropy"]][i, "entropy"] <- mean(df[["entropy"]]$entropy, na.rm = T)
     result[["cross_K"]][i, ] <- df[["cross_K"]]
     result[["cross_L"]][i, ] <- df[["cross_L"]]
+    result[["co_occurrence"]][i, ] <- df[["co_occurrence"]]
     
     for (target_cell_type in names(df[["mixing_score"]])) {
       result[["mixing_score"]][[target_cell_type]][i, ] <- df[["mixing_score"]][[target_cell_type]]
@@ -80,6 +81,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   result[["entropy"]]$radius <- radii
   result[["cross_K"]]$radius <- radii
   result[["cross_L"]]$radius <- radii
+  result[["co_occurrence"]]$radius <- radii
   for (target_cell_type in names(df[["mixing_score"]])) {
     result[["mixing_score"]][[target_cell_type]]$radius <- radii
   }
@@ -96,7 +98,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
     fig_ACINP <- plot_cells_in_neighbourhood_proportions_gradient3D(result[["cells_in_neighbourhood_proportion"]], reference_cell_type)
     methods::show(fig_ACINP)
     
-    expected_entropy <- calculate_entropy_background3D(spatial_df, target_cell_types, feature_colname)
+    expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
     fig_AE <- plot_entropy_gradient3D(result[["entropy"]], expected_entropy, reference_cell_type, target_cell_types)
     methods::show(fig_AE)
     

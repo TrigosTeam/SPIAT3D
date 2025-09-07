@@ -28,5 +28,5 @@ calculate_prevalence3D <- function(grid_metrics,
     prevalence <- sum(grid_metrics[[metric_colname]] < threshold) / nrow(grid_metrics) * 100    
   }
   
-  return(p)
+  return(prevalence)
 }

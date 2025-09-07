@@ -11,10 +11,10 @@ calculate_entropy_grid_metrics3D <- function(spe,
   if (!(is.integer(n_splits) && length(n_splits) == 1 || (is.numeric(n_splits) && length(n_splits) == 1 && n_splits > 0 && n_splits%%1 == 0))) {
     stop("`n_splits` is not a positive integer.")
   }
-  ## Check reference_cell_types are found in the spe object
-  unknown_cell_types <- setdiff(reference_cell_types, spe[[feature_colname]])
+  ## Check cell_types_of_interest are found in the spe object
+  unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
-    warning(paste("The following cell types in reference_cell_types are not found in the spe object:\n   ",
+    warning(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
                   paste(unknown_cell_types, collapse = ", ")))
     return(NULL)
   }

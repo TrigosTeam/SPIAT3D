@@ -1,97 +1,5 @@
-library(alphashape3d)
 
-alpha_hull_clustering3D <- function(spe, 
-                                    cell_types_of_interest, 
-                                    alpha, 
-                                    minimum_cells_in_cluster,
-                                    feature_colname = "Cell.Type", 
-                                    plot_image = T) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  ## Check cell types of interst are found in the spe object
-  unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
-  if (length(unknown_cell_types) != 0) {
-    stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
-  }
-  if (!(is.numeric(alpha) && length(alpha) == 1 && alpha > 0)) {
-    stop("`alpha` is not a positive numeric.")
-  }
-  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
-    stop("`minimum_cells_in_cluster` is not a positive integer.")
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  if (!is.logical(plot_image)) {
-    stop("`plot_image` is not a logical (TRUE or FALSE).")
-  }
-  
-  ## Subset for the chosen cell_types_of_interest
-  spe_subset <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
-  spe_subset_coords <- spatialCoords(spe_subset)
-  
-  ## Get the alpha hull
-  alpha_hull <- ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
-  
-  if (sum(alpha_hull$triang[, 9]) == 0) stop("alpha value is too small? No alpha hulls identified")
-  
-  ## Determine which alpha hull cluster each cell_type_of_interest belongs to
-  alpha_hull_clusters <- components_ashape3d(alpha_hull)
-  
-  ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe), colData(spe))
-  
-  df_cell_types_of_interest <- df[df[[feature_colname]] %in% cell_types_of_interest, ]
-  df_other_cell_types <- df[!(df[[feature_colname]] %in% cell_types_of_interest), ]
-  
-  df_cell_types_of_interest$alpha_hull_cluster <- alpha_hull_clusters
-  df_other_cell_types$alpha_hull_cluster <- 0
-  
-  ## Ignore cell_types_of_interest which belong to an alpha hull cluster with less than minimum_cells_in_cluster
-  alpha_hull_clusters_table <- table(alpha_hull_clusters)
-  maximium_alpha_hull_cluster <- Position(function(x) x < minimum_cells_in_cluster, alpha_hull_clusters_table)
-  maximium_alpha_hull_cluster <- as.numeric(names(alpha_hull_clusters_table[maximium_alpha_hull_cluster]))
-  
-  if (!is.na(maximium_alpha_hull_cluster) && maximium_alpha_hull_cluster != -1) {
-    spe_subset_coords <- spe_subset_coords[alpha_hull_clusters >= 1 & alpha_hull_clusters < maximium_alpha_hull_cluster, ]
-    
-    df_cell_types_of_interest$alpha_hull_cluster <- ifelse(alpha_hull_clusters >= 1 & alpha_hull_clusters < maximium_alpha_hull_cluster, 
-                                                           alpha_hull_clusters, 0)
-    
-    ## Get the alpha hull again...
-    alpha_hull <- ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
-  }
-  
-  ## Convert data frame to spe object
-  df <- rbind(df_cell_types_of_interest, df_other_cell_types)
-  
-  spe <- SpatialExperiment(
-    assay = matrix(data = NA, nrow = nrow(df), ncol = nrow(df)),
-    colData = df,
-    spatialCoordsNames = c("Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position"),
-    metadata = spe@metadata)
-  
-  ## Get the information of the vertices and faces of the alpha hull (what 3 vertices make up each face triangle?)
-  vertices <- alpha_hull$x
-  faces <- alpha_hull$triang[alpha_hull$triang[, 9] == 2, c("tr1", "tr2", "tr3")]
-  spe@metadata$alpha_hull <- list(vertices = vertices, faces = faces, ashape3d_object = alpha_hull)
-  
-  ## Plot
-  if (plot_image) {
-    fig <- plot_alpha_hull_clusters3D(spe, feature_colname = feature_colname)
-    methods::show(fig)
-  }
-  
-  return(spe)
-}
-calculate_all_gradient_cc_metrics3D <- function(spe, 
+calculate_all_gradient_cc_metrics2D <- function(spe, 
                                                 reference_cell_type, 
                                                 target_cell_types, 
                                                 radii, 
@@ -143,7 +51,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   
   # Get gradient results for each metric
   for (i in seq(length(radii))) {
-    df <- calculate_all_single_radius_cc_metrics3D(spe,
+    df <- calculate_all_single_radius_cc_metrics2D(spe,
                                                    reference_cell_type,
                                                    target_cell_types,
                                                    radii[i],
@@ -185,38 +93,38 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   
   ## Plot
   if (plot_image) {
-    fig_ACIN <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
+    fig_ACIN <- plot_cells_in_neighbourhood_gradient2D(result[["cells_in_neighbourhood"]], reference_cell_type)
     methods::show(fig_ACIN)
     
-    fig_ACINP <- plot_cells_in_neighbourhood_proportions_gradient3D(result[["cells_in_neighbourhood_proportion"]], reference_cell_type)
+    fig_ACINP <- plot_cells_in_neighbourhood_proportions_gradient2D(result[["cells_in_neighbourhood_proportion"]], reference_cell_type)
     methods::show(fig_ACINP)
     
-    expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
-    fig_AE <- plot_entropy_gradient3D(result[["entropy"]], expected_entropy, reference_cell_type, target_cell_types)
+    expected_entropy <- calculate_entropy_background2D(spe, target_cell_types, feature_colname)
+    fig_AE <- plot_entropy_gradient2D(result[["entropy"]], expected_entropy, reference_cell_type, target_cell_types)
     methods::show(fig_AE)
     
     for (target_cell_type in names(result[["mixing_score"]])) {
-      fig_NMS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "NMS")
-      fig_MS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "MS")
+      fig_NMS <- plot_mixing_scores_gradient2D(result[["mixing_score"]][[target_cell_type]], "NMS")
+      fig_MS <- plot_mixing_scores_gradient2D(result[["mixing_score"]][[target_cell_type]], "MS")
       fig_NMS_MS <- plot_grid(fig_NMS, fig_MS, nrow = 2)
       methods::show(fig_NMS_MS)
     }
-    fig_CK <- plot_cross_K_gradient3D(result[["cross_K"]])
-    fig_CKR <- plot_cross_K_gradient_ratio3D(result[["cross_K"]])
+    fig_CK <- plot_cross_K_gradient2D(result[["cross_K"]])
+    fig_CKR <- plot_cross_K_gradient_ratio2D(result[["cross_K"]])
     fig_CK_CKR <- plot_grid(fig_CK, fig_CKR, nrow = 2)
     methods::show(fig_CK_CKR)
     
-    fig_CL <- plot_cross_L_gradient3D(result[["cross_L"]])
-    fig_CLR <- plot_cross_L_gradient_ratio3D(result[["cross_L"]])
+    fig_CL <- plot_cross_L_gradient2D(result[["cross_L"]])
+    fig_CLR <- plot_cross_L_gradient_ratio2D(result[["cross_L"]])
     fig_CL_CLR <- plot_grid(fig_CL, fig_CLR, nrow = 2)
     methods::show(fig_CL_CLR)
     
     for (target_cell_type in names(result[["cross_G"]])) {
-      fig_CG <- plot_cross_G_gradient3D(result[["cross_G"]][[target_cell_type]], reference_cell_type, target_cell_type)
+      fig_CG <- plot_cross_G_gradient2D(result[["cross_G"]][[target_cell_type]], reference_cell_type, target_cell_type)
       methods::show(fig_CG)
     }
     
-    fig_co_occ <- plot_co_occurrence_gradient3D(result[["co_occurrence"]])
+    fig_co_occ <- plot_co_occurrence_gradient2D(result[["co_occurrence"]])
     methods::show(fig_co_occ)
   }
   
@@ -227,7 +135,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
 ### Calculate all single radius cell-colocalisation metrics
 # If a function only requires one target cell type, iterate through each cell type in target_cell_types, else use all target_cell_types
 
-calculate_all_single_radius_cc_metrics3D <- function(spe, 
+calculate_all_single_radius_cc_metrics2D <- function(spe, 
                                                      reference_cell_type, 
                                                      target_cell_types, 
                                                      radius, 
@@ -297,14 +205,13 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   spe_coords <- data.frame(spatialCoords(spe))
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
   width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
-  height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
   ## Get volume of the window the cells are in
-  volume <- length * width * height
+  volume <- length * width
   
   
   
-  # All single radius cc metrics stem from calculate_entropy3D function
-  entropy_df <- calculate_entropy3D(spe, 
+  # All single radius cc metrics stem from calculate_entropy2D function
+  entropy_df <- calculate_entropy2D(spe, 
                                     reference_cell_type, 
                                     target_cell_types, 
                                     radius, 
@@ -375,7 +282,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   
   ## Co_occurrence ---------------
   all_cell_types <- unique(spe[[feature_colname]])
-  cells_in_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
+  cells_in_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions2D(spe,
                                                                                           reference_cell_type,
                                                                                           all_cell_types,
                                                                                           radius,
@@ -402,82 +309,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   return(result)
 }
 
-calculate_border_of_clusters3D <- function(spe, 
-                                           radius,
-                                           cluster_colname, 
-                                           feature_colname = "Cell.Type", 
-                                           plot_image = T) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  if (!(is.numeric(radius) && length(radius) == 1 && radius > 0)) {
-    stop("`radius` is not a positive numeric.")
-  }
-  if (!is.character(cluster_colname)) {
-    stop("`cluster_colname` is not a character. This should be 'alpha_hull_cluster', 'dbscan_cluster', or 'grid_based_cluster', depending on the chosen method.")
-  }
-  if (is.null(spe[[cluster_colname]])) {
-    stop(paste("No column called", cluster_colname, "found in spe object."))
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  if (!is.logical(plot_image)) {
-    stop("`plot_image` is not a logical (TRUE or FALSE).")
-  }
-  
-  ## Get spatial coords of spe
-  spe_coords <- data.frame(spatialCoords(spe))
-  
-  ## Get coords of non-cluster cells
-  non_cluster_coords <- spe_coords[spe[[cluster_colname]] == 0, ]
-  
-  # New column for spe object: 'cluster_border'. Default is 'outside'
-  spe$cluster_border <- "outside"
-  
-  # Label cells part of a cluster (e.g. 'cluster1')
-  spe$cluster_border[spe[[cluster_colname]] != 0] <- paste("inside_C", spe[[cluster_colname]][spe[[cluster_colname]] != 0], sep = "")
-  
-  ## Iterate for each cluster
-  n_clusters <- max(spe[[cluster_colname]])
-  
-  for (i in seq_len(n_clusters)) {
-    
-    ## Subset for cells in the current cluster of interest
-    cluster_coords <- spe_coords[spe[[cluster_colname]] == i, ]
-    
-    # For each cell in the current cluster, check how many other cells in the cluster are in its radius
-    cluster_to_cluster_interactions <- dbscan::frNN(cluster_coords, radius)
-    
-    # Determine the median minimum number of cluster cells found in the radius of cluster cell. Use this as the threshold for non-cluster cells.
-    non_cluster_threshold <- quantile(unlist(lapply(cluster_to_cluster_interactions$dist, length)), 0.5)
-    
-    # For each non-cluster cell, check how many cluster cells are in its radius.
-    non_cluster_to_cluster_interactions <- dbscan::frNN(cluster_coords, radius, non_cluster_coords)
-    
-    # If number of cluster cells found in the radius of non-cluster cells is greater than threshold, non-cluster cell has probably infiltrated cluster too
-    n_cluster_cells_in_non_cluster_cell_radius <- unlist(lapply(non_cluster_to_cluster_interactions$id, length))
-    
-    spe$cluster_border[as.numeric(names(non_cluster_to_cluster_interactions$id)[n_cluster_cells_in_non_cluster_cell_radius > non_cluster_threshold])] <- paste("infiltrated_C", i, sep = "")
-    
-    # If number of cluster cells found in the radius of non-cluster cells is less than threshold, but greater than 0, non-cluster cell is probably on the border
-    spe$cluster_border[as.numeric(names(non_cluster_to_cluster_interactions$id)[n_cluster_cells_in_non_cluster_cell_radius > 0 & n_cluster_cells_in_non_cluster_cell_radius < non_cluster_threshold])] <- paste("border_C", i, sep = "")
-  }
-  
-  ## Plot
-  if (plot_image) {
-    fig <- plot_cells3D(spe, feature_colname = "cluster_border")
-    methods::show(fig)
-  }
-  
-  return(spe)
-}
-calculate_cell_proportion_grid_metrics3D <- function(spe, 
+calculate_cell_proportion_grid_metrics2D <- function(spe, 
                                                      n_splits,
                                                      reference_cell_types,
                                                      target_cell_types,
@@ -520,7 +352,7 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   }
   
   # Add grid metrics to spe
-  spe <- get_spe_grid_metrics3D(spe, n_splits, feature_colname)
+  spe <- get_spe_grid_metrics2D(spe, n_splits, feature_colname)
   
   # Get grid_prism_cell_matrix from spe
   grid_prism_cell_matrix <- spe@metadata$grid_metrics$grid_prism_cell_matrix
@@ -550,79 +382,14 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   
   ## Plot
   if (plot_image) {
-    fig <- plot_grid_metrics_continuous3D(result, "proportion")
-    methods::show(fig)
-  }
-  
-  return(result)
-}
-calculate_cell_proportions_of_clusters3D <- function(spe, cluster_colname, feature_colname = "Cell.Type", plot_image = T) {
-  
-  # Get number of clusters
-  n_clusters <- max(spe[[cluster_colname]])
-  
-  ## Get different cell types found in the clusters (alphabetical for consistency)
-  cell_types <- unique(spe[[feature_colname]][spe[[cluster_colname]] != 0])
-  cell_types <- cell_types[order(cell_types)]
-  
-  ## For each cluster, determine the size and cell proportion of each cluster
-  result <- data.frame(matrix(nrow = n_clusters, ncol = 2 + length(cell_types)))
-  colnames(result) <- c("cluster_number", "n_cells", cell_types)
-  result$cluster_number <- as.character(seq(n_clusters))
-  
-  for (i in seq(n_clusters)) {
-    cells_in_cluster <- spe[[feature_colname]][spe[[cluster_colname]] == i]
-    result[i, "n_cells"] <- length(cells_in_cluster)
-    
-    for (cell_type in cell_types) {
-      result[i, cell_type] <- sum(cells_in_cluster == cell_type) / result[i, "n_cells"]
-    }
-  }
-  
-  ## Plot
-  if (plot_image) {
-    plot_result <- reshape2::melt(result, id.vars = c("cluster_number", "n_cells"))
-    fig <- ggplot(plot_result, aes(cluster_number, value, fill = variable)) +
-      geom_bar(stat = "identity") +
-      labs(title = "Cell proportions of each cluster", x = "", y = "Cell proportion") +
-      scale_x_discrete(labels = paste("cluster_", result$cluster_number, ", n = ", result$n_cells, sep = "")) +
-      guides(fill = guide_legend(title="Cell type")) +
-      theme_bw() +
-      theme(plot.title = element_text(hjust = 0.5))
-    
+    fig <- plot_grid_metrics_continuous2D(result, "proportion")
     methods::show(fig)
   }
   
   return(result)
 }
 
-#' @title Calculate cell proportions in 3D spatial data.
-#'
-#' @description This function calculates the proportions of different cell types in a 3D SpatialExperiment object. 
-#'    It can optionally plot a bar chart of the cell proportions.
-#'
-#' @param spe A SpatialExperiment object containing 3D spatial information for the cells.
-#' @param cell_types_of_interest A character vector specifying the cell types of interest.
-#'    If NULL, all cell types in the `feature_colname` column will be considered.
-#' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
-#'    object that contains the cell type information.
-#' @param plot_image A logical indicating whether to plot violin plots of the minimum distances 
-#'    between cell type pairs. Defaults to TRUE.
-#'
-#' @return A data frame containing the cell types, their frequencies, proportions, and percentages.
-#'
-#' @examples
-#' cell_proportions <- calculate_cell_proportions3D(
-#'     spe = SPIAT3D::simulated_spe, 
-#'     cell_types_of_interest = NULL, 
-#'     feature_colname = "Cell.Type", 
-#'     plot_image = TRUE
-#' )
-#' 
-#' @export
-
-
-calculate_cell_proportions3D <- function(spe,
+calculate_cell_proportions2D <- function(spe,
                                          cell_types_of_interest = NULL, 
                                          feature_colname = "Cell.Type",
                                          plot_image = TRUE) {
@@ -695,7 +462,7 @@ calculate_cell_proportions3D <- function(spe,
   
   return(cell_proportions)
 }
-calculate_cells_in_neighbourhood_gradient3D <- function(spe, 
+calculate_cells_in_neighbourhood_gradient2D <- function(spe, 
                                                         reference_cell_type, 
                                                         target_cell_types, 
                                                         radii, 
@@ -710,7 +477,7 @@ calculate_cells_in_neighbourhood_gradient3D <- function(spe,
   colnames(result) <- target_cell_types
   
   for (i in seq(length(radii))) {
-    cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+    cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood2D(spe,
                                                                     reference_cell_type,
                                                                     target_cell_types,
                                                                     radii[i],
@@ -727,14 +494,14 @@ calculate_cells_in_neighbourhood_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_gradient3D(result, reference_cell_type)
+    fig <- plot_cells_in_neighbourhood_gradient2D(result, reference_cell_type)
     methods::show(fig)
   }
   
   return(result)
 }
 
-calculate_cells_in_neighbourhood_proportions_gradient3D <- function(spe, 
+calculate_cells_in_neighbourhood_proportions_gradient2D <- function(spe, 
                                                                     reference_cell_type, 
                                                                     target_cell_types, 
                                                                     radii, 
@@ -749,7 +516,7 @@ calculate_cells_in_neighbourhood_proportions_gradient3D <- function(spe,
   colnames(result) <- target_cell_types
   
   for (i in seq(length(radii))) {
-    cell_proportions_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
+    cell_proportions_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions2D(spe,
                                                                                                     reference_cell_type,
                                                                                                     target_cell_types,
                                                                                                     radii[i],
@@ -765,21 +532,21 @@ calculate_cells_in_neighbourhood_proportions_gradient3D <- function(spe,
   
   # Plot
   if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_proportions_gradient3D(result, reference_cell_type)
+    fig <- plot_cells_in_neighbourhood_proportions_gradient2D(result, reference_cell_type)
     methods::show(fig)
   }
   
   return(result)
 }
 
-calculate_cells_in_neighbourhood_proportions3D <- function(spe, 
+calculate_cells_in_neighbourhood_proportions2D <- function(spe, 
                                                            reference_cell_type, 
                                                            target_cell_types, 
                                                            radius, 
                                                            feature_colname = "Cell.Type") {
   
   ## Get cells in neighbourhood df
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood2D(spe,
                                                                   reference_cell_type,
                                                                   target_cell_types,
                                                                   radius,
@@ -796,7 +563,7 @@ calculate_cells_in_neighbourhood_proportions3D <- function(spe,
   
   return(cells_in_neighbourhood_df)
 }
-calculate_cells_in_neighbourhood3D <- function(spe, 
+calculate_cells_in_neighbourhood2D <- function(spe, 
                                                reference_cell_type, 
                                                target_cell_types, 
                                                radius, 
@@ -886,53 +653,19 @@ calculate_cells_in_neighbourhood3D <- function(spe,
   
   ## Print summary
   if (show_summary) {
-    print(summarise_cells_in_neighbourhood3D(result))    
+    print(summarise_cells_in_neighbourhood2D(result))    
   }
   
   ## Plot
   if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_violin3D(result, reference_cell_type)
+    fig <- plot_cells_in_neighbourhood_violin2D(result, reference_cell_type)
     methods::show(fig)
   }
   
   return(result)
 }
-### Assume that clusters have uniform density and that the centre of each cluster is defined by its centre of mass
-### Centre of mass can be estimated by taking the average of the x, y, and z coordinates of cells in the cluster
 
-calculate_center_of_clusters3D <- function(spe, cluster_colname) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  if (!is.character(cluster_colname)) {
-    stop("`cluster_colname` is not a character. This should be 'alpha_hull_cluster', 'dbscan_cluster', or 'grid_based_cluster', depending on the chosen method.")
-  }
-  if (is.null(spe[[cluster_colname]])) {
-    stop(paste("No column called", cluster_colname, "found in spe object."))
-  }
-  
-  # Get number of clusters
-  n_clusters <- max(spe[[cluster_colname]])
-  
-  # Get spe coords
-  spe_coords <- spatialCoords(spe)
-  
-  ## For each cluster, determine the number of cells in each cluster of each cluster
-  result <- data.frame(matrix(nrow = n_clusters, ncol = 4))
-  colnames(result) <- c("cluster_number", "Centre.X.Position", "Centre.Y.Position", "Centre.Z.Position")
-  
-  result$cluster_number <- as.character(seq(n_clusters))
-  for (i in seq(n_clusters)) {
-    spe_cluster_coords <- spe_coords[spe[[cluster_colname]] == i, ]
-    result[i, c("Centre.X.Position", "Centre.Y.Position", "Centre.Z.Position")] <- 
-      apply(spe_cluster_coords, 2, mean)
-  }
-  
-  return(result)
-}
-calculate_co_occurrence_gradient3D <- function(spe, 
+calculate_co_occurrence_gradient2D <- function(spe, 
                                                reference_cell_type, 
                                                target_cell_types, 
                                                radii, 
@@ -947,7 +680,7 @@ calculate_co_occurrence_gradient3D <- function(spe,
   colnames(result) <- c("reference", target_cell_types)
   
   for (i in seq(length(radii))) {
-    co_occurrence_df <- calculate_co_occurrence3D(spe,
+    co_occurrence_df <- calculate_co_occurrence2D(spe,
                                                   reference_cell_type,
                                                   target_cell_types,
                                                   radii[i],
@@ -960,13 +693,13 @@ calculate_co_occurrence_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig <- plot_co_occurrence_gradient3D(result)
+    fig <- plot_co_occurrence_gradient2D(result)
     methods::show(fig)
   }
   
   return(result)
 }
-calculate_co_occurrence3D <- function(spe, 
+calculate_co_occurrence2D <- function(spe, 
                                       reference_cell_type, 
                                       target_cell_types, 
                                       radius, 
@@ -975,7 +708,7 @@ calculate_co_occurrence3D <- function(spe,
   # Get all cell types in spe
   all_cell_types <- unique(spe[[feature_colname]])
   
-  cells_in_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
+  cells_in_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions2D(spe,
                                                                                           reference_cell_type,
                                                                                           all_cell_types,
                                                                                           radius,
@@ -1010,7 +743,7 @@ calculate_co_occurrence3D <- function(spe,
   
   return(result)
 }
-calculate_cross_G_gradient3D <- function(spe, 
+calculate_cross_G_gradient2D <- function(spe, 
                                          reference_cell_type, 
                                          target_cell_type, 
                                          radii, 
@@ -1026,7 +759,7 @@ calculate_cross_G_gradient3D <- function(spe,
                         "expected_cross_G")
   
   for (i in seq(length(radii))) {
-    cross_G_df <- calculate_cross_G3D(spe,
+    cross_G_df <- calculate_cross_G2D(spe,
                                       reference_cell_type,
                                       target_cell_type,
                                       radii[i],
@@ -1039,13 +772,13 @@ calculate_cross_G_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig <- plot_cross_G_gradient3D(result, reference_cell_type, target_cell_type)
+    fig <- plot_cross_G_gradient2D(result, reference_cell_type, target_cell_type)
     methods::show(fig)
   }
   
   return(result)
 }
-calculate_cross_G3D <- function(spe,
+calculate_cross_G2D <- function(spe,
                                 reference_cell_type,
                                 target_cell_type,
                                 radius,
@@ -1053,7 +786,7 @@ calculate_cross_G3D <- function(spe,
   
   ### Calculate the observed cross_G
   # Get the number of target cells in the radius around each reference cell
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood2D(spe,
                                                                   reference_cell_type,
                                                                   target_cell_type,
                                                                   radius,
@@ -1072,10 +805,9 @@ calculate_cross_G3D <- function(spe,
   
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
   width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
-  height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
   
   # Get volume of the window the cells are in
-  volume <- length * width * height
+  volume <- length * width
   
   # Get the number of target cells
   n_target_cells <- sum(spe[[feature_colname]] == target_cell_type)
@@ -1084,14 +816,14 @@ calculate_cross_G3D <- function(spe,
   target_cell_type_intensity <- n_target_cells / volume
   
   # Apply formula
-  expected_cross_G <- 1 - exp(-1 * target_cell_type_intensity * (4 / 3) * pi * radius^3)
+  expected_cross_G <- 1 - exp(-1 * target_cell_type_intensity * pi * radius^2)
   
   result <- data.frame(observed_cross_G = observed_cross_G,
                        expected_cross_G = expected_cross_G)
   
   return(result)
 }
-calculate_cross_K_gradient3D <- function(spe, 
+calculate_cross_K_gradient2D <- function(spe, 
                                          reference_cell_type, 
                                          target_cell_types, 
                                          radii, 
@@ -1106,7 +838,7 @@ calculate_cross_K_gradient3D <- function(spe,
   colnames(result) <- c("reference", "expected", target_cell_types)
   
   for (i in seq(length(radii))) {
-    cross_K_df <- calculate_cross_K3D(spe,
+    cross_K_df <- calculate_cross_K2D(spe,
                                       reference_cell_type,
                                       target_cell_types,
                                       radii[i],
@@ -1119,8 +851,8 @@ calculate_cross_K_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig1 <- plot_cross_K_gradient3D(result)
-    fig2 <- plot_cross_K_gradient_ratio3D(result)
+    fig1 <- plot_cross_K_gradient2D(result)
+    fig2 <- plot_cross_K_gradient_ratio2D(result)
     
     combined_fig <- plot_grid(fig1, fig2, nrow = 2)
     methods::show(combined_fig)
@@ -1128,7 +860,7 @@ calculate_cross_K_gradient3D <- function(spe,
   
   return(result)
 }
-calculate_cross_K3D <- function(spe, 
+calculate_cross_K2D <- function(spe, 
                                 reference_cell_type, 
                                 target_cell_types, 
                                 radius, 
@@ -1143,7 +875,7 @@ calculate_cross_K3D <- function(spe,
   
   
   ## Get expected cross K-function
-  expected_cross_K <- (4/3) * pi * radius^3
+  expected_cross_K <- pi * radius^2
   
   ## For reference_cell_type, check it is found in the spe object
   if (!(reference_cell_type %in% spe[[feature_colname]])) {
@@ -1159,9 +891,9 @@ calculate_cross_K3D <- function(spe,
   
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
   width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
-  height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
+  
   ## Get volume of the window the cells are in
-  volume <- length * width * height
+  volume <- length * width
   
   # Number of reference cell types is constant
   n_ref_cells <- sum(spe[[feature_colname]] == reference_cell_type)
@@ -1169,7 +901,7 @@ calculate_cross_K3D <- function(spe,
   # Define result data frame
   result <- data.frame(reference = reference_cell_type, expected = expected_cross_K)
   
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood2D(spe,
                                                                   reference_cell_type,
                                                                   target_cell_types,
                                                                   radius,
@@ -1195,7 +927,7 @@ calculate_cross_K3D <- function(spe,
   
   return(result)
 }
-calculate_cross_L_gradient3D <- function(spe, 
+calculate_cross_L_gradient2D <- function(spe, 
                                          reference_cell_type, 
                                          target_cell_types, 
                                          radii, 
@@ -1210,7 +942,7 @@ calculate_cross_L_gradient3D <- function(spe,
   colnames(result) <- c("reference", "expected", target_cell_types)
   
   for (i in seq(length(radii))) {
-    cross_L_df <- calculate_cross_L3D(spe,
+    cross_L_df <- calculate_cross_L2D(spe,
                                       reference_cell_type,
                                       target_cell_types,
                                       radii[i],
@@ -1223,8 +955,8 @@ calculate_cross_L_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig1 <- plot_cross_L_gradient3D(result)
-    fig2 <- plot_cross_L_gradient_ratio3D(result)
+    fig1 <- plot_cross_L_gradient2D(result)
+    fig2 <- plot_cross_L_gradient_ratio2D(result)
     
     combined_fig <- plot_grid(fig1, fig2, nrow = 2)
     methods::show(combined_fig)
@@ -1232,23 +964,23 @@ calculate_cross_L_gradient3D <- function(spe,
   
   return(result)
 }
-calculate_cross_L3D <- function(spe, 
-                                 reference_cell_type, 
-                                 target_cell_types, 
-                                 radius, 
-                                 feature_colname = "Cell.Type") {
+calculate_cross_L2D <- function(spe, 
+                                reference_cell_type, 
+                                target_cell_types, 
+                                radius, 
+                                feature_colname = "Cell.Type") {
   
-  result <- calculate_cross_K3D(spe = spe,
+  result <- calculate_cross_K2D(spe = spe,
                                 reference_cell_type = reference_cell_type,
                                 target_cell_types = target_cell_types,
                                 radius = radius,
                                 feature_colname = feature_colname)
   
-  result[ , c("expected", target_cell_types)] <- (result[ , c("expected", target_cell_types)] / (4 * pi / 3)) ^ (1/3)
+  result[ , c("expected", target_cell_types)] <- (result[ , c("expected", target_cell_types)] / (pi)) ^ (1/2)
   
   return(result)
 }
-calculate_entropy_background3D <- function(spe,
+calculate_entropy_background2D <- function(spe,
                                            cell_types_of_interest, 
                                            feature_colname = "Cell.Type") {
   
@@ -1258,7 +990,7 @@ calculate_entropy_background3D <- function(spe,
   # One cell type case: entropy is 0
   if (is.character(cell_types_of_interest) && length(cell_types_of_interest) == 1) return(0)
   
-  cell_proportions_data <- calculate_cell_proportions3D(spe, cell_types_of_interest, feature_colname, FALSE)
+  cell_proportions_data <- calculate_cell_proportions2D(spe, cell_types_of_interest, feature_colname, FALSE)
   
   # Calculate entropy of the entire image
   entropy <- -1 * sum(cell_proportions_data$proportion * log(cell_proportions_data$proportion, length(cell_proportions_data$proportion)))
@@ -1266,7 +998,7 @@ calculate_entropy_background3D <- function(spe,
   return(entropy) 
 }
 
-calculate_entropy_gradient3D <- function(spe,
+calculate_entropy_gradient2D <- function(spe,
                                          reference_cell_type,
                                          target_cell_types,
                                          radii,
@@ -1281,7 +1013,7 @@ calculate_entropy_gradient3D <- function(spe,
   colnames(result) <- "entropy"
   
   for (i in seq(length(radii))) {
-    entropy_df <- calculate_entropy3D(spe,
+    entropy_df <- calculate_entropy2D(spe,
                                       reference_cell_type,
                                       target_cell_types,
                                       radii[i],
@@ -1296,15 +1028,15 @@ calculate_entropy_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
-    fig <- plot_entropy_gradient3D(result, expected_entropy, reference_cell_type, target_cell_types)
+    expected_entropy <- calculate_entropy_background2D(spe, target_cell_types, feature_colname)
+    fig <- plot_entropy_gradient2D(result, expected_entropy, reference_cell_type, target_cell_types)
     methods::show(fig)
   }
   
   return(result)
 }
 
-calculate_entropy_grid_metrics3D <- function(spe, 
+calculate_entropy_grid_metrics2D <- function(spe, 
                                              n_splits,
                                              cell_types_of_interest,
                                              feature_colname = "Cell.Type",
@@ -1342,7 +1074,7 @@ calculate_entropy_grid_metrics3D <- function(spe,
   }
   
   # Add grid metrics to spe
-  spe <- get_spe_grid_metrics3D(spe, n_splits, feature_colname)
+  spe <- get_spe_grid_metrics2D(spe, n_splits, feature_colname)
   
   # Get grid_prism_cell_matrix from spe
   grid_prism_cell_matrix <- spe@metadata$grid_metrics$grid_prism_cell_matrix
@@ -1371,13 +1103,13 @@ calculate_entropy_grid_metrics3D <- function(spe,
   
   ## Plot
   if (plot_image) {
-    fig <- plot_grid_metrics_continuous3D(result, "entropy")
+    fig <- plot_grid_metrics_continuous2D(result, "entropy")
     methods::show(fig)
   }
   
   return(result)
 }
-calculate_entropy3D <- function(spe,
+calculate_entropy2D <- function(spe,
                                 reference_cell_type,
                                 target_cell_types,
                                 radius,
@@ -1389,7 +1121,7 @@ calculate_entropy3D <- function(spe,
   }
   
   ## Users should ensure include the reference_cell_type as one of the target_cell_types
-  cells_in_neighbourhood_proportion_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
+  cells_in_neighbourhood_proportion_df <- calculate_cells_in_neighbourhood_proportions2D(spe,
                                                                                          reference_cell_type,
                                                                                          target_cell_types,
                                                                                          radius,
@@ -1407,121 +1139,8 @@ calculate_entropy3D <- function(spe,
   
   return(cells_in_neighbourhood_proportion_df)
 }
-### Start from the grid_prism with the maximum cell proportion.
-## Look left, right, forward, back, up and down and see if that grid_prism has at least threshold cell proportion value
-## If it does, add it to the answer
-## Keep doing this until adjacent grid prisms don't have above threshold, or if you hit a boundary, or it has already been removed
-## Return a vector containing all the grid prism numbers which COULD be part of the cluster
-calculate_grid_prism_numbers_in_cluster3D <- function(curr_grid_prism_number, 
-                                                      grid_prism_cell_proportions, 
-                                                      threshold_cell_proportion,
-                                                      n_splits,
-                                                      answer) {
-  
-  ## If answer already has curr_grid_prism_number, go back
-  if (as.character(curr_grid_prism_number) %in% answer) return(answer)
-  
-  grid_prism_numbers <- names(grid_prism_cell_proportions)
-  
-  ## If curr_grid_prism_number has already been removed from grid_prism_numbers, go back
-  if (!(as.character(curr_grid_prism_number) %in% grid_prism_numbers)) return(answer)
-  
-  
-  if (grid_prism_cell_proportions[as.character(curr_grid_prism_number)] > threshold_cell_proportion) {
-    
-    answer <- c(answer, as.character(curr_grid_prism_number))
-    
-    ### CHECK RIGHT, LEFT, FORWARD, BACKWARD, UP, DOWN
-    ## Need to check if going right, left, forward, backward, up or down is possible
-    
-    # Right
-    if (curr_grid_prism_number%%n_splits != 0) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number + 1,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-    
-    # Left
-    if (curr_grid_prism_number%%n_splits != 1) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number - 1,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-    
-    # Forward
-    if ((curr_grid_prism_number - 1)%%(n_splits^2) < n_splits^2 - n_splits) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number + n_splits,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-    
-    # Backward
-    if (curr_grid_prism_number%%(n_splits^2) > n_splits) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number - n_splits,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-    
-    # Up
-    if (curr_grid_prism_number <= n_splits^3 - n_splits^2) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number + n_splits^2,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-    
-    # Down
-    if (curr_grid_prism_number > n_splits^2) {
-      answer <- calculate_grid_prism_numbers_in_cluster3D(curr_grid_prism_number - n_splits^2,
-                                                          grid_prism_cell_proportions,
-                                                          threshold_cell_proportion,
-                                                          n_splits,
-                                                          answer)
-    }
-  }
-  
-  return(answer)
-}#' @title Calculate minimum distances between cell types in 3D spatial data.
-#'
-#' @description This function calculates the minimum distances between different cell types in a 3D SpatialExperiment object. 
-#'    It allows you to specify a subset of cell types to analyse and provides the option to summarise 
-#'    the results and plot violin plots of the minimum distances between cell types.
-#'
-#' @param spe A SpatialExperiment object containing 3D spatial information for the cells.
-#' @param cell_types_of_interest A character vector specifying the cell types of interest.
-#'   If NULL, all cell types in the `feature_colname` column will be considered.
-#' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
-#'    object that contains the cell type information.
-#' @param show_summary A logical indicating whether to print a summary of the minimum distances 
-#'    for each cell type pair. Defaults to TRUE.
-#' @param plot_image A logical indicating whether to plot violin plots of the minimum distances 
-#'    between cell type pairs. Defaults to TRUE.
-#'
-#' @return A data frame containing information about the reference cell, the nearest cell of another type, 
-#'    and the distance between them for each cell type pair.
-#'
-#' @examples
-#' minimum_distances <- calculate_minimum_distances_between_cell_types3D(
-#'     spe = SPIAT3D::simulated_spe,
-#'     cell_types_of_interest = NULL,
-#'     feature_colname = "Cell.Type",
-#'     show_summary = TRUE,
-#'     plot_image = TRUE
-#' )
-#' 
-#' @export
 
-
-calculate_minimum_distances_between_cell_types3D <- function(spe,
+calculate_minimum_distances_between_cell_types2D <- function(spe,
                                                              cell_types_of_interest = NULL,
                                                              feature_colname = "Cell.Type",
                                                              show_summary = TRUE,
@@ -1643,18 +1262,18 @@ calculate_minimum_distances_between_cell_types3D <- function(spe,
   
   # Print summary
   if (show_summary) {
-    print(summarise_distances_between_cell_types3D(result))  
+    print(summarise_distances_between_cell_types2D(result))  
   }
   
   # Plot
   if (plot_image) {
-    fig <- plot_distances_between_cell_types_violin3D(result)
+    fig <- plot_distances_between_cell_types_violin2D(result)
     methods::show(fig)
   }
   
   return(result)
 }
-calculate_minimum_distances_to_clusters3D <- function(spe, 
+calculate_minimum_distances_to_clusters2D <- function(spe, 
                                                       cell_types_inside_cluster, 
                                                       cell_types_outside_cluster, 
                                                       cluster_colname, 
@@ -1759,7 +1378,7 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
   }
   return(result)
 }
-calculate_mixing_scores_gradient3D <- function(spe, 
+calculate_mixing_scores_gradient2D <- function(spe, 
                                                reference_cell_type, 
                                                target_cell_type, 
                                                radii, 
@@ -1781,7 +1400,7 @@ calculate_mixing_scores_gradient3D <- function(spe,
                         "normalised_mixing_score")
   
   for (i in seq(length(radii))) {
-    mixing_scores <- calculate_mixing_scores3D(spe,
+    mixing_scores <- calculate_mixing_scores2D(spe,
                                                reference_cell_type,
                                                target_cell_type,
                                                radii[i],
@@ -1794,8 +1413,8 @@ calculate_mixing_scores_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig1 <- plot_mixing_scores_gradient3D(result, "NMS")
-    fig2 <- plot_mixing_scores_gradient3D(result, "MS")
+    fig1 <- plot_mixing_scores_gradient2D(result, "NMS")
+    fig2 <- plot_mixing_scores_gradient2D(result, "MS")
     combined_fig <- plot_grid(fig1, fig2, nrow = 2)
     methods::show(combined_fig)
   }
@@ -1803,7 +1422,7 @@ calculate_mixing_scores_gradient3D <- function(spe,
   return(result)
 }
 
-calculate_mixing_scores3D <- function(spe, 
+calculate_mixing_scores2D <- function(spe, 
                                       reference_cell_types, 
                                       target_cell_types, 
                                       radius, 
@@ -1841,7 +1460,7 @@ calculate_mixing_scores3D <- function(spe,
       
       
       ## Get cells in neighbourhood df
-      cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+      cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood2D(spe,
                                                                       reference_cell_type,
                                                                       c(reference_cell_type, target_cell_type),
                                                                       radius,
@@ -1912,7 +1531,7 @@ calculate_mixing_scores3D <- function(spe,
   
   return(result)
 }
-calculate_pairwise_distances_between_cell_types3D <- function(spe,
+calculate_pairwise_distances_between_cell_types2D <- function(spe,
                                                               cell_types_of_interest = NULL,
                                                               feature_colname = "Cell.Type",
                                                               show_summary = TRUE,
@@ -2042,22 +1661,22 @@ calculate_pairwise_distances_between_cell_types3D <- function(spe,
   
   # Print summary
   if (show_summary) {
-    print(summarise_distances_between_cell_types3D(result))  
+    print(summarise_distances_between_cell_types2D(result))  
   }
   
   # Plot
   if (plot_image) {
-    fig <- plot_distances_between_cell_types_violin3D(result)
+    fig <- plot_distances_between_cell_types_violin2D(result)
     methods::show(fig)
   }
   
   return(result)
 }
-calculate_prevalence_gradient_AUC3D <- function(prevalence_gradient_df) {
+calculate_prevalence_gradient_AUC2D <- function(prevalence_gradient_df) {
   
   return(sum(prevalence_gradient_df$prevalence) * 0.01)
 }
-calculate_prevalence_gradient3D <- function(grid_metrics,
+calculate_prevalence_gradient2D <- function(grid_metrics,
                                             metric_colname,
                                             show_AUC = T,
                                             plot_image = T) {
@@ -2084,12 +1703,12 @@ calculate_prevalence_gradient3D <- function(grid_metrics,
   
   # Get prevalences for each threshold
   result$prevalence <- sapply(thresholds, function(threshold) { 
-    calculate_prevalence3D(grid_metrics, metric_colname, threshold) 
+    calculate_prevalence2D(grid_metrics, metric_colname, threshold) 
   })
   
   # Show AUC of prevalence gradient graph
   if (show_AUC) {
-    print(paste("AUC:", round(calculate_prevalence_gradient_AUC3D(result), 2)))
+    print(paste("AUC:", round(calculate_prevalence_gradient_AUC2D(result), 2)))
   }
   
   # Plot
@@ -2107,7 +1726,7 @@ calculate_prevalence_gradient3D <- function(grid_metrics,
   
   return(result)
 }
-calculate_prevalence3D <- function(grid_metrics,
+calculate_prevalence2D <- function(grid_metrics,
                                    metric_colname,
                                    threshold,
                                    above = TRUE) {
@@ -2139,7 +1758,7 @@ calculate_prevalence3D <- function(grid_metrics,
   
   return(prevalence)
 }
-calculate_spatial_autocorrelation3D <- function(grid_metrics,
+calculate_spatial_autocorrelation2D <- function(grid_metrics,
                                                 metric_colname,
                                                 weight_method = 0.1) {
   
@@ -2158,14 +1777,13 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
   ## Get number of grid prisms
   n_grid_prisms <- nrow(grid_metrics)
   
-  ## Get splitting number (should be the cube root of n_grid_prisms)
-  n_splits <- (n_grid_prisms)^(1/3)
+  ## Get splitting number (should be the SQUARE root of n_grid_prisms)
+  n_splits <- (n_grid_prisms)^(1/2)
   
   ## Find the coordinates of each grid prism
   x <- ((seq(n_grid_prisms) - 1) %% n_splits)
   y <- (floor(((seq(n_grid_prisms) - 1) %% (n_splits)^2) / n_splits))
-  z <- (floor((seq(n_grid_prisms) - 1) / (n_splits^2)))
-  grid_prism_coords <- data.frame(x = x, y = y, z = z)
+  grid_prism_coords <- data.frame(x = x, y = y)
   
   ## Subset for non NA rows
   grid_prism_coords <- grid_prism_coords[!is.na(grid_metrics[[metric_colname]]), ]
@@ -2182,9 +1800,9 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
     weight_matrix <- ifelse(weight_matrix > 1, 0, 1)  
   }
   ## Use queen method: adjacent points get a weight of 1, otherwise, weight of 0
-  ## Adjacent points are within sqrt(3) unit apart. e.g. (0, 0, 0) vs (0, 0, 1)
+  ## Adjacent points are within sqrt(2) unit apart. e.g. (0, 0, 0) vs (0, 0, 1)
   else if (weight_method == "queen") {
-    weight_matrix <- ifelse(weight_matrix > sqrt(3), 0, 1)  
+    weight_matrix <- ifelse(weight_matrix > sqrt(2), 0, 1)  
   }
   ## If a number (x) between 0 and 1 is supplied, set a threshold to be x quantile value of c(weight_matrix)
   ## Grid prisms within this specified threshold have a weight of 1, otherwise, weight of 0
@@ -2212,167 +1830,10 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
   
   return(I)
 }
-calculate_volume_of_clusters3D <- function(spe, cluster_colname) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  if (!is.character(cluster_colname)) {
-    stop("`cluster_colname` is not a character. This should be 'alpha_hull_cluster', 'dbscan_cluster', or 'grid_based_cluster', depending on the chosen method.")
-  }
-  if (is.null(spe[[cluster_colname]])) {
-    stop(paste("No column called", cluster_colname, "found in spe object."))
-  }
-  
-  # Get number of clusters
-  n_clusters <- max(spe[[cluster_colname]])
-  
-  ### 1. Estimate volume of each cluster by density of the window. ------------
-  
-  ## For each cluster, determine the number of cells in each cluster of each cluster
-  result <- data.frame(matrix(nrow = n_clusters, ncol = 2))
-  colnames(result) <- c("cluster_number", "n_cells")
-  
-  for (i in seq(n_clusters)) {
-    result[i, "n_cells"] <- sum(spe[[cluster_colname]] == i)
-  }
-  result$cluster_number <- as.character(seq(n_clusters))
-  
-  ## Assume window is a rectangular prism
-  spe_coords <- data.frame(spatialCoords(spe))
-  
-  length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
-  width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
-  height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
-  
-  window_volume <- length * width * height
-  
-  result$volume_by_density <- (result$n_cells / ncol(spe)) * window_volume
-  
-  
-  ### 2. If cluster_colname == "alpha_hull_cluster", use the volume method found in the alphashape3d package
-  if (cluster_colname == "alpha_hull_cluster") {
-    result$volume_by_alpha_hull <- volume_ashape3d(spe@metadata$alpha_hull$ashape3d_object, byComponents = T)
-  }
-  
-  
-  ### 3. If cluster_colname == "grid_based_cluster", sum the volume of each grid prism to get volume of each cluster
-  if (cluster_colname == "grid_based_cluster") {
-    result$volume_by_grid <- 0
-    i <- 1
-    for (grid_cluster in spe@metadata$grid_prisms) {
-      result[i, "volume_by_grid"] <- sum(grid_cluster$l * grid_cluster$w * grid_cluster$h)
-      i <- i + 1
-    }
-  }
-  
-  return(result)
-}
-library(dbscan)
 
-dbscan_clustering3D <- function(spe,
-                                cell_types_of_interest,
-                                radius,
-                                minimum_cells_in_radius,
-                                minimum_cells_in_cluster,
-                                feature_colname = "Cell.Type",
-                                plot_image = T) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  ## Check cell types of interst are found in the spe object
-  unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
-  if (length(unknown_cell_types) != 0) {
-    stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
-  }
-  if (!(is.numeric(radius) && length(radius) == 1 && radius > 0)) {
-    stop("`radius` is not a positive numeric.")
-  }
-  if (!(is.integer(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 || (is.numeric(minimum_cells_in_radius) && length(minimum_cells_in_radius) == 1 && minimum_cells_in_radius > 0 && minimum_cells_in_radius%%1 == 0))) {
-    stop("`minimum_cells_in_radius` is not a positive integer.")
-  }
-  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
-    stop("`minimum_cells_in_cluster` is not a positive integer.")
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  if (!is.logical(plot_image)) {
-    stop("`plot_image` is not a logical (TRUE or FALSE).")
-  }
-  
-  spe_subset <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
-  spe_subset_coords <- spatialCoords(spe_subset)
-  
-  db <- dbscan::dbscan(spe_subset_coords, eps = radius, minPts = minimum_cells_in_radius, borderPoints = F)
-  n_clusters <- max(db$cluster)
-  if (n_clusters == 0) {
-    stop("No clusters identified. Consider increasing `radius` and/or decreasing `minimum_cells_in_radius`.")
-  }
-  
-  ## Cell types of interest have a 'cluster' value of 0 if they are noise, 1 if they belong to cluster 1, ...
-  ## Check if number of cells in cluster 1, cluster 2, ... is larger than minimum_cells_in_cluster, if they don't, these cells are also assigned a value of 0.
-  for (i in seq_len(n_clusters)) {
-    if (sum(db$cluster == i) < minimum_cells_in_cluster) {
-      db$cluster[db$cluster == i] <- 0
-      
-      ## Re-number the clusters
-      db$cluster[db$cluster > i] <- db$cluster[db$cluster > i] - 1
-    }
-  }
-  n_clusters <- max(db$cluster)
-  if (n_clusters == 0) {
-    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
-  }
-  
-  ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe), colData(spe))
-  
-  df_cell_types_of_interest <- df[df[[feature_colname]] %in% cell_types_of_interest, ]
-  df_other_cell_types <- df[!(df[[feature_colname]] %in% cell_types_of_interest), ]
-  
-  df_cell_types_of_interest$dbscan_cluster <- db$cluster
-  df_other_cell_types$dbscan_cluster <- 0
-  
-  ## Convert data frame to spe object
-  df <- rbind(df_cell_types_of_interest, df_other_cell_types)
-  
-  spe <- SpatialExperiment(
-    assay = matrix(data = NA, nrow = nrow(df), ncol = nrow(df)),
-    colData = df,
-    spatialCoordsNames = c("Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position"),
-    metadata = spe@metadata)
-  
-  ## Plot
-  if (plot_image) {
-    df$dbscan_cluster <- ifelse(df$dbscan_cluster == 0, "non_cluster", paste("cluster_", df$dbscan_cluster, sep = ""))
-    
-    fig <- plot_ly(df,
-                   type = "scatter3d",
-                   mode = 'markers',
-                   x = ~Cell.X.Position,
-                   y = ~Cell.Y.Position,
-                   z = ~Cell.Z.Position,
-                   color = ~dbscan_cluster,
-                   colors = rainbow(length(unique(df$dbscan_cluster))),
-                   marker = list(size = 2)) %>% 
-      layout(scene = list(xaxis = list(title = 'x'),
-                          yaxis = list(title = 'y'),
-                          zaxis = list(title = 'z')))
-    
-    methods::show(fig)
-  }
-  
-  return(spe)
-}
-get_spe_grid_metrics3D <- function(spe, 
+
+
+get_spe_grid_metrics2D <- function(spe, 
                                    n_splits, 
                                    feature_colname = "Cell.Type") {
   
@@ -2395,33 +1856,27 @@ get_spe_grid_metrics3D <- function(spe,
   ## Get dimensions of the window
   min_x <- min(spe_coords[ , "Cell.X.Position"])
   min_y <- min(spe_coords[ , "Cell.Y.Position"])
-  min_z <- min(spe_coords[ , "Cell.Z.Position"])
   
   max_x <- max(spe_coords[ , "Cell.X.Position"])
   max_y <- max(spe_coords[ , "Cell.Y.Position"])
-  max_z <- max(spe_coords[ , "Cell.Z.Position"])
   
   length <- round(max_x - min_x)
   width  <- round(max_y - min_y)
-  height <- round(max_z - min_z)
   
   ## Get distance of row, col and lay
   d_row <- length / n_splits
   d_col <- width / n_splits
-  d_lay <- height / n_splits
   
   # Shift spe_coords so they begin at the origin
   spe_coords[, "Cell.X.Position"] <- spe_coords[, "Cell.X.Position"] - min_x
   spe_coords[, "Cell.Y.Position"] <- spe_coords[, "Cell.Y.Position"] - min_y
-  spe_coords[, "Cell.Z.Position"] <- spe_coords[, "Cell.Z.Position"] - min_z
   
   ## Figure out which 'grid prism number' each cell is inside
   spe$grid_prism_num <- floor(spe_coords[ , "Cell.X.Position"] / d_row) +
-    floor(spe_coords[ , "Cell.Y.Position"] / d_col) * n_splits + 
-    floor(spe_coords[ , "Cell.Z.Position"] / d_lay) * n_splits^2 + 1
+    floor(spe_coords[ , "Cell.Y.Position"] / d_col) * n_splits
   
   ## Determine the cell types found in each grid prism
-  n_grid_prisms <- n_splits^3
+  n_grid_prisms <- n_splits^2
   grid_prism_cell_matrix <- as.data.frame.matrix(table(spe[[feature_colname]], factor(spe$grid_prism_num, levels = seq(n_grid_prisms))))
   grid_prism_cell_matrix <- data.frame(grid_prism_num = seq(n_grid_prisms),
                                        t(grid_prism_cell_matrix))
@@ -2429,395 +1884,15 @@ get_spe_grid_metrics3D <- function(spe,
   ## Determine centre coordinates of each grid prism
   grid_prism_coordinates <- data.frame(grid_prism_num = seq(n_grid_prisms),
                                        x_coord = ((seq(n_grid_prisms) - 1) %% n_splits + 0.5) * d_row + round(min_x),
-                                       y_coord = (floor(((seq(n_grid_prisms) - 1) %% (n_splits)^2) / n_splits) + 0.5) * d_col + round(min_y),
-                                       z_coord = (floor((seq(n_grid_prisms) - 1) / (n_splits^2)) + 0.5) * d_lay + round(min_z))
+                                       y_coord = (floor(((seq(n_grid_prisms) - 1) %% (n_splits)^2) / n_splits) + 0.5) * d_col + round(min_y))
   
   spe@metadata[["grid_metrics"]] <- list("grid_prism_cell_matrix" = grid_prism_cell_matrix,
                                          "grid_prism_coordinates" = grid_prism_coordinates)
   
   return(spe)
 }
-grid_based_cluster_recursion3D <- function(df,  # Using a df is much faster than using a spe
-                                           cell_types_of_interest,
-                                           threshold_cell_proportion,
-                                           x, y, z, l, w, h,
-                                           feature_colname,
-                                           answer) {
-  
-  # Look at cells only in the current grid prism
-  df <- df[df$Cell.X.Position >= x &
-             df$Cell.X.Position < (x + l) &
-             df$Cell.Y.Position >= y &
-             df$Cell.Y.Position < (y + w) &
-             df$Cell.Z.Position >= z &
-             df$Cell.Z.Position < (z + h), ]
-  
-  # Get cell types from spe grid prism
-  cell_types <- df[[feature_colname]]
-  
-  # Number of cells in prism is getting too small
-  if (length(cell_types) <= 2) return(data.frame())
-  
-  # Get total cell proportion for chosen cell_types_of_interest
-  cell_proportion <- mean(cell_types %in% cell_types_of_interest)
-  
-  # Keep grid prism if cell proportion is above the threshold cell proportion
-  if (cell_proportion >= threshold_cell_proportion) {
-    return(data.frame(x, y, z, l, w, h))
-  }
-  
-  # some cell_types_of_interest still in the grid prism, check sub-grid prisms (8 to check)
-  else if (cell_proportion > 0) {
-    # (0, 0, 0)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x, y, z, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    # (0.5, 0, 0)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x + l/2, y, z, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    # (0, 0.5, 0)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x, y + w/2, z, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    # (0.5, 0.5, 0)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x + l/2, y + w/2, z, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    # (0, 0, 0.5)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x, y, z + h/2, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    # (0.5, 0, 0.5)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x + l/2, y, z + h/2, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    # (0, 0.5, 0.5)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x, y + w/2, z + h/2, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    # (0.5, 0.5, 0.5)
-    answer <- rbind(answer, grid_based_cluster_recursion3D(df,
-                                                           cell_types_of_interest,
-                                                           threshold_cell_proportion,
-                                                           x + l/2, y + w/2, z + h/2, l/2, w/2, h/2,
-                                                           feature_colname,
-                                                           data.frame()))
-    
-    return(answer)
-  }
-  
-  # cell proportion is zero
-  else {
-    return(data.frame())
-  }
-}
-grid_based_clustering3D <- function(spe,
-                                     cell_types_of_interest,
-                                     n_splits,
-                                     minimum_cells_in_cluster,
-                                     feature_colname = "Cell.Type",
-                                     plot_image = TRUE) {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  ## Check cell types of interst are found in the spe object
-  unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
-  if (length(unknown_cell_types) != 0) {
-    stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
-  }
-  if (!(is.integer(n_splits) && length(n_splits) == 1 || (is.numeric(n_splits) && length(n_splits) == 1 && n_splits > 0 && n_splits%%1 == 0))) {
-    stop("`n_splits` is not a positive integer.")
-  }
-  if (!(is.integer(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 || (is.numeric(minimum_cells_in_cluster) && length(minimum_cells_in_cluster) == 1 && minimum_cells_in_cluster > 0 && minimum_cells_in_cluster%%1 == 0))) {
-    stop("`minimum_cells_in_cluster` is not a positive integer.")
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  if (!is.logical(plot_image)) {
-    stop("`plot_image` is not a logical (TRUE or FALSE).")
-  }
-  
-  # Add grid metrics to spe
-  spe <- get_spe_grid_metrics3D(spe, n_splits, feature_colname)
-  
-  # Get grid_prism_cell_matrix from spe
-  grid_prism_cell_matrix <- spe@metadata$grid_metrics$grid_prism_cell_matrix
-  
-  ## Calculate proportions for each grid prism
-  if (length(cell_types_of_interest) == 1) {
-    grid_prism_cell_proportions <- grid_prism_cell_matrix[ , cell_types_of_interest]
-  }
-  else {
-    grid_prism_cell_proportions <- rowSums(grid_prism_cell_matrix[ , cell_types_of_interest])
-  }
-  grid_prism_cell_proportions <- grid_prism_cell_proportions / rowSums(grid_prism_cell_matrix[ , unique(spe[[feature_colname]])])
-  n_grid_prisms <- n_splits^3
-  names(grid_prism_cell_proportions) <- seq(n_grid_prisms)
-  
-  
-  ## Create template for final result
-  result <- list()
-  n_clusters <- 1
-  
-  ## Get dimensions of the window
-  spe_coords <- data.frame(spatialCoords(spe))
-  
-  min_x <- min(spe_coords$Cell.X.Position)
-  min_y <- min(spe_coords$Cell.Y.Position)
-  min_z <- min(spe_coords$Cell.Z.Position)
-  
-  max_x <- max(spe_coords$Cell.X.Position)
-  max_y <- max(spe_coords$Cell.Y.Position)
-  max_z <- max(spe_coords$Cell.Z.Position)
-  
-  length <- round(max_x - min_x)
-  width  <- round(max_y - min_y)
-  height <- round(max_z - min_z)
-  
-  ## Get distance of row, col and lay
-  d_row <- length / n_splits
-  d_col <- width / n_splits
-  d_lay <- height / n_splits
-  
-  
-  ### CLUSTER DETECTION RECURSIVE ALGORITHM LOOP ###
-  
-  # First, remove all 0s and NANs from grid_prism_cell_proportions
-  grid_prism_cell_proportions <- grid_prism_cell_proportions[grid_prism_cell_proportions != 0 & !is.nan(grid_prism_cell_proportions)]
-  
-  while (length(grid_prism_cell_proportions) != 0) {
-    # Get the maximum cell proportion and its corresponding grid prism number
-    maximum_cell_proportion <- max(grid_prism_cell_proportions)
-    maximum_cell_proportion_prism_number <- as.numeric(names(which.max(grid_prism_cell_proportions)))
-    
-    # Break out the loop if maximum cell proportion is less than 0.5
-    if (maximum_cell_proportion < 0.5) break 
-    
-    # Else, find all the grid prisms adjacent to the maximum cell proportion grid prism. 
-    # These are potentially apart of the cluster
-    # Adjacent grid prisms must have cell proportion > 0.25 * max cell proportion
-    grid_prisms_in_cluster <- calculate_grid_prism_numbers_in_cluster3D(maximum_cell_proportion_prism_number,
-                                                                        grid_prism_cell_proportions,
-                                                                        0.25 * maximum_cell_proportion,
-                                                                        n_splits,
-                                                                        c())
-    
-    # Perform the recursive algorithm on each grid prism potentially apart of the cluster to get a more precise shape of each cluster
-    # Create data frame with spatial coords and cell types as columns. Use this as input
-    result[[n_clusters]] <- data.frame()
-    df <- spe_coords
-    df[[feature_colname]] <- spe[[feature_colname]] 
-    for (grid_prism in as.numeric(grid_prisms_in_cluster)) {
-      result[[n_clusters]] <- rbind(result[[n_clusters]],
-                                    grid_based_cluster_recursion3D(df,
-                                                                   cell_types_of_interest,
-                                                                   0.75 * maximum_cell_proportion,
-                                                                   ((grid_prism - 1) %% n_splits) * d_row + round(min_x),
-                                                                   (floor(((grid_prism - 1) %% n_splits^2) / n_splits)) * d_col + round(min_y),
-                                                                   (floor((grid_prism - 1) / n_splits^2)) * d_lay + round(min_z),
-                                                                   d_row, d_col, d_lay,
-                                                                   feature_colname,
-                                                                   data.frame()))
-      
-      
-    }
-    colnames(result[[n_clusters]]) <- c("x", "y", "z", "l", "w", "h")
-    n_clusters <- n_clusters + 1
-    
-    # Remove grid prisms which have just been examined
-    grid_prism_cell_proportions <- grid_prism_cell_proportions[setdiff((names(grid_prism_cell_proportions)), 
-                                                                       grid_prisms_in_cluster)]
-    
-  }
-  # Name each grid_based cluster
-  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
-  
-  ## Add grid_based_cluster column to spe, indicating which cluster each cell belongs to
-  spe$grid_based_cluster <- 0
-  cluster_number <- 1
-  
-  for (i in seq_len(length(result))) {
-    cluster_info <- result[[paste("cluster", i, sep = "_")]]
-    for (j in seq(nrow(cluster_info))) {
-      x <- cluster_info$x[j]
-      y <- cluster_info$y[j]
-      z <- cluster_info$z[j]
-      l <- cluster_info$l[j]
-      w <- cluster_info$w[j]
-      h <- cluster_info$h[j]
-      
-      spe$grid_based_cluster <- ifelse(spe_coords$Cell.X.Position >= x &
-                                         spe_coords$Cell.X.Position < (x + l) &
-                                         spe_coords$Cell.Y.Position >= y &
-                                         spe_coords$Cell.Y.Position < (y + w) &
-                                         spe_coords$Cell.Z.Position >= z &
-                                         spe_coords$Cell.Z.Position < (z + h) &
-                                         spe[[feature_colname]] %in% cell_types_of_interest, 
-                                       cluster_number, 
-                                       spe$grid_based_cluster)
-      
-    }
-    # Check if current cluster surpasses the minimum_cells_in_cluster threshold
-    if (sum(spe$grid_based_cluster == cluster_number) < minimum_cells_in_cluster) {
-      spe$grid_based_cluster[spe$grid_based_cluster == cluster_number] <- 0
-      result[[paste("cluster", i, sep = "_")]] <- NULL
-      
-    }
-    else {
-      cluster_number <- cluster_number + 1 
-    }
-  }
-  
-  n_clusters <- max(spe$grid_based_cluster)
-  if (n_clusters == 0) {
-    stop("All clusters identified do not meet the `minimum_cells_in_cluster` threshold. Consider lowering the `minimum_cells_in_cluster` parameter.")
-  }
-  
-  # re-name each grid_based cluster
-  names(result) <- paste("cluster", seq_len(length(result)), sep = "_")
-  
-  # Add grid_clustering result to spe metadata
-  spe@metadata[["grid_prisms"]] <- result
-  
-  ## Plot
-  if (plot_image) {
-    fig <- plot_grid_based_clusters3D(spe, feature_colname = feature_colname)
-    methods::show(fig)
-  }
-  
-  return(spe)
-}
-plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull, 
-                                        plot_cell_types = NULL,
-                                        plot_colours = NULL,
-                                        feature_colname = "Cell.Type") {
-  
-  # Check input parameters
-  if (class(spe_with_alpha_hull) != "SpatialExperiment") {
-    stop("`spe_with_alpha_hull` is not a SpatialExperiment object.")
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe_with_alpha_hull[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  
-  ## If no cell types chosen, use all cell types found in data frame
-  if (is.null(plot_cell_types)) plot_cell_types <- unique(spe_with_alpha_hull[[feature_colname]])
-  
-  ## If cell types have been chosen, check they are found in the spe object
-  unknown_cell_types <- setdiff(plot_cell_types, spe_with_alpha_hull[[feature_colname]])
-  if (length(unknown_cell_types) != 0) {
-    stop(paste("The following plot_cell_types are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
-  }
-  
-  ## If no colours inputted, use rainbow palette
-  if (is.null(plot_colours)) {
-    plot_colours <- rainbow(length(plot_cell_types))
-  }
-  
-  ## User inputs mismatching cell types and colours
-  if (length(plot_cell_types) != length(plot_colours)) {
-    stop("Length of plot_cell_types is not equal to length of plot_colours")
-  }
-  
-  ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe_with_alpha_hull), "Cell.Type" = spe_with_alpha_hull[[feature_colname]])
-  
-  ## Factor for feature column
-  df[["Cell.Type"]] <- factor(df[, "Cell.Type"],
-                              levels = plot_cell_types)
-  
-  ## Add points to fig
-  fig <- plot_ly() %>%
-    add_trace(
-      data = df,
-      type = "scatter3d",
-      mode = 'markers',
-      x = ~Cell.X.Position,
-      y = ~Cell.Y.Position,
-      z = ~Cell.Z.Position,
-      marker = list(size = 2),
-      color = ~Cell.Type,
-      colors = plot_colours
-    ) %>% 
-    layout(scene = list(xaxis = list(title = 'x'),
-                        yaxis = list(title = 'y'),
-                        zaxis = list(title = 'z')))
-  
-  
-  ## Get alpha hull numbers (ignoring 0)
-  alpha_hull_clusters <- spe_with_alpha_hull$alpha_hull_cluster[spe_with_alpha_hull$alpha_hull_cluster != 0]
-  
-  # Get number of alpha hulls
-  n_alpha_hulls <- length(unique(alpha_hull_clusters))
-  
-  vertices <- spe_with_alpha_hull@metadata$alpha_hull$vertices
-  faces <- data.frame(spe_with_alpha_hull@metadata$alpha_hull$faces)
-  alpha_hull_colours <- rainbow(n_alpha_hulls)
-  
-  ## Add alpha hulls to fig, one by one  
-  for (i in seq(n_alpha_hulls)) {
-    faces_temp <- faces[faces[ , 1] %in% which(alpha_hull_clusters == i) , ]
-    
-    ## Ignore the weird cases where some cells represent clusters, but no faces are associated with them??
-    if (nrow(faces_temp) == 0) next
-    
-    opacity_level <- 0.20
-    
-    fig <- fig %>%
-      add_trace(
-        type = 'mesh3d',
-        x = vertices[, 1], 
-        y = vertices[, 2], 
-        z = vertices[, 3],
-        i = faces_temp[, 1] - 1, 
-        j = faces_temp[, 2] - 1, 
-        k = faces_temp[, 3] - 1,
-        opacity = opacity_level,
-        facecolor = rep(alpha_hull_colours[i], nrow(faces_temp))
-      )
-  }
-  
-  return(fig)
-}
-plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, reference_cell_type = NULL) {
+
+plot_cells_in_neighbourhood_gradient2D <- function(cells_in_neighbourhood_gradient_df, reference_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cells_in_neighbourhood_gradient_df, "radius")
   
@@ -2833,7 +1908,7 @@ plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradie
   
   return(fig)
 }
-plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbourhood_proportions_gradient_df, reference_cell_type = NULL) {
+plot_cells_in_neighbourhood_proportions_gradient2D <- function(cells_in_neighbourhood_proportions_gradient_df, reference_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cells_in_neighbourhood_proportions_gradient_df, id.vars = c("radius"))
   fig <- ggplot(plot_result, aes(radius, value, color = variable)) +
@@ -2850,7 +1925,7 @@ plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbou
   return(fig)
 }
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, reference_cell_type, scales = "free_x") {
+plot_cells_in_neighbourhood_violin2D <- function(cells_in_neighbourhood_df, reference_cell_type, scales = "free_x") {
   
   ## Target cell types will be all the columns except the first column
   target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]
@@ -2873,95 +1948,8 @@ plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, refe
   
   return(fig)
 }
-plot_cells3D <- function(spe,
-                         plot_cell_types = NULL,
-                         plot_colours = NULL,
-                         feature_colname = "Cell.Type") {
-  
-  # Check input parameters
-  if (class(spe) != "SpatialExperiment") {
-    stop("`spe` is not a SpatialExperiment object.")
-  }
-  if (!is.null(plot_cell_types)) {
-    if(!is.character(plot_cell_types)) {
-      stop("`plot_cell_types` is not a character vector.")
-    }
-  } 
-  if (!is.null(plot_colours)) {
-    non_colours <- plot_colours[which(!(sapply(plot_colours, function(X) {
-      tryCatch(is.matrix(col2rgb(X)), 
-               error = function(e) FALSE)
-    })))]
-    if (length(non_colours) > 0) {
-      stop(paste("The following plot_colours are not colours:\n   ",
-                 paste(non_colours, collapse = ", ")))
-    } 
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe[[feature_colname]])) {
-    stop(paste(feature_colname, "is not a valid column in your spe object."))
-  }
-  
-  ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe), "Cell.Type" = spe[[feature_colname]])
-  
-  ## If no cell types chosen, use all cell types found in data frame
-  if (is.null(plot_cell_types)) {
-    warning("plot_cell_types not specified, all cell types found in the spe object will be used.")
-    plot_cell_types <- unique(df[["Cell.Type"]])
-  }
-  ## If no colours inputted, use rainbow palette
-  if (is.null(plot_colours)) {
-    warning("plot_colours not specified, rainbow palette will be used.")
-    plot_colours <- rainbow(length(plot_cell_types))
-  }
-  ## User inputs mismatching cell types and colours
-  if (length(plot_cell_types) != length(plot_colours)) {
-    stop("Length of plot_cell_types is not equal to length of plot_colours")
-  }
-  
-  ## If cell types have been chosen, check they are found in the spe object
-  spe_cell_types <- unique(spe[[feature_colname]])
-  unknown_cell_types <- setdiff(plot_cell_types, spe_cell_types)
-  
-  if (length(unknown_cell_types) == length(plot_cell_types)) {
-    stop("None of the plot_cell_types are found in the spe object")
-  }
-  
-  if (length(unknown_cell_types) != 0) {
-    warning(paste("The following plot_cell_types are not found in the spe object:\n   ",
-                  paste(unknown_cell_types, collapse = ", ")))
-    plot_colours <- plot_colours[which(plot_cell_types %in% spe_cell_types)]
-    plot_cell_types <- intersect(plot_cell_types, spe_cell_types)
-  }
-  
-  ## Factor for feature column
-  df[, "Cell.Type"] <- factor(df[, "Cell.Type"],
-                              levels = plot_cell_types)
-  
-  ## Plot
-  fig <- plot_ly(df,
-                 type = "scatter3d",
-                 mode = 'markers',
-                 x = ~Cell.X.Position,
-                 y = ~Cell.Y.Position,
-                 z = ~Cell.Z.Position,
-                 color = ~Cell.Type,
-                 colors = plot_colours,
-                 marker = list(size = 2))
-  
-  fig <- fig %>% layout(scene = list(xaxis = list(title = 'x', showgrid = T, showaxeslabels = F, showticklabels = T, gridwidth = 5, 
-                                                  titlefont = list(size = 20), tickfont = list(size = 15)),
-                                     yaxis = list(title = 'y', showgrid = T, showaxeslabels = F, showticklabels = T, gridwidth = 5,
-                                                  titlefont = list(size = 20), tickfont = list(size = 15)),
-                                     zaxis = list(title = 'z', showgrid = T, showaxeslabels = F, showticklabels = T, gridwidth = 5,
-                                                  titlefont = list(size = 20), tickfont = list(size = 15))))
-  
-  return(fig)
-}
-plot_co_occurrence_gradient3D <- function(co_occurrence_gradient_df) {
+
+plot_co_occurrence_gradient2D <- function(co_occurrence_gradient_df) {
   
   target_cell_types <- colnames(co_occurrence_gradient_df)
   target_cell_types <- target_cell_types[!target_cell_types %in% c("reference", "radius")]
@@ -2978,7 +1966,7 @@ plot_co_occurrence_gradient3D <- function(co_occurrence_gradient_df) {
   
   return(fig) 
 }
-plot_cross_G_gradient3D <- function(cross_G_gradient_df, reference_cell_type = NULL, target_cell_type = NULL) {
+plot_cross_G_gradient2D <- function(cross_G_gradient_df, reference_cell_type = NULL, target_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cross_G_gradient_df, "radius", c("observed_cross_G", "expected_cross_G"))
   
@@ -2994,7 +1982,7 @@ plot_cross_G_gradient3D <- function(cross_G_gradient_df, reference_cell_type = N
   
   return(fig) 
 }
-plot_cross_K_gradient_ratio3D <- function(cross_K_gradient_df) {
+plot_cross_K_gradient_ratio2D <- function(cross_K_gradient_df) {
   
   target_cell_types <- colnames(cross_K_gradient_df)[!colnames(cross_K_gradient_df) %in% c("reference", "expected", "radius")]
   
@@ -3014,7 +2002,7 @@ plot_cross_K_gradient_ratio3D <- function(cross_K_gradient_df) {
   
   return(fig) 
 }
-plot_cross_K_gradient3D <- function(cross_K_gradient_df) {
+plot_cross_K_gradient2D <- function(cross_K_gradient_df) {
   
   target_cell_types <- colnames(cross_K_gradient_df)[!colnames(cross_K_gradient_df) %in% c("reference", "expected", "radius")]
   
@@ -3028,7 +2016,7 @@ plot_cross_K_gradient3D <- function(cross_K_gradient_df) {
   
   return(fig) 
 }
-plot_cross_L_gradient_ratio3D <- function(cross_L_gradient_df) {
+plot_cross_L_gradient_ratio2D <- function(cross_L_gradient_df) {
   
   target_cell_types <- colnames(cross_L_gradient_df)[!colnames(cross_L_gradient_df) %in% c("reference", "expected", "radius")]
   
@@ -3048,7 +2036,7 @@ plot_cross_L_gradient_ratio3D <- function(cross_L_gradient_df) {
   
   return(fig) 
 }
-plot_cross_L_gradient3D <- function(cross_L_gradient_df) {
+plot_cross_L_gradient2D <- function(cross_L_gradient_df) {
   
   target_cell_types <- colnames(cross_L_gradient_df)[!colnames(cross_L_gradient_df) %in% c("reference", "expected", "radius")]
   
@@ -3063,7 +2051,7 @@ plot_cross_L_gradient3D <- function(cross_L_gradient_df) {
   return(fig) 
 }
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_distances_between_cell_types_violin3D <- function(distances_df, scales = "free_x") {
+plot_distances_between_cell_types_violin2D <- function(distances_df, scales = "free_x") {
   
   # setting these variables to NULL as otherwise get "no visible binding for global variable" in R check
   pair <- distance <- NULL
@@ -3080,7 +2068,7 @@ plot_distances_between_cell_types_violin3D <- function(distances_df, scales = "f
   
   return(fig)
 }
-plot_entropy_gradient3D <- function(entropy_gradient_df, expected_entropy = NULL, reference_cell_type = NULL, target_cell_types = NULL) {
+plot_entropy_gradient2D <- function(entropy_gradient_df, expected_entropy = NULL, reference_cell_type = NULL, target_cell_types = NULL) {
   
   plot_result <- entropy_gradient_df
   
@@ -3107,175 +2095,8 @@ plot_entropy_gradient3D <- function(entropy_gradient_df, expected_entropy = NULL
   
   return(fig)
 }
-plot_grid_based_clusters3D <- function(spe_with_grid, 
-                                       plot_cell_types = NULL,
-                                       plot_colours = NULL,
-                                       feature_colname = "Cell.Type") {
-  
-  # Check input parameters
-  if (class(spe_with_grid) != "SpatialExperiment") {
-    stop("`spe_with_grid` is not a SpatialExperiment object.")
-  }
-  if (!is.character(feature_colname)) {
-    stop("`feature_colname` is not a character.")
-  }
-  if (is.null(spe_with_grid[[feature_colname]])) {
-    stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  
-  ## If no cell types chosen, use all cell types found in data frame
-  if (is.null(plot_cell_types)) plot_cell_types <- unique(spe_with_grid[[feature_colname]])
-  
-  ## If cell types have been chosen, check they are found in the spe object
-  unknown_cell_types <- setdiff(plot_cell_types, spe_with_grid[[feature_colname]])
-  if (length(unknown_cell_types) != 0) {
-    stop(paste("The following plot_cell_types are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
-  }
-  
-  ## If no colours inputted, use rainbow palette
-  if (is.null(plot_colours)) plot_colours <- rainbow(length(plot_cell_types))
-  
-  ## User inputs mismatching cell types and colours
-  if (length(plot_cell_types) != length(plot_colours)) stop("Length of plot_cell_types is not equal to length of plot_colours")
-  
-  ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe_with_grid), colData(spe_with_grid))
-  
-  ## Factor for feature column
-  df[[feature_colname]] <- factor(df[[feature_colname]], levels = plot_cell_types)
-  
-  ## Add points to fig
-  fig <- plot_ly() %>%
-    add_trace(
-      data = df,
-      type = "scatter3d",
-      mode = 'markers',
-      x = ~Cell.X.Position,
-      y = ~Cell.Y.Position,
-      z = ~Cell.Z.Position,
-      marker = list(size = 2),
-      color = ~.data[[feature_colname]],
-      colors = plot_colours
-    ) %>% 
-    layout(scene = list(xaxis = list(title = 'x'),
-                        yaxis = list(title = 'y'),
-                        zaxis = list(title = 'z')))
-  
-  # Get number of grid-based clusters
-  n_grid_based_clusters <- length(spe_with_grid@metadata[["grid_prisms"]])
-  
-  faces <- data.frame(edge1 = c(1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8),
-                      edge2 = c(2, 5, 2, 3, 3, 5, 6, 4 ,7, 6, 7, 4),
-                      edge3 = c(6, 6, 4, 4, 7, 7, 2, 2, 5, 5, 3, 3))
-  grid_based_colours <- rainbow(n_grid_based_clusters)
-  
-  ## Add grid-based clusters to fig, one by one  
-  for (i in seq(n_grid_based_clusters)) {
-    
-    grid_based_cluster <- spe_with_grid@metadata[["grid_prisms"]][[i]]
-    
-    for (j in seq(nrow(grid_based_cluster))) {
-      
-      x <- grid_based_cluster$x[j]
-      y <- grid_based_cluster$y[j]
-      z <- grid_based_cluster$z[j]
-      l <- grid_based_cluster$l[j]
-      w <- grid_based_cluster$w[j]
-      h <- grid_based_cluster$h[j]
-      vertices <- data.frame(x = c(x, x + l, x, x + l, x, x + l, x, x + l),
-                             y = c(y, y, y + w, y + w, y, y, y + w, y + w),
-                             z = c(z, z, z, z, z + h, z + h, z + h, z + h))
-      
-      fig <- fig %>%
-        add_trace(
-          type = 'mesh3d',
-          x = vertices[, 1], 
-          y = vertices[, 2], 
-          z = vertices[, 3],
-          i = faces[, 1] - 1, 
-          j = faces[, 2] - 1, 
-          k = faces[, 3] - 1,
-          opacity = 0.2,
-          facecolor = rep(grid_based_colours[i], 12) # Always 12 faces per grid prism
-        )      
-    }
-  }
-  
-  return(fig)
-}
-plot_grid_metrics_continuous3D <- function(grid_metrics, metric_colname) {
-  
-  ## Check input parameters
-  if (!(is.character(metric_colname) && metric_colname %in% c("proportion", "entropy"))) {
-    stop("`metric_colname` is not 'proportion' or 'entropy'.")
-  }
-  if (is.null(grid_metrics[[metric_colname]])) {
-    stop("`metric_colname` is not a column in `grid_metrics`.")
-  }
-  
-  ## Color of each dot is related to its entropy
-  pal <- colorRampPalette(hcl.colors(n = 5, palette = "Red-Blue", rev = TRUE))
-  
-  ## Add size column and for NA entropy values, make the size small
-  grid_metrics$size <- ifelse(is.na(grid_metrics[[metric_colname]]), 3, 10)
-  
-  fig <- plot_ly(grid_metrics,
-                 type = "scatter3d",
-                 mode = 'markers',
-                 x = ~x_coord,
-                 y = ~y_coord,
-                 z = ~z_coord,
-                 color = as.formula(paste0('~', metric_colname)),
-                 colors = pal(nrow(grid_metrics)),
-                 marker = list(size = ~size),
-                 symbol = 1,
-                 symbols = "square")
-  
-  fig <- fig %>% layout(scene = list(xaxis = list(title = 'x'),
-                                     yaxis = list(title = 'y'),
-                                     zaxis = list(title = 'z')))
-  
-  return(fig)
-}
-plot_grid_metrics_discrete3D <- function(grid_metrics, metric_colname) {
-  
-  ## Check input parameters
-  if (!(is.character(metric_colname) && metric_colname %in% c("proportion", "entropy"))) {
-    stop("`metric_colname` is not 'proportion' or 'entropy'.")
-  }
-  if (is.null(grid_metrics[[metric_colname]])) {
-    stop("`metric_colname` is not a column in `grid_metrics`.")
-  }
-  
-  ## Define low, medium and high categories
-  # Low: between 0 and 1/3
-  # Medium: between 1/3 and 2/3
-  # High: between 2/3 and 1
-  
-  grid_metrics$rank <- ifelse(is.na(grid_metrics[[metric_colname]]), "na",
-                              ifelse(grid_metrics[[metric_colname]] < 1/3, "low",
-                                     ifelse(grid_metrics[[metric_colname]] < 2/3, "medium", "high")))
-  grid_metrics$rank <- factor(grid_metrics$rank, c("low", "medium", "high", "na"))
-  
-  fig <- plot_ly(grid_metrics,
-                 type = "scatter3d",
-                 mode = 'markers',
-                 x = ~x_coord,
-                 y = ~y_coord,
-                 z = ~z_coord,
-                 color = ~rank,
-                 colors = c("#AEB6E5", "#BC6EB9", "#A93154", "gray"),
-                 symbol = 1,
-                 symbols = "square",
-                 marker = list(size = 4))
-  
-  fig <- fig %>% layout(scene = list(xaxis = list(title = 'x'),
-                                     yaxis = list(title = 'y'),
-                                     zaxis = list(title = 'z')))
-  return(fig)
-}
-plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, metric = "MS") {
+
+plot_mixing_scores_gradient2D <- function(mixing_scores_gradient_df, metric = "MS") {
   
   if (!metric %in% c("MS", "NMS")) {
     stop("'metric' should be 'MS' or 'NMS', for mixing score and normalised mixing score respectively.")
@@ -3312,7 +2133,7 @@ plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, metric = "M
   return(fig)
 }
 
-summarise_cells_in_neighbourhood3D <- function(cells_in_neighbourhood_df) {
+summarise_cells_in_neighbourhood2D <- function(cells_in_neighbourhood_df) {
   
   ## Target cell types will be all the columns except the first column
   target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]
@@ -3334,7 +2155,7 @@ summarise_cells_in_neighbourhood3D <- function(cells_in_neighbourhood_df) {
   
   return(data.frame(t(df)))
 }
-summarise_distances_between_cell_types3D <- function(distances_df) {
+summarise_distances_between_cell_types2D <- function(distances_df) {
   
   pair <- distance <- NULL
   

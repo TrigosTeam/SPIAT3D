@@ -86,6 +86,25 @@ cross_K_gradient <- calculate_cross_K_gradient3D(spe1,
                                                  radii = seq(1, 50))
 
 
+### Calculate cross-L function
+cross_L_gradient <- calculate_cross_L_gradient3D(spe1,
+                                                 reference_cell_type = "Tumour",
+                                                 target_cell_type = c("Tumour", "Immune"),
+                                                 radii = seq(1, 50, 5))
+
+### Calculate cross-G function
+cross_G_gradient <- calculate_cross_G_gradient3D(spe1,
+                                                 reference_cell_type = "Tumour",
+                                                 target_cell_type = "Immune",
+                                                 radii = seq(1, 50, 5))
+
+### Calculate co-occurrence
+co_occurrence <- calculate_co_occurrence_gradient3D(spe1,
+                                                    reference_cell_type = "Tumour",
+                                                    target_cell_types = c("Tumour", "Immune"),
+                                                    radii = seq(15, 50, 5))
+
+
 ### Calculate entropy
 entropy_background <- calculate_entropy_background3D(spe1,
                                                      cell_types_of_interest = c("Tumour", "Immune"))
