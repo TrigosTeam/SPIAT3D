@@ -7,7 +7,7 @@ calculate_cells_in_neighbourhood_proportions3D <- function(spe,
   ## Get cells in neighbourhood df
   cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
                                                                   reference_cell_type,
-                                                                  target_cell_types,
+                                                                  c(reference_cell_type, target_cell_types),
                                                                   radius,
                                                                   feature_colname,
                                                                   FALSE,
@@ -15,10 +15,13 @@ calculate_cells_in_neighbourhood_proportions3D <- function(spe,
   
   if (is.null(cells_in_neighbourhood_df)) return(NULL)
   
-  ## Get total number of target cells for each row (first column is the reference cell id column, so we exclude it)
-  cells_in_neighbourhood_df$total <- apply(cells_in_neighbourhood_df[ , c(-1)], 1, sum)
+  cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")] <- 
+    cells_in_neighbourhood_df[ , target_cell_types] / (cells_in_neighbourhood_df[ , target_cell_types] + cells_in_neighbourhood_df[ , reference_cell_type])
   
-  cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")] <- cells_in_neighbourhood_df[ , target_cell_types] / cells_in_neighbourhood_df$total
+  # If reference cell type is in target cell types, proportion should be 1
+  if (reference_cell_type %in% target_cell_types) {
+    cells_in_neighbourhood_df[cells_in_neighbourhood_df[[reference_cell_type]] != 0, paste(reference_cell_type, "_prop", sep = "")] <- 1
+  }
   
   return(cells_in_neighbourhood_df)
 }

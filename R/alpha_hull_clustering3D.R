@@ -58,13 +58,13 @@ alpha_hull_clustering3D <- function(spe,
   alpha_hull_clusters_table <- table(alpha_hull_clusters)
   maximium_alpha_hull_cluster <- Position(function(x) x < minimum_cells_in_cluster, alpha_hull_clusters_table)
   maximium_alpha_hull_cluster <- as.numeric(names(alpha_hull_clusters_table[maximium_alpha_hull_cluster]))
-
+  
   if (!is.na(maximium_alpha_hull_cluster) && maximium_alpha_hull_cluster != -1) {
     spe_subset_coords <- spe_subset_coords[alpha_hull_clusters >= 1 & alpha_hull_clusters < maximium_alpha_hull_cluster, ]
     
     df_cell_types_of_interest$alpha_hull_cluster <- ifelse(alpha_hull_clusters >= 1 & alpha_hull_clusters < maximium_alpha_hull_cluster, 
                                                            alpha_hull_clusters, 0)
-  
+    
     ## Get the alpha hull again...
     alpha_hull <- ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
   }

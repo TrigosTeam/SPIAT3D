@@ -74,7 +74,7 @@ calculate_cell_proportions3D <- function(spe,
   # Get proportions and percentages
   cell_proportions$proportion <- cell_proportions$frequency / cell_type_frequency_total
   cell_proportions$percentage <- cell_proportions$proportion * 100
-
+  
   # Order the cell types by proportion (highest cell proportion is first)
   cell_proportions <- cell_proportions[rev(order(cell_proportions$proportion)), ]
   rownames(cell_proportions) <- seq(nrow(cell_proportions))

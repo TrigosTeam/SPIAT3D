@@ -560,7 +560,10 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   
   return(result)
 }
-calculate_cell_proportions_of_clusters3D <- function(spe, cluster_colname, feature_colname = "Cell.Type", plot_image = T) {
+calculate_cell_proportions_of_clusters3D <- function(spe, 
+                                                     cluster_colname, 
+                                                     feature_colname = "Cell.Type", 
+                                                     plot_image = T) {
   
   # Get number of clusters
   n_clusters <- max(spe[[cluster_colname]])
@@ -888,7 +891,7 @@ calculate_cells_in_neighbourhood3D <- function(spe,
     ## Add to data frame
     result[[target_cell_type]] <- n_targets
   }
-
+  
   ## Print summary
   if (show_summary) {
     print(summarise_cells_in_neighbourhood3D(result))    
@@ -1242,10 +1245,10 @@ calculate_cross_L_gradient3D <- function(spe,
   return(result)
 }
 calculate_cross_L3D <- function(spe, 
-                                 reference_cell_type, 
-                                 target_cell_types, 
-                                 radius, 
-                                 feature_colname = "Cell.Type") {
+                                reference_cell_type, 
+                                target_cell_types, 
+                                radius, 
+                                feature_colname = "Cell.Type") {
   
   result <- calculate_cross_K3D(spe = spe,
                                 reference_cell_type = reference_cell_type,
@@ -1497,7 +1500,8 @@ calculate_grid_prism_numbers_in_cluster3D <- function(curr_grid_prism_number,
   }
   
   return(answer)
-}#' @title Calculate minimum distances between cell types in 3D spatial data.
+}
+#' @title Calculate minimum distances between cell types in 3D spatial data.
 #'
 #' @description This function calculates the minimum distances between different cell types in a 3D SpatialExperiment object. 
 #'    It allows you to specify a subset of cell types to analyse and provides the option to summarise 
@@ -2546,11 +2550,11 @@ grid_based_cluster_recursion3D <- function(df,  # Using a df is much faster than
   }
 }
 grid_based_clustering3D <- function(spe,
-                                     cell_types_of_interest,
-                                     n_splits,
-                                     minimum_cells_in_cluster,
-                                     feature_colname = "Cell.Type",
-                                     plot_image = TRUE) {
+                                    cell_types_of_interest,
+                                    n_splits,
+                                    minimum_cells_in_cluster,
+                                    feature_colname = "Cell.Type",
+                                    plot_image = TRUE) {
   
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
@@ -2729,9 +2733,9 @@ grid_based_clustering3D <- function(spe,
   return(spe)
 }
 plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull, 
-                                        plot_cell_types = NULL,
-                                        plot_colours = NULL,
-                                        feature_colname = "Cell.Type") {
+                                       plot_cell_types = NULL,
+                                       plot_colours = NULL,
+                                       feature_colname = "Cell.Type") {
   
   # Check input parameters
   if (class(spe_with_alpha_hull) != "SpatialExperiment") {
@@ -2824,7 +2828,8 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
   
   return(fig)
 }
-plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, reference_cell_type = NULL) {
+plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, 
+                                                   reference_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cells_in_neighbourhood_gradient_df, "radius")
   
@@ -2840,7 +2845,8 @@ plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradie
   
   return(fig)
 }
-plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbourhood_proportions_gradient_df, reference_cell_type = NULL) {
+plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbourhood_proportions_gradient_df, 
+                                                               reference_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cells_in_neighbourhood_proportions_gradient_df, id.vars = c("radius"))
   fig <- ggplot(plot_result, aes(radius, value, color = variable)) +
@@ -2857,7 +2863,8 @@ plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbou
   return(fig)
 }
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, reference_cell_type, scales = "free_x") {
+plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, 
+                                                 reference_cell_type, scales = "free_x") {
   
   ## Target cell types will be all the columns except the first column
   target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]
@@ -2985,7 +2992,9 @@ plot_co_occurrence_gradient3D <- function(co_occurrence_gradient_df) {
   
   return(fig) 
 }
-plot_cross_G_gradient3D <- function(cross_G_gradient_df, reference_cell_type = NULL, target_cell_type = NULL) {
+plot_cross_G_gradient3D <- function(cross_G_gradient_df, 
+                                    reference_cell_type = NULL, 
+                                    target_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cross_G_gradient_df, "radius", c("observed_cross_G", "expected_cross_G"))
   
@@ -3070,7 +3079,8 @@ plot_cross_L_gradient3D <- function(cross_L_gradient_df) {
   return(fig) 
 }
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_distances_between_cell_types_violin3D <- function(distances_df, scales = "free_x") {
+plot_distances_between_cell_types_violin3D <- function(distances_df, 
+                                                       scales = "free_x") {
   
   # setting these variables to NULL as otherwise get "no visible binding for global variable" in R check
   pair <- distance <- NULL
@@ -3087,7 +3097,10 @@ plot_distances_between_cell_types_violin3D <- function(distances_df, scales = "f
   
   return(fig)
 }
-plot_entropy_gradient3D <- function(entropy_gradient_df, expected_entropy = NULL, reference_cell_type = NULL, target_cell_types = NULL) {
+plot_entropy_gradient3D <- function(entropy_gradient_df, 
+                                    expected_entropy = NULL, 
+                                    reference_cell_type = NULL, 
+                                    target_cell_types = NULL) {
   
   plot_result <- entropy_gradient_df
   
@@ -3211,7 +3224,8 @@ plot_grid_based_clusters3D <- function(spe_with_grid,
   
   return(fig)
 }
-plot_grid_metrics_continuous3D <- function(grid_metrics, metric_colname) {
+plot_grid_metrics_continuous3D <- function(grid_metrics, 
+                                           metric_colname) {
   
   ## Check input parameters
   if (!(is.character(metric_colname) && metric_colname %in% c("proportion", "entropy"))) {
@@ -3245,7 +3259,8 @@ plot_grid_metrics_continuous3D <- function(grid_metrics, metric_colname) {
   
   return(fig)
 }
-plot_grid_metrics_discrete3D <- function(grid_metrics, metric_colname) {
+plot_grid_metrics_discrete3D <- function(grid_metrics, 
+                                         metric_colname) {
   
   ## Check input parameters
   if (!(is.character(metric_colname) && metric_colname %in% c("proportion", "entropy"))) {
@@ -3282,7 +3297,8 @@ plot_grid_metrics_discrete3D <- function(grid_metrics, metric_colname) {
                                      zaxis = list(title = 'z')))
   return(fig)
 }
-plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, metric = "MS") {
+plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, 
+                                          metric = "MS") {
   
   if (!metric %in% c("MS", "NMS")) {
     stop("'metric' should be 'MS' or 'NMS', for mixing score and normalised mixing score respectively.")

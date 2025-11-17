@@ -4,7 +4,7 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
                                                       cluster_colname, 
                                                       feature_colname = "Cell.Type", 
                                                       plot_image = T) {
-
+  
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
     stop("`spe` is not a SpatialExperiment object.")
@@ -39,10 +39,10 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
     warning("Temporarily adding Cell.Id column to your spe")
     spe$Cell.ID <- paste("Cell", seq(ncol(spe)), sep = "_")
   }
-
+  
   ## For each cell type outside clusters, get their set of coords. These exclude cell types in clusters
   spe_coords <- spatialCoords(spe)
-
+  
   # Cells outside cluster have a cluster number of 0 (i.e. they are not in a cluster)
   spe_outside_cluster <- spe[ , spe[[cluster_colname]] == 0]
   
@@ -82,10 +82,10 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
       result <- rbind(result, local_dist_mins)
     }
     
-
+    
     ## Plot
     if (plot_image) {
-
+      
       cluster_number_labs <- paste("cluster_", seq(n_clusters), sep = "")
       names(cluster_number_labs) <- seq(n_clusters)
       

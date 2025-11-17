@@ -63,7 +63,7 @@ dbscan_clustering3D <- function(spe,
   
   ## Convert spe object to data frame
   df <- data.frame(spatialCoords(spe), colData(spe))
-
+  
   df_cell_types_of_interest <- df[df[[feature_colname]] %in% cell_types_of_interest, ]
   df_other_cell_types <- df[!(df[[feature_colname]] %in% cell_types_of_interest), ]
   

@@ -1,5 +1,6 @@
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, reference_cell_type, scales = "free_x") {
+plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, 
+                                                 reference_cell_type, scales = "free_x") {
   
   ## Target cell types will be all the columns except the first column
   target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]

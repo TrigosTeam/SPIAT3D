@@ -1,4 +1,5 @@
-plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, reference_cell_type = NULL) {
+plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, 
+                                                   reference_cell_type = NULL) {
   
   plot_result <- reshape2::melt(cells_in_neighbourhood_gradient_df, "radius")
   

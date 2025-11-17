@@ -70,6 +70,6 @@ calculate_border_of_clusters3D <- function(spe,
     fig <- plot_cells3D(spe, feature_colname = "cluster_border")
     methods::show(fig)
   }
-      
+  
   return(spe)
 }

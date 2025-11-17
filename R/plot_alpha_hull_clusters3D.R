@@ -64,7 +64,7 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
   
   # Get number of alpha hulls
   n_alpha_hulls <- length(unique(alpha_hull_clusters))
-
+  
   vertices <- spe_with_alpha_hull@metadata$alpha_hull$vertices
   faces <- data.frame(spe_with_alpha_hull@metadata$alpha_hull$faces)
   alpha_hull_colours <- rainbow(n_alpha_hulls)

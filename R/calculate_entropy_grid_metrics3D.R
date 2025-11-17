@@ -34,7 +34,7 @@ calculate_entropy_grid_metrics3D <- function(spe,
   if (!is.logical(plot_image)) {
     stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
-
+  
   # Add grid metrics to spe
   spe <- get_spe_grid_metrics3D(spe, n_splits, feature_colname)
   

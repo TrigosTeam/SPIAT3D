@@ -1,4 +1,5 @@
-plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, metric = "MS") {
+plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df, 
+                                          metric = "MS") {
   
   if (!metric %in% c("MS", "NMS")) {
     stop("'metric' should be 'MS' or 'NMS', for mixing score and normalised mixing score respectively.")

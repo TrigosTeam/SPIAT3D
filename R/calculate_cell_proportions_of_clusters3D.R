@@ -1,4 +1,7 @@
-calculate_cell_proportions_of_clusters3D <- function(spe, cluster_colname, feature_colname = "Cell.Type", plot_image = T) {
+calculate_cell_proportions_of_clusters3D <- function(spe, 
+                                                     cluster_colname, 
+                                                     feature_colname = "Cell.Type", 
+                                                     plot_image = T) {
   
   # Get number of clusters
   n_clusters <- max(spe[[cluster_colname]])
@@ -37,4 +40,3 @@ calculate_cell_proportions_of_clusters3D <- function(spe, cluster_colname, featu
   
   return(result)
 }
-

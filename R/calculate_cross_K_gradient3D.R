@@ -28,7 +28,7 @@ calculate_cross_K_gradient3D <- function(spe,
   if (plot_image) {
     fig1 <- plot_cross_K_gradient3D(result)
     fig2 <- plot_cross_K_gradient_ratio3D(result)
-
+    
     combined_fig <- plot_grid(fig1, fig2, nrow = 2)
     methods::show(combined_fig)
   }

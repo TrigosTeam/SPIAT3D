@@ -13,7 +13,7 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
         (is.character(weight_method) && weight_method %in% c("IDW", "rook", "queen")))) {
     stop("`weight_method` is not a numeric between 0 and 1 or either 'IDW', 'rook' or 'queen'.")
   }
-
+  
   ## Get number of grid prisms
   n_grid_prisms <- nrow(grid_metrics)
   

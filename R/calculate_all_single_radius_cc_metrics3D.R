@@ -36,7 +36,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   unknown_cell_types <- setdiff(target_cell_types, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     warning(paste("The following cell types in target_cell_types are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
+                  paste(unknown_cell_types, collapse = ", ")))
   }
   
   # Define result
@@ -66,7 +66,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                            "expected_cross_G")
   co_occurrence_df_colnames <- c("reference",
                                  target_cell_types)
-
+  
   # Get rough dimensions of window for cross_K
   spe_coords <- data.frame(spatialCoords(spe))
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
@@ -75,8 +75,8 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   ## Get volume of the window the cells are in
   volume <- length * width * height
   
-
-
+  
+  
   # All single radius cc metrics stem from calculate_entropy3D function
   entropy_df <- calculate_entropy3D(spe, 
                                     reference_cell_type, 
@@ -88,10 +88,10 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   result[["cells_in_neighbourhood"]] <- entropy_df[ , c("ref_cell_id", target_cell_types)]
   
   ## Cells in neighbourhood proportion ----------
-  result[["cells_in_neighbourhood_proportion"]] <- entropy_df[ , c("ref_cell_id", target_cell_types, paste(target_cell_types, "_prop", sep = ""))]
+  result[["cells_in_neighbourhood_proportion"]] <- entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_prop", sep = ""))]
   
   ## Entropy --------------
-  result[["entropy"]] <- entropy_df
+  result[["entropy"]] <- entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_entropy", sep = ""))]
   
   ## Mixing score -----------------
   for (target_cell_type in target_cell_types) {
@@ -149,21 +149,25 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   
   ## Co_occurrence ---------------
   all_cell_types <- unique(spe[[feature_colname]])
-  cells_in_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
-                                                                                          reference_cell_type,
-                                                                                          all_cell_types,
-                                                                                          radius,
-                                                                                          feature_colname)
+  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+                                                                  reference_cell_type,
+                                                                  all_cell_types,
+                                                                  radius,
+                                                                  feature_colname,
+                                                                  F,
+                                                                  F)
+  
+  cells_in_neighbourhood_df$total <- rowSums(cells_in_neighbourhood_df[, -1], na.rm = TRUE)
   
   co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(co_occurrence_df_colnames)))
   colnames(co_occurrence_df) <- co_occurrence_df_colnames
   co_occurrence_df$reference <- reference_cell_type
   
   n_cells_in_spe <- length(spe[[feature_colname]])
-  n_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_proportions_df$total)
+  n_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df$total)
   
   for (target_cell_type in target_cell_types) {
-    n_target_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_proportions_df[[target_cell_type]])
+    n_target_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df[[target_cell_type]])
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
     n_target_cells_in_spe <- sum(spe[[feature_colname]] == target_cell_type)
     target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe

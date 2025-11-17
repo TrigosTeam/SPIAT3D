@@ -73,7 +73,7 @@ calculate_minimum_distances_between_cell_types3D <- function(spe,
     unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
     if (length(unknown_cell_types) != 0) {
       warning(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",
-                 paste(unknown_cell_types, collapse = ", ")))
+                    paste(unknown_cell_types, collapse = ", ")))
     }
     
     spe <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
@@ -96,7 +96,7 @@ calculate_minimum_distances_between_cell_types3D <- function(spe,
   # Each row represents a combination
   # If a row is [1 , 2], then we are comparing cell type 1 and cell type 2
   permu <- gtools::permutations(length(cell_types_of_interest), 2, repeats.allowed = TRUE)
-
+  
   result <- data.frame()
   
   for (i in seq(nrow(permu))) {

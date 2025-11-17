@@ -50,7 +50,7 @@ calculate_cross_K3D <- function(spe,
   for (target_cell_type in target_cell_types) {
     
     n_ref_tar_interactions <- sum(cells_in_neighbourhood_df[[target_cell_type]])
-
+    
     n_tar_cells <- sum(spe[[feature_colname]] == target_cell_type)
     
     ## Get observed cross K-function

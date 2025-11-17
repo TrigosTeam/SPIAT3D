@@ -16,14 +16,14 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   unknown_cell_types <- setdiff(reference_cell_types, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     warning(paste("The following cell types in reference_cell_types are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
+                  paste(unknown_cell_types, collapse = ", ")))
     return(NULL)
   }
   ## Check target_cell_types are found in the spe object
   unknown_cell_types <- setdiff(target_cell_types, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     warning(paste("The following cell types in target_cell_types are not found in the spe object:\n   ",
-               paste(unknown_cell_types, collapse = ", ")))
+                  paste(unknown_cell_types, collapse = ", ")))
     return(NULL)
   }
   # Check if there is intersection between reference_cell_types and target_cell_types
@@ -65,7 +65,7 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   }
   result$total <- result$reference + result$target
   result$proportion <- result$target / result$total
-
+  
   # Add grid_prism_coordinates info to result
   result <- cbind(result, spe@metadata$grid_metrics$grid_prism_coordinates)
   

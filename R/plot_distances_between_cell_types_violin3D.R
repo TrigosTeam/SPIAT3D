@@ -1,5 +1,6 @@
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_distances_between_cell_types_violin3D <- function(distances_df, scales = "free_x") {
+plot_distances_between_cell_types_violin3D <- function(distances_df, 
+                                                       scales = "free_x") {
   
   # setting these variables to NULL as otherwise get "no visible binding for global variable" in R check
   pair <- distance <- NULL

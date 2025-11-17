@@ -25,7 +25,7 @@ calculate_mixing_scores_gradient3D <- function(spe,
                                                target_cell_type,
                                                radii[i],
                                                feature_colname)
-
+    
     result[i, ] <- mixing_scores
   }
   

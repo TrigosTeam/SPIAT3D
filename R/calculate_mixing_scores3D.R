@@ -43,7 +43,7 @@ calculate_mixing_scores3D <- function(spe,
                                                                       feature_colname,
                                                                       FALSE,
                                                                       FALSE)
-
+      
       # Get number of ref-ref interactions
       # Halve it to avoid counting each ref-ref interaction twice
       n_ref_ref_interactions <- 0.5 * sum(cells_in_neighbourhood_df[[reference_cell_type]]) 

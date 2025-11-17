@@ -1,4 +1,5 @@
-plot_grid_metrics_discrete3D <- function(grid_metrics, metric_colname) {
+plot_grid_metrics_discrete3D <- function(grid_metrics, 
+                                         metric_colname) {
   
   ## Check input parameters
   if (!(is.character(metric_colname) && metric_colname %in% c("proportion", "entropy"))) {
