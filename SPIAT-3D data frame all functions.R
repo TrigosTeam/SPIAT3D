@@ -2143,7 +2143,7 @@ calculate_prevalence3D <- function(grid_metrics,
 }
 calculate_spatial_autocorrelation3D <- function(grid_metrics,
                                                 metric_colname,
-                                                weight_method = 0.1) {
+                                                weight_method) {
   
   ## Check input parameters
   if (!(is.character(metric_colname))) {
@@ -2152,9 +2152,8 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
   if (is.null(grid_metrics[[metric_colname]])) {
     stop("`metric_colname` is not a column in `grid_metrics`.")
   }
-  if (!((is.numeric(weight_method) && length(weight_method) == 1 && weight_method > 0 && weight_method < 1) ||
-        (is.character(weight_method) && weight_method %in% c("IDW", "rook", "queen")))) {
-    stop("`weight_method` is not a numeric between 0 and 1 or either 'IDW', 'rook' or 'queen'.")
+  if (!(is.character(weight_method) && weight_method %in% c("IDW", "rook", "queen"))) {
+    stop("`weight_method` is not 'IDW', 'rook' or 'queen'.")
   }
   
   ## Get number of grid prisms
@@ -2187,12 +2186,6 @@ calculate_spatial_autocorrelation3D <- function(grid_metrics,
   ## Adjacent points are within sqrt(3) unit apart. e.g. (0, 0, 0) vs (0, 0, 1)
   else if (weight_method == "queen") {
     weight_matrix <- ifelse(weight_matrix > sqrt(3), 0, 1)  
-  }
-  ## If a number (x) between 0 and 1 is supplied, set a threshold to be x quantile value of c(weight_matrix)
-  ## Grid prisms within this spatial_dfcified threshold have a weight of 1, otherwise, weight of 0
-  else if (as.numeric(weight_method) && 0 < weight_method && weight_method < 1) {
-    threshold <- quantile(c(weight_matrix), weight_method)
-    weight_matrix <- ifelse(weight_matrix > threshold, 0, 1)
   }
   
   ## Points along the diagonal are comparing the same point so its weight is zero
