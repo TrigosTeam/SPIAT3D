@@ -1977,7 +1977,7 @@ calculate_pairwise_distances_between_cell_types3D <- function(spe,
   if (ncol(spe) < 2) {
     stop("There must be at least two cells in spe.")
   }
-  if (!(is.null(cell_types_of_interest) && is.character(cell_types_of_interest))) {
+  if (!(is.null(cell_types_of_interest) || is.character(cell_types_of_interest))) {
     stop("`cell_types_of_interest` is not a character vector or NULL.")
   }
   if (!is.character(feature_colname)) {
