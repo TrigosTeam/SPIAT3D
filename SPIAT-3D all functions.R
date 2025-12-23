@@ -122,16 +122,16 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   
   ## Define result
   result <- list("mixing_score" = list(),
+                 "neighbourhood_counts" = data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types))),
                  "cells_in_neighbourhood" = data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types))),
-                 "cells_in_neighbourhood_proportion" = data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types))),
-                 "entropy" = data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types))),
+                 "neighbourhood_entropy" = data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types))),
                  "cross_K" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_L" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_G" = list(),
                  "co_occurrence" = data.frame(matrix(nrow = length(radii), ncol = length(co_occurrence_df_colnames))))
+  colnames(result[["neighbourhood_counts"]]) <- target_cell_types
   colnames(result[["cells_in_neighbourhood"]]) <- target_cell_types
-  colnames(result[["cells_in_neighbourhood_proportion"]]) <- target_cell_types
-  colnames(result[["entropy"]]) <- target_cell_types
+  colnames(result[["neighbourhood_entropy"]]) <- target_cell_types
   colnames(result[["cross_K"]]) <- cross_K_df_colnames
   colnames(result[["cross_L"]]) <- cross_K_df_colnames
   colnames(result[["co_occurrence"]]) <- co_occurrence_df_colnames
@@ -156,11 +156,11 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
     
     if (is.null(df)) return(NULL)
     
-    df[["cells_in_neighbourhood"]]$ref_cell_id <- NULL
+    df[["neighbourhood_counts"]]$ref_cell_id <- NULL
     
-    result[["cells_in_neighbourhood"]][i, ] <- apply(df[["cells_in_neighbourhood"]], 2, mean)
-    result[["cells_in_neighbourhood_proportion"]][i, ] <- apply(df[["cells_in_neighbourhood_proportion"]][ , paste(target_cell_types, "_prop", sep = "")], 2, mean, na.rm = T)
-    result[["entropy"]][i, ] <- apply(df[["entropy"]][ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
+    result[["neighbourhood_counts"]][i, ] <- apply(df[["neighbourhood_counts"]], 2, mean)
+    result[["cells_in_neighbourhood"]][i, ] <- apply(df[["cells_in_neighbourhood"]][ , paste(target_cell_types, "_prop", sep = "")], 2, mean, na.rm = T)
+    result[["neighbourhood_entropy"]][i, ] <- apply(df[["neighbourhood_entropy"]][ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
     result[["cross_K"]][i, ] <- df[["cross_K"]]
     result[["cross_L"]][i, ] <- df[["cross_L"]]
     result[["co_occurrence"]][i, ] <- df[["co_occurrence"]]
@@ -174,9 +174,9 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   }
   
   # Add radius column to each data frame
+  result[["neighbourhood_counts"]]$radius <- radii
   result[["cells_in_neighbourhood"]]$radius <- radii
-  result[["cells_in_neighbourhood_proportion"]]$radius <- radii
-  result[["entropy"]]$radius <- radii
+  result[["neighbourhood_entropy"]]$radius <- radii
   result[["cross_K"]]$radius <- radii
   result[["cross_L"]]$radius <- radii
   result[["co_occurrence"]]$radius <- radii
@@ -190,14 +190,14 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   
   ## Plot
   if (plot_image) {
-    fig_ACIN <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
+    fig_ACIN <- plot_neighbourhood_counts_gradient3D(result[["neighbourhood_counts"]], reference_cell_type)
     methods::show(fig_ACIN)
     
-    fig_ACINP <- plot_cells_in_neighbourhood_proportions_gradient3D(result[["cells_in_neighbourhood_proportion"]], reference_cell_type)
+    fig_ACINP <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
     methods::show(fig_ACINP)
     
     expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
-    fig_AE <- plot_entropy_gradient3D(result[["entropy"]], reference_cell_type)
+    fig_AE <- plot_neighbourhood_entropy_gradient3D(result[["neighbourhood_entropy"]], reference_cell_type)
     methods::show(fig_AE)
     
     for (target_cell_type in names(result[["mixing_score"]])) {
@@ -275,9 +275,9 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   }
   
   # Define result
-  result <- list("cells_in_neighbourhood" = list(),
-                 "cells_in_neighbourhood_proportion" = list(),
-                 "entropy" = list(),
+  result <- list("neighbourhood_counts" = list(),
+                 "cells_in_neighbourhood" = list(),
+                 "neighbourhood_entropy" = list(),
                  "mixing_score" = list(),
                  "cross_K" = list(),
                  "cross_L" = list(),
@@ -312,21 +312,21 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   
   
   
-  # All single radius cc metrics stem from calculate_entropy3D function
-  entropy_df <- calculate_entropy3D(spe, 
-                                    reference_cell_type, 
-                                    target_cell_types, 
-                                    radius, 
-                                    feature_colname)  
+  # All single radius cc metrics stem from calculate_neighbourhood_entropy3D function
+  neighbourhood_entropy_df <- calculate_neighbourhood_entropy3D(spe, 
+                                                                reference_cell_type, 
+                                                                target_cell_types, 
+                                                                radius, 
+                                                                feature_colname)  
   
   ## Cells in neighbourhood ----------
-  result[["cells_in_neighbourhood"]] <- entropy_df[ , c("ref_cell_id", target_cell_types)]
+  result[["neighbourhood_counts"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", target_cell_types)]
   
   ## Cells in neighbourhood proportion ----------
-  result[["cells_in_neighbourhood_proportion"]] <- entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_prop", sep = ""))]
+  result[["cells_in_neighbourhood"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_prop", sep = ""))]
   
-  ## Entropy --------------
-  result[["entropy"]] <- entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_entropy", sep = ""))]
+  ## neighbourhood_entropy --------------
+  result[["neighbourhood_entropy"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_entropy", sep = ""))]
   
   ## Mixing score -----------------
   for (target_cell_type in target_cell_types) {
@@ -339,8 +339,8 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
       mixing_score_df$tar_cell_type <- target_cell_type
       mixing_score_df$n_ref_cells <- sum(spe[[feature_colname]] == reference_cell_type)
       mixing_score_df$n_tar_cells <- sum(spe[[feature_colname]] == target_cell_type)
-      mixing_score_df$n_ref_tar_interactions <- sum(entropy_df[[target_cell_type]])
-      mixing_score_df$n_ref_ref_interactions <- sum(entropy_df[[reference_cell_type]])
+      mixing_score_df$n_ref_tar_interactions <- sum(neighbourhood_entropy_df[[target_cell_type]])
+      mixing_score_df$n_ref_ref_interactions <- sum(neighbourhood_entropy_df[[reference_cell_type]])
       mixing_score_df$mixing_score <- mixing_score_df$n_ref_tar_interactions / (0.5 * mixing_score_df$n_ref_ref_interactions)
       mixing_score_df$normalised_mixing_score <- 0.5 * mixing_score_df$mixing_score * mixing_score_df$n_ref_cells / mixing_score_df$n_tar_cell
       if (is.infinite(mixing_score_df$mixing_score)) mixing_score_df$mixing_score <- NA
@@ -356,7 +356,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   cross_K_df$expected <- (4/3) * pi * radius^3
   
   for (target_cell_type in target_cell_types) {
-    cross_K_df[[target_cell_type]] <- (((volume * sum(entropy_df[[target_cell_type]])) / sum(spe[[feature_colname]] == reference_cell_type)) / sum(spe[[feature_colname]] == target_cell_type)) 
+    cross_K_df[[target_cell_type]] <- (((volume * sum(neighbourhood_entropy_df[[target_cell_type]])) / sum(spe[[feature_colname]] == reference_cell_type)) / sum(spe[[feature_colname]] == target_cell_type)) 
   }
   result[["cross_K"]] <- cross_K_df
   
@@ -370,7 +370,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
     cross_G_df <- data.frame(matrix(nrow = 1, ncol = length(cross_G_df_colnames)))
     colnames(cross_G_df) <- cross_G_df_colnames
     
-    reference_target_interactions <- entropy_df[[target_cell_type]]
+    reference_target_interactions <- neighbourhood_entropy_df[[target_cell_type]]
     n_target_cells <- sum(spe[[feature_colname]] == target_cell_type)
     target_cell_type_intensity <- n_target_cells / volume
     observed_cross_G <- sum(reference_target_interactions != 0) / length(reference_target_interactions)
@@ -384,25 +384,25 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   
   ## Co_occurrence ---------------
   all_cell_types <- unique(spe[[feature_colname]])
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                  reference_cell_type,
-                                                                  all_cell_types,
-                                                                  radius,
-                                                                  feature_colname,
-                                                                  F,
-                                                                  F)
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                              reference_cell_type,
+                                                              all_cell_types,
+                                                              radius,
+                                                              feature_colname,
+                                                              F,
+                                                              F)
   
-  cells_in_neighbourhood_df$total <- rowSums(cells_in_neighbourhood_df[, -1], na.rm = TRUE)
+  neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
   
   co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(co_occurrence_df_colnames)))
   colnames(co_occurrence_df) <- co_occurrence_df_colnames
   co_occurrence_df$reference <- reference_cell_type
   
   n_cells_in_spe <- length(spe[[feature_colname]])
-  n_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df$total)
+  n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
   
   for (target_cell_type in target_cell_types) {
-    n_target_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df[[target_cell_type]])
+    n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
     n_target_cells_in_spe <- sum(spe[[feature_colname]] == target_cell_type)
     target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe
@@ -723,6 +723,45 @@ calculate_cell_proportions3D <- function(spe,
   
   return(cell_proportions)
 }
+calculate_neighbourhood_counts_gradient3D <- function(spe, 
+                                                      reference_cell_type, 
+                                                      target_cell_types, 
+                                                      radii, 
+                                                      feature_colname = "Cell.Type",
+                                                      plot_image = TRUE) {
+  
+  if (!(is.numeric(radii) && length(radii) > 1)) {
+    stop("`radii` is not a numeric vector with at least 2 values")
+  }
+  
+  result <- data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types)))
+  colnames(result) <- target_cell_types
+  
+  for (i in seq(length(radii))) {
+    neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                                reference_cell_type,
+                                                                target_cell_types,
+                                                                radii[i],
+                                                                feature_colname,
+                                                                FALSE,
+                                                                FALSE)
+    
+    if (is.null(neighbourhood_counts_df)) return(NULL)
+    
+    neighbourhood_counts_df$ref_cell_id <- NULL
+    result[i, ] <- apply(neighbourhood_counts_df, 2, mean)
+  }
+  # Add a radius column to the result
+  result$radius <- radii
+  
+  if (plot_image) {
+    fig <- plot_neighbourhood_counts_gradient3D(result, reference_cell_type)
+    methods::show(fig)
+  }
+  
+  return(result)
+}
+
 calculate_cells_in_neighbourhood_gradient3D <- function(spe, 
                                                         reference_cell_type, 
                                                         target_cell_types, 
@@ -738,50 +777,11 @@ calculate_cells_in_neighbourhood_gradient3D <- function(spe,
   colnames(result) <- target_cell_types
   
   for (i in seq(length(radii))) {
-    cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                    reference_cell_type,
-                                                                    target_cell_types,
-                                                                    radii[i],
-                                                                    feature_colname,
-                                                                    FALSE,
-                                                                    FALSE)
-    
-    if (is.null(cells_in_neighbourhood_df)) return(NULL)
-    
-    cells_in_neighbourhood_df$ref_cell_id <- NULL
-    result[i, ] <- apply(cells_in_neighbourhood_df, 2, mean)
-  }
-  # Add a radius column to the result
-  result$radius <- radii
-  
-  if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_gradient3D(result, reference_cell_type)
-    methods::show(fig)
-  }
-  
-  return(result)
-}
-
-calculate_cells_in_neighbourhood_proportions_gradient3D <- function(spe, 
-                                                                    reference_cell_type, 
-                                                                    target_cell_types, 
-                                                                    radii, 
-                                                                    feature_colname = "Cell.Type",
-                                                                    plot_image = TRUE) {
-  
-  if (!(is.numeric(radii) && length(radii) > 1)) {
-    stop("`radii` is not a numeric vector with at least 2 values")
-  }
-  
-  result <- data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types)))
-  colnames(result) <- target_cell_types
-  
-  for (i in seq(length(radii))) {
-    cell_proportions_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
-                                                                                                    reference_cell_type,
-                                                                                                    target_cell_types,
-                                                                                                    radii[i],
-                                                                                                    feature_colname)
+    cell_proportions_neighbourhood_proportions_df <- calculate_cells_in_neighbourhood3D(spe,
+                                                                                        reference_cell_type,
+                                                                                        target_cell_types,
+                                                                                        radii[i],
+                                                                                        feature_colname)
     
     if (is.null(cell_proportions_neighbourhood_proportions_df)) return(NULL)
     
@@ -793,47 +793,47 @@ calculate_cells_in_neighbourhood_proportions_gradient3D <- function(spe,
   
   # Plot
   if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_proportions_gradient3D(result, reference_cell_type)
+    fig <- plot_cells_in_neighbourhood_gradient3D(result, reference_cell_type)
     methods::show(fig)
   }
   
   return(result)
 }
 
-calculate_cells_in_neighbourhood_proportions3D <- function(spe, 
-                                                           reference_cell_type, 
-                                                           target_cell_types, 
-                                                           radius, 
-                                                           feature_colname = "Cell.Type") {
-  
-  ## Get cells in neighbourhood df
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                  reference_cell_type,
-                                                                  c(reference_cell_type, target_cell_types),
-                                                                  radius,
-                                                                  feature_colname,
-                                                                  FALSE,
-                                                                  FALSE)
-  
-  if (is.null(cells_in_neighbourhood_df)) return(NULL)
-  
-  cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")] <- 
-    cells_in_neighbourhood_df[ , target_cell_types] / (cells_in_neighbourhood_df[ , target_cell_types] + cells_in_neighbourhood_df[ , reference_cell_type])
-  
-  # If reference cell type is in target cell types, proportion should be 1
-  if (reference_cell_type %in% target_cell_types) {
-    cells_in_neighbourhood_df[cells_in_neighbourhood_df[[reference_cell_type]] != 0, paste(reference_cell_type, "_prop", sep = "")] <- 1
-  }
-  
-  return(cells_in_neighbourhood_df)
-}
 calculate_cells_in_neighbourhood3D <- function(spe, 
                                                reference_cell_type, 
                                                target_cell_types, 
                                                radius, 
-                                               feature_colname = "Cell.Type",
-                                               show_summary = TRUE,
-                                               plot_image = TRUE) {
+                                               feature_colname = "Cell.Type") {
+  
+  ## Get cells in neighbourhood df
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                              reference_cell_type,
+                                                              c(reference_cell_type, target_cell_types),
+                                                              radius,
+                                                              feature_colname,
+                                                              FALSE,
+                                                              FALSE)
+  
+  if (is.null(neighbourhood_counts_df)) return(NULL)
+  
+  neighbourhood_counts_df[ , paste(target_cell_types, "_prop", sep = "")] <- 
+    neighbourhood_counts_df[ , target_cell_types] / (neighbourhood_counts_df[ , target_cell_types] + neighbourhood_counts_df[ , reference_cell_type])
+  
+  # If reference cell type is in target cell types, proportion should be 1
+  if (reference_cell_type %in% target_cell_types) {
+    neighbourhood_counts_df[neighbourhood_counts_df[[reference_cell_type]] != 0, paste(reference_cell_type, "_prop", sep = "")] <- 1
+  }
+  
+  return(neighbourhood_counts_df)
+}
+calculate_neighbourhood_counts3D <- function(spe, 
+                                             reference_cell_type, 
+                                             target_cell_types, 
+                                             radius, 
+                                             feature_colname = "Cell.Type",
+                                             show_summary = TRUE,
+                                             plot_image = TRUE) {
   
   
   # Check input parameters
@@ -919,12 +919,12 @@ calculate_cells_in_neighbourhood3D <- function(spe,
   
   ## Print summary
   if (show_summary) {
-    print(summarise_cells_in_neighbourhood3D(result))    
+    print(summarise_neighbourhood_counts3D(result))    
   }
   
   ## Plot
   if (plot_image) {
-    fig <- plot_cells_in_neighbourhood_violin3D(result, reference_cell_type)
+    fig <- plot_neighbourhood_counts_violin3D(result, reference_cell_type)
     methods::show(fig)
   }
   
@@ -1008,15 +1008,15 @@ calculate_co_occurrence3D <- function(spe,
   # Get all cell types in spe
   all_cell_types <- unique(spe[[feature_colname]])
   
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                  reference_cell_type,
-                                                                  all_cell_types,
-                                                                  radius,
-                                                                  feature_colname,
-                                                                  F,
-                                                                  F)
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                              reference_cell_type,
+                                                              all_cell_types,
+                                                              radius,
+                                                              feature_colname,
+                                                              F,
+                                                              F)
   
-  cells_in_neighbourhood_df$total <- rowSums(cells_in_neighbourhood_df[, -1], na.rm = TRUE)
+  neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
   
   result <- data.frame(reference = reference_cell_type)
   
@@ -1024,12 +1024,12 @@ calculate_co_occurrence3D <- function(spe,
   n_cells_in_spe <- length(spe[[feature_colname]])
   
   # Get total number of cells in radius around reference cell type
-  n_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df$total)
+  n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
   
   for (target_cell_type in target_cell_types) {
     
     # Get total number of target cells in radius around reference cell type
-    n_target_cells_in_reference_cell_type_radius <- sum(cells_in_neighbourhood_df[[target_cell_type]])
+    n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
     
     # Get proportion of target cells in radius around reference cell type
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
@@ -1090,15 +1090,15 @@ calculate_cross_G3D <- function(spe,
   
   ### Calculate the observed cross_G
   # Get the number of target cells in the radius around each reference cell
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                  reference_cell_type,
-                                                                  target_cell_type,
-                                                                  radius,
-                                                                  feature_colname,
-                                                                  show_summary = FALSE,
-                                                                  plot_image = FALSE)
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                              reference_cell_type,
+                                                              target_cell_type,
+                                                              radius,
+                                                              feature_colname,
+                                                              show_summary = FALSE,
+                                                              plot_image = FALSE)
   
-  reference_target_interactions <- cells_in_neighbourhood_df[[target_cell_type]]
+  reference_target_interactions <- neighbourhood_counts_df[[target_cell_type]]
   
   # cross_G: essentially the proportion of reference cells with at least 1 target cell within the chosen radius.
   observed_cross_G <- sum(reference_target_interactions != 0) / length(reference_target_interactions)
@@ -1206,17 +1206,17 @@ calculate_cross_K3D <- function(spe,
   # Define result data frame
   result <- data.frame(reference = reference_cell_type, expected = expected_cross_K)
   
-  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                  reference_cell_type,
-                                                                  target_cell_types,
-                                                                  radius,
-                                                                  feature_colname,
-                                                                  show_summary = FALSE,
-                                                                  plot_image = FALSE)
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                              reference_cell_type,
+                                                              target_cell_types,
+                                                              radius,
+                                                              feature_colname,
+                                                              show_summary = FALSE,
+                                                              plot_image = FALSE)
   
   for (target_cell_type in target_cell_types) {
     
-    n_ref_tar_interactions <- sum(cells_in_neighbourhood_df[[target_cell_type]])
+    n_ref_tar_interactions <- sum(neighbourhood_counts_df[[target_cell_type]])
     
     n_tar_cells <- sum(spe[[feature_colname]] == target_cell_type)
     
@@ -1303,12 +1303,12 @@ calculate_entropy_background3D <- function(spe,
   return(entropy) 
 }
 
-calculate_entropy_gradient3D <- function(spe,
-                                         reference_cell_type,
-                                         target_cell_types,
-                                         radii,
-                                         feature_colname = "Cell.Type",
-                                         plot_image = TRUE) {
+calculate_neighbourhood_entropy_gradient3D <- function(spe,
+                                                       reference_cell_type,
+                                                       target_cell_types,
+                                                       radii,
+                                                       feature_colname = "Cell.Type",
+                                                       plot_image = TRUE) {
   
   if (!(is.numeric(radii) && length(radii) > 1)) {
     stop("`radii` is not a numeric vector with at least 2 values")
@@ -1318,15 +1318,15 @@ calculate_entropy_gradient3D <- function(spe,
   colnames(result) <- target_cell_types
   
   for (i in seq(length(radii))) {
-    entropy_df <- calculate_entropy3D(spe,
-                                      reference_cell_type,
-                                      target_cell_types,
-                                      radii[i],
-                                      feature_colname)
+    neighbourhood_entropy_df <- calculate_neighbourhood_entropy3D(spe,
+                                                                  reference_cell_type,
+                                                                  target_cell_types,
+                                                                  radii[i],
+                                                                  feature_colname)
     
-    if (is.null(entropy_df)) return(NULL)
+    if (is.null(neighbourhood_entropy_df)) return(NULL)
     
-    result[i, ] <- apply(entropy_df[ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
+    result[i, ] <- apply(neighbourhood_entropy_df[ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
   }
   
   # Add a radius column to the result
@@ -1334,7 +1334,7 @@ calculate_entropy_gradient3D <- function(spe,
   
   if (plot_image) {
     expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
-    fig <- plot_entropy_gradient3D(result, reference_cell_type)
+    fig <- plot_neighbourhood_entropy_gradient3D(result, reference_cell_type)
     methods::show(fig)
   }
   
@@ -1402,7 +1402,7 @@ calculate_entropy_grid_metrics3D <- function(spe,
   
   ## Use proportion data frame to get entropy
   calculate_entropy <- function(x) {
-    entropy <- -1 * sum(x * ifelse(is.infinite(log(x, length(x))), 0, log(x, length(x))))
+    entropy <- -1 * sum(x * ifelse(is.infinite(log(x, 2)), 0, log(x, 2))) / log(length(x), 2)
     return(entropy)
   }
   result$entropy <- apply(df_props, 1, calculate_entropy)
@@ -1418,11 +1418,11 @@ calculate_entropy_grid_metrics3D <- function(spe,
   
   return(result)
 }
-calculate_entropy3D <- function(spe,
-                                reference_cell_type,
-                                target_cell_types,
-                                radius,
-                                feature_colname = "Cell.Type") {
+calculate_neighbourhood_entropy3D <- function(spe,
+                                              reference_cell_type,
+                                              target_cell_types,
+                                              radius,
+                                              feature_colname = "Cell.Type") {
   
   # Check target_cell_types
   if (!(is.character(target_cell_types) && length(target_cell_types) >= 2)) {
@@ -1430,21 +1430,21 @@ calculate_entropy3D <- function(spe,
   }
   
   ## Users should ensure include the reference_cell_type as one of the target_cell_types
-  cells_in_neighbourhood_proportion_df <- calculate_cells_in_neighbourhood_proportions3D(spe,
-                                                                                         reference_cell_type,
-                                                                                         target_cell_types,
-                                                                                         radius,
-                                                                                         feature_colname)
+  cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
+                                                                  reference_cell_type,
+                                                                  target_cell_types,
+                                                                  radius,
+                                                                  feature_colname)
   
-  if (is.null(cells_in_neighbourhood_proportion_df)) return(NULL)
+  if (is.null(cells_in_neighbourhood_df)) return(NULL)
   
-  ## Get entropy for target_cell_type
-  cells_in_neighbourhood_proportion_df[ , paste(target_cell_types, "_entropy", sep = "")] <- 
+  ## Get neighbourhood_entropy for target_cell_type
+  cells_in_neighbourhood_df[ , paste(target_cell_types, "_entropy", sep = "")] <- 
     -1 * 
-    (cells_in_neighbourhood_proportion_df[ , paste(target_cell_types, "_prop", sep = "")] * log(cells_in_neighbourhood_proportion_df[ , paste(target_cell_types, "_prop", sep = "")], 2) +
-       (1 - cells_in_neighbourhood_proportion_df[ , paste(target_cell_types, "_prop", sep = "")]) * log(1 - (cells_in_neighbourhood_proportion_df[ , paste(target_cell_types, "_prop", sep = "")]), 2))
+    (cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")] * log(cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")], 2) +
+       (1 - cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")]) * log(1 - (cells_in_neighbourhood_df[ , paste(target_cell_types, "_prop", sep = "")]), 2))
   
-  return(cells_in_neighbourhood_proportion_df)
+  return(cells_in_neighbourhood_df)
 }
 ### Start from the grid_prism with the maximum cell proportion.
 ## Look left, right, forward, back, up and down and see if that grid_prism has at least threshold cell proportion value
@@ -1889,20 +1889,20 @@ calculate_mixing_scores3D <- function(spe,
       
       
       ## Get cells in neighbourhood df
-      cells_in_neighbourhood_df <- calculate_cells_in_neighbourhood3D(spe,
-                                                                      reference_cell_type,
-                                                                      c(reference_cell_type, target_cell_type),
-                                                                      radius,
-                                                                      feature_colname,
-                                                                      FALSE,
-                                                                      FALSE)
+      neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
+                                                                  reference_cell_type,
+                                                                  c(reference_cell_type, target_cell_type),
+                                                                  radius,
+                                                                  feature_colname,
+                                                                  FALSE,
+                                                                  FALSE)
       
       # Get number of ref-ref interactions
       # Halve it to avoid counting each ref-ref interaction twice
-      n_ref_ref_interactions <- 0.5 * sum(cells_in_neighbourhood_df[[reference_cell_type]]) 
+      n_ref_ref_interactions <- 0.5 * sum(neighbourhood_counts_df[[reference_cell_type]]) 
       
       # Get number of ref-tar interactions
-      n_ref_tar_interactions <- sum(cells_in_neighbourhood_df[[target_cell_type]]) 
+      n_ref_tar_interactions <- sum(neighbourhood_counts_df[[target_cell_type]]) 
       
       
       # Can't get mixing scores if there are no target cells
@@ -2874,48 +2874,48 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
   
   return(fig)
 }
-plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, 
-                                                   reference_cell_type = NULL) {
+plot_neighbourhood_counts_gradient3D <- function(neighbourhood_counts_gradient_df, 
+                                                 reference_cell_type = NULL) {
   
-  plot_result <- reshape2::melt(cells_in_neighbourhood_gradient_df, "radius")
+  plot_result <- reshape2::melt(neighbourhood_counts_gradient_df, "radius")
   
   fig <- ggplot(plot_result, aes(radius, value, color = variable)) + 
     geom_line() + 
-    labs(title = "Average cells in neighbourhood gradient", x = "Radius", y = "Average cells in neighbourhood") + 
+    labs(title = "Average neighbourhood counts gradient", x = "Radius", y = "Average neighbourhood counts") + 
     scale_color_discrete(name = "Cell type") +
     theme_bw()
   
   if (!is.null(reference_cell_type)) {
-    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, ", Target: ", paste(colnames(cells_in_neighbourhood_gradient_df)[seq(ncol(cells_in_neighbourhood_gradient_df) - 1)], collapse = ", "), sep = ""))
+    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, sep = ""))
   }
   
   return(fig)
 }
-plot_cells_in_neighbourhood_proportions_gradient3D <- function(cells_in_neighbourhood_proportions_gradient_df, 
-                                                               reference_cell_type = NULL) {
+plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, 
+                                                   reference_cell_type = NULL) {
   
-  plot_result <- reshape2::melt(cells_in_neighbourhood_proportions_gradient_df, id.vars = c("radius"))
+  plot_result <- reshape2::melt(cells_in_neighbourhood_gradient_df, id.vars = c("radius"))
   fig <- ggplot(plot_result, aes(radius, value, color = variable)) +
     geom_point() +
     geom_line() +
-    labs(title = "Average cells in neighbourhood proportions gradient", x = "Radius", y = "Cell proportion", color = "Cell type") +
+    labs(title = "Average cells in neighbourhood gradient", x = "Radius", y = "Cell proportion", color = "Cell type") +
     theme_bw() +
     ylim(0, 1)
   
   if (!is.null(reference_cell_type)) {
-    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, ", Target: ", paste(colnames(cells_in_neighbourhood_proportions_gradient_df)[seq(ncol(cells_in_neighbourhood_proportions_gradient_df) - 1)], collapse = ", "), sep = ""))
+    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, sep = ""))
   }
   
   return(fig)
 }
 ## For scales parameter, use "free_x" or "free". "free_y" looks silly
-plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df, 
-                                                 reference_cell_type, scales = "free_x") {
+plot_neighbourhood_counts_violin3D <- function(neighbourhood_counts_df, 
+                                               reference_cell_type, scales = "free_x") {
   
   ## Target cell types will be all the columns except the first column
-  target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]
+  target_cell_types <- colnames(neighbourhood_counts_df)[c(-1)]
   
-  df <- reshape2::melt(cells_in_neighbourhood_df, measure.vars = target_cell_types)
+  df <- reshape2::melt(neighbourhood_counts_df, measure.vars = target_cell_types)
   colnames(df) <- c("ref_cell_id", "tar_cell_type", "count")
   
   # setting these variables to NULL as otherwise get "no visible binding for global variable" in R check
@@ -2926,7 +2926,7 @@ plot_cells_in_neighbourhood_violin3D <- function(cells_in_neighbourhood_df,
     facet_wrap(~tar_cell_type, scales=scales, strip.position="bottom") +
     theme_bw() +
     theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-    labs(title=paste("Cells in neighbourhood of", reference_cell_type, "cells"), x = "Target cell type", y = "Number of cells") +
+    labs(title=paste("Neighbourhood counts of", reference_cell_type, "cells"), x = "Target cell type", y = "Neighbourhood counts") +
     stat_summary(fun.data = "mean_sdl", fun.args = list(mult= 1), colour = "red")
   
   message("Plots show mean ± sd")
@@ -3144,19 +3144,19 @@ plot_distances_between_cell_types_violin3D <- function(distances_df,
   return(fig)
 }
 
-plot_entropy_gradient3D <- function(entropy_gradient_df, 
-                                    reference_cell_type = NULL) {
+plot_neighbourhood_entropy_gradient3D <- function(neighbourhood_entropy_gradient_df, 
+                                                  reference_cell_type = NULL) {
   
-  plot_result <- reshape2::melt(entropy_gradient_df, id.vars = c("radius"))
+  plot_result <- reshape2::melt(neighbourhood_entropy_gradient_df, id.vars = c("radius"))
   fig <- ggplot(plot_result, aes(radius, value, color = variable)) +
     geom_point() +
     geom_line() +
-    labs(title = "Entropy gradient", x = "Radius", y = "Entropy", color = "Cell type") +
+    labs(title = "Neighbourhood entropy gradient", x = "Radius", y = "Neighbourhood entropy", color = "Cell type") +
     theme_bw() +
     ylim(0, 1)
   
   if (!is.null(reference_cell_type)) {
-    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, ", Target: ", paste(colnames(entropy_gradient_df)[seq(ncol(entropy_gradient_df) - 1)], collapse = ", "), sep = ""))
+    fig <- fig + labs(subtitle = paste("Reference: ", reference_cell_type, ", Target: ", paste(colnames(neighbourhood_entropy_gradient_df)[seq(ncol(neighbourhood_entropy_gradient_df) - 1)], collapse = ", "), sep = ""))
   }
   
   return(fig)
@@ -3371,10 +3371,10 @@ plot_mixing_scores_gradient3D <- function(mixing_scores_gradient_df,
   return(fig)
 }
 
-summarise_cells_in_neighbourhood3D <- function(cells_in_neighbourhood_df) {
+summarise_neighbourhood_counts3D <- function(neighbourhood_counts_df) {
   
   ## Target cell types will be all the columns except the first column
-  target_cell_types <- colnames(cells_in_neighbourhood_df)[c(-1)]
+  target_cell_types <- colnames(neighbourhood_counts_df)[c(-1)]
   
   ## Set up data frame for summarised_results list
   df <- data.frame(row.names = c("mean", "min", "max", "median", "st_dev"))
@@ -3382,7 +3382,7 @@ summarise_cells_in_neighbourhood3D <- function(cells_in_neighbourhood_df) {
   for (target_cell_type in target_cell_types) {
     
     ## Get statistical measures for each target cell type
-    target_cell_type_values <- cells_in_neighbourhood_df[[target_cell_type]]
+    target_cell_type_values <- neighbourhood_counts_df[[target_cell_type]]
     df[[target_cell_type]] <- c(mean(target_cell_type_values),
                                 min(target_cell_type_values),
                                 max(target_cell_type_values),
