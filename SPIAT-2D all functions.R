@@ -1601,7 +1601,10 @@ calculate_pairwise_distances_between_cell_types2D <- function(spe,
 }
 calculate_prevalence_gradient_AUC2D <- function(prevalence_gradient_df) {
   
-  return(sum(prevalence_gradient_df$prevalence) * 0.01)
+  return(
+    sum(diff(prevalence_gradient_df$threshold) * (head(prevalence_gradient_df$prevalence, -1) + tail(prevalence_gradient_df$prevalence, -1)) / 2)
+  )
+  
 }
 calculate_prevalence_gradient2D <- function(grid_metrics,
                                             metric_colname,
