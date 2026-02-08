@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' cell_proportions <- calculate_cell_proportions3D(
-#'     spe = SPIAT3D::simulated_spe, 
+#'     spe = SPIAT-3D::simulated_spe, 
 #'     cell_types_of_interest = NULL, 
 #'     feature_colname = "Cell.Type", 
 #'     plot_image = TRUE
