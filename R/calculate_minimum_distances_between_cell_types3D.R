@@ -5,10 +5,12 @@
 #'    the results and plot violin plots of the minimum distances between cell types.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for the cells.
+#'  Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
+#'  for the x-coordinate, y-coordinate and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of interest.
 #'   If NULL, all cell types in the `feature_colname` column will be considered.
 #' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
-#'    object that contains the cell type information.
+#'    object that contains the cell type information. Defaults to "Cell.Type"
 #' @param show_summary A logical indicating whether to print a summary of the minimum distances 
 #'    for each cell type pair. Defaults to TRUE.
 #' @param plot_image A logical indicating whether to plot violin plots of the minimum distances 
@@ -19,7 +21,7 @@
 #'
 #' @examples
 #' minimum_distances <- calculate_minimum_distances_between_cell_types3D(
-#'     spe = SPIAT3D::simulated_spe,
+#'     spe = SPIAT-3D::simulated_spe,
 #'     cell_types_of_interest = NULL,
 #'     feature_colname = "Cell.Type",
 #'     show_summary = TRUE,
@@ -135,12 +137,13 @@ calculate_minimum_distances_between_cell_types3D <- function(spe,
       nearest_neighbours <- RANN::nn2(data = cell_type2_coords, 
                                       query = cell_type1_coords, 
                                       k = 2)
+      
+      # Get cell IDs and distances
       nearest_neighbours[['nn.idx']] <- nearest_neighbours[['nn.idx']][ , 2]
       nearest_neighbours[['nn.dists']] <- nearest_neighbours[['nn.dists']][ , 2]
     }
     
     # Create the data frame containing the chosen cells and their ids, as well as the nearest cell to them and their ids, and the distance between
-    
     df <- data.frame(
       ref_cell_id = cell_type_ids[[cell_type1]],
       ref_cell_type = cell_type1,
@@ -151,6 +154,7 @@ calculate_minimum_distances_between_cell_types3D <- function(spe,
     result <- rbind(result, df)
   }
   
+  # Add cell pair column
   result$pair <- paste(result$ref_cell_type, result$nearest_cell_type,sep = "/")
   
   # Print summary
