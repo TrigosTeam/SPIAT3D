@@ -3,17 +3,17 @@
 #' @description This function finds cell clusters in a 3D SpatialExperiment object using the alpha hull clustering algorithm. 
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for the cells. 
-#'  Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
-#'  for the x-coordinate, y-coordinate and z-coordinate of each cell.
+#'     Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
+#'     for the x-coordinate, y-coordinate and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of interest.
 #' @param alpha A positive numeric. A smaller alpha value results in clusters with more intricate borders.
-#'  A large alpha value results in clusters with smooth and simple boundaries.
+#'     A large alpha value results in clusters with smooth and simple boundaries.
 #' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
-#'    object that contains the cell type information. Defaults to "Cell.Type"
+#'     object that contains the cell type information. Defaults to "Cell.Type"
 #' @param plot_image A logical indicating whether to plot 3D spatial data with alpha hull clusters. Defaults to TRUE.
 #'
 #' @return The same 3D SpatialExperiment object used as input for spe, with an added column in the `colData` slot
-#'  to specify which alpha hull cluster each cell belongs to, and added metadata containing information needed to plot the alpha hull clusters.
+#'     to specify which alpha hull cluster each cell belongs to, and added metadata containing information needed to plot the alpha hull clusters.
 #'
 #' @examples
 #' alpha_hull_spe <- alpha_hull_clustering3D(

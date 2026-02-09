@@ -5,8 +5,8 @@
 #' cells in neighbourhood, neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
 #' 
 #' @param spe A SpatialExperiment object containing 3D spatial information for the cells. 
-#'  Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
-#'  for the x-coordinate, y-coordinate and z-coordinate of each cell.
+#'     Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
+#'     for the x-coordinate, y-coordinate and z-coordinate of each cell.
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of radius values used to calculate each metric over a gradient

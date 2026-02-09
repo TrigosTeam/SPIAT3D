@@ -5,19 +5,19 @@
 #'    the results and plot violin plots of the minimum distances between cell types.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for the cells.
-#'  Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
-#'  for the x-coordinate, y-coordinate and z-coordinate of each cell.
+#'     Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
+#'     for the x-coordinate, y-coordinate and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of interest.
-#'   If NULL, all cell types in the `feature_colname` column will be considered.
+#'     If NULL, all cell types in the `feature_colname` column will be considered.
 #' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
-#'    object that contains the cell type information. Defaults to "Cell.Type"
+#'     object that contains the cell type information. Defaults to "Cell.Type"
 #' @param show_summary A logical indicating whether to print a summary of the minimum distances 
-#'    for each cell type pair. Defaults to TRUE.
+#'     for each cell type pair. Defaults to TRUE.
 #' @param plot_image A logical indicating whether to plot violin plots of the minimum distances 
-#'    between cell type pairs. Defaults to TRUE.
+#'     between cell type pairs. Defaults to TRUE.
 #'
 #' @return A data frame containing information about the reference cell, the nearest cell of another type, 
-#'    and the distance between them for each cell type pair.
+#'     and the distance between them for each cell type pair.
 #'
 #' @examples
 #' minimum_distances <- calculate_minimum_distances_between_cell_types3D(
