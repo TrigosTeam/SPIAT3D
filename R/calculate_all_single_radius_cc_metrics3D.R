@@ -1,5 +1,28 @@
-### Calculate all single radius cell-colocalisation metrics
-# If a function only requires one target cell type, iterate through each cell type in target_cell_types, else use all target_cell_types
+#' @title Apply all cell colocalization metrics on 3D spatial data.
+#'
+#' @description This function finds the output of all cell colocalization metrics on a 3D SpatialExperiment Object.
+#' Metrics include: mixing score, normalized mixing score, neighbourhood counts, 
+#' cells in neighbourhood, neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
+#' 
+#' @param spe A SpatialExperiment object containing 3D spatial information for the cells. 
+#'  Naming of spatial coordinates MUST be "Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" 
+#'  for the x-coordinate, y-coordinate and z-coordinate of each cell.
+#' @param reference_cell_type A string specifying the reference cell type.
+#' @param target_cell_types A character vector specifying the target cell types.
+#' @param feature_colname A string specifying the name of the column in the `colData` slot of the SpatialExperiment
+#'    object that contains the cell type information. Defaults to "Cell.Type"
+#'
+#' @return A list containing the output of each metric, for each applicable reference-target cell pair.
+#'
+#' @examples
+#' result <- calculate_all_single_radius_cc_metrics3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     reference = "Tumour",
+#'     target = c("Tumour", "Immune"),
+#'     feature_colname = "Cell.Type"
+#' )
+#' 
+#' @export
 
 calculate_all_single_radius_cc_metrics3D <- function(spe, 
                                                      reference_cell_type, 
@@ -79,8 +102,6 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   ## Get volume of the window the cells are in
   volume <- length * width * height
   
-  
-  
   # All single radius cc metrics stem from calculate_neighbourhood_entropy3D function
   neighbourhood_entropy_df <- calculate_neighbourhood_entropy3D(spe, 
                                                                 reference_cell_type, 
@@ -122,7 +143,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   cross_K_df <- data.frame(matrix(nrow = 1, ncol = length(cross_K_df_colnames)))
   colnames(cross_K_df) <- cross_K_df_colnames
   cross_K_df$reference <- reference_cell_type
-  cross_K_df$expected <- (4/3) * pi * radius^3
+  cross_K_df$expected <- (4 / 3) * pi * radius^3
   
   for (target_cell_type in target_cell_types) {
     cross_K_df[[target_cell_type]] <- (((volume * sum(neighbourhood_entropy_df[[target_cell_type]])) / sum(spe[[feature_colname]] == reference_cell_type)) / sum(spe[[feature_colname]] == target_cell_type)) 
