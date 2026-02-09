@@ -1,3 +1,41 @@
+#' @title Calculate cell proportion grid metrics in 3D spatial data.
+#'
+#' @description This functions divides a 3D SpatialExperiment Object into a 3D 
+#'     grid of rectangular prisms. The cell proportions in each rectangular 
+#'     prism is calculated. The output can be used for other SPIAT-3D metrics:
+#'     calculate_spatial_autocorrelation3D, calculate_prevalence3D,
+#'     calculate_prevalence_gradient3D.
+#' 
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell. 
+#' @param n_splits A positive numeric integer specifying the number splits used
+#'     to divide the x-axis, y-axis and z-axis.
+#' @param reference_cell_types A character vector specifying the reference cell 
+#'     types.
+#' @param target_cell_types A character vector specifying the target cell types.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type".
+#' @param plot_image A logical indicating whether to plot cell proportion grid
+#'     metrics. Defaults to TRUE.
+#'
+#' @return A data frame containing the cell proportion and spatial information 
+#'     for each rectangular prism.
+#'
+#' @examples
+#' cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     n_splits = 10,
+#'     reference_cell_types = c("Tumour"),
+#'     target_cell_types = c("Immune"),
+#'     feature_colname = "Cell.Type",
+#'     plot_image = T
+#' )
+#' 
+#' @export
+
 calculate_cell_proportion_grid_metrics3D <- function(spe, 
                                                      n_splits,
                                                      reference_cell_types,
