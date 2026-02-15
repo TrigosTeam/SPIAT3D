@@ -1,3 +1,45 @@
+#' @title Calculate minimum distances to cell clusters in 3D spatial data.
+#'
+#' @description This function calculates the minimum distances between 
+#'     non-cluster cells to cluster cells in a  3D SpatialExperiment object,
+#'     where the cell clusters have already been identified using an existing
+#'     SPIAT-3D cell clustering algorithm function.
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell.
+#' @param cell_types_inside_cluster A character vector specifying the cell types 
+#'     inside the cell clusters that are of interest.
+#' @param cell_types_outside_cluster A character vector specifying the cell 
+#'     types outside the cell clusters that are of interest.
+#' @param cluster_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     clustering information. Should be 'alpha_hull_cluster', 'dbscan_cluster', 
+#'     or 'grid_based_cluster'.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type"
+#' @param plot_image A logical indicating whether to plot violin plots of the 
+#'     minimum distances each non-cluster cell to each cluster. Defaults to 
+#'     TRUE.
+#'
+#' @return A data frame containing information about the reference cell, the 
+#'     nearest cell of another type, and the distance between them for each cell 
+#'     type pair.
+#'
+#' @examples
+#' minimum_distances_to_clusters <- calculate_minimum_distances_to_clusters3D(
+#'     spe = SPIAT-3D::simulated_spe_with_alpha_hull_clustering,
+#'     cell_types_inside_cluster = c("Tumour"),
+#'     cell_types_outside_cluster = c("Tumour", "Immune"),
+#'     cluster_colname = "alpha_hull_cluster",
+#'     feature_colname = "Cell.Type",
+#'     plot_image = TRUE
+#' )
+#' 
+#' @export
+
 calculate_minimum_distances_to_clusters3D <- function(spe, 
                                                       cell_types_inside_cluster, 
                                                       cell_types_outside_cluster, 
@@ -62,13 +104,18 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
   n_clusters <- max(spe[[cluster_colname]])
   
   for (i in seq(n_clusters)) {
+    # Get coordinates of cells inside current cluster
     cluster_coords <- spe_coords[spe[[cluster_colname]] == i & spe[[feature_colname]] %in% cell_types_inside_cluster, ]
+    # Get cell types of cells inside current cluster
     cluster_cell_types <- spe[["Cell.Type"]][spe[[cluster_colname]] == i & spe[[feature_colname]] %in% cell_types_inside_cluster]
+    # Get ids of cells inside current cluster
     cluster_cell_ids <- spe[["Cell.ID"]][spe[[cluster_colname]] == i & spe[[feature_colname]] %in% cell_types_inside_cluster]
     
     for (outside_cell_type in cell_types_outside_cluster) {
+      # Get coordinates of cells outside of any cluster
       curr_cell_type_coords <- cell_types_outside_cluster_coords[[outside_cell_type]]
       
+      # Get minimum distances of each cell outside of any cluster to current cluster
       all_closest <- RANN::nn2(data = cluster_coords, 
                                query = curr_cell_type_coords, 
                                k = 1) 
