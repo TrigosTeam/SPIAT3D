@@ -1,3 +1,41 @@
+#' @title Calculate pairwise distances between cell types in 3D spatial data.
+#'
+#' @description This function calculates the pairwise distances between 
+#'     different cell types in a 3D SpatialExperiment object. It allows you to 
+#'     specify a subset of cell types to analyse and provides the option to 
+#'     summarise the results and plot violin plots of the pairwise distances 
+#'     between cell types.
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell.
+#' @param cell_types_of_interest A character vector specifying the cell types of 
+#'     interest. If NULL, all cell types in the `feature_colname` column will be 
+#'     considered.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type"
+#' @param show_summary A logical indicating whether to print a summary of the 
+#'     pairwise distances for each cell type pair. Defaults to TRUE.
+#' @param plot_image A logical indicating whether to plot violin plots of the 
+#'     pairwise distances between cell type pairs. Defaults to TRUE.
+#'
+#' @return A data frame containing information about the reference cell, target
+#'     cell, and the distance between them for all reference and target cells
+#'     and for each cell type pair.
+#'
+#' @examples
+#' pairwise_distances <- calculate_pairwise_distances_between_cell_types3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     cell_types_of_interest = NULL,
+#'     feature_colname = "Cell.Type",
+#'     show_summary = TRUE,
+#'     plot_image = TRUE
+#' )
+#' 
+#' @export
+
 calculate_pairwise_distances_between_cell_types3D <- function(spe,
                                                               cell_types_of_interest = NULL,
                                                               feature_colname = "Cell.Type",
