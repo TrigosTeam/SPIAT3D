@@ -30,7 +30,7 @@
 #'     cell_types_of_interest = c("Tumour", "Immune"),
 #'     alpha = 8,
 #'     feature_colname = "Cell.Type",
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_alpha_hull_clusters3D(
@@ -39,6 +39,8 @@
 #'     plot_colours = NULL,
 #'     feature_colname = "Cell.Type"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 

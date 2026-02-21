@@ -29,6 +29,8 @@
 #'     feature_colname = "Cell.Type"
 #' )
 #' 
+#' methods::show(fig)
+#' 
 #' @export
 
 plot_cells3D <- function(spe,

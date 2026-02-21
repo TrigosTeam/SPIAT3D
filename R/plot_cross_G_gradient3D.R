@@ -32,6 +32,8 @@
 #'     target_cell_type = "Immune"
 #' )
 #' 
+#' methods::show(fig)
+#' 
 #' @export
 
 plot_cross_G_gradient3D <- function(cross_G_gradient_df, 

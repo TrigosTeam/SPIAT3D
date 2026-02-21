@@ -31,7 +31,7 @@
 #'     n_splits = 10,
 #'     minimum_cells_in_cluster = 30,
 #'     feature_colname = "Cell.Type",
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_grid_based_clusters3D(
@@ -40,6 +40,8 @@
 #'     plot_colours = NULL,
 #'     feature_colname = "Cell.Type"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 

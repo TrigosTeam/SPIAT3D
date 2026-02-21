@@ -22,6 +22,8 @@
 #'     co_occurrence_gradient_df = result
 #' )
 #' 
+#' methods::show(fig)
+#' 
 #' @export
 
 plot_co_occurrence_gradient3D <- function(co_occurrence_gradient_df) {

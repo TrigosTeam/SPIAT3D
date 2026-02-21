@@ -21,13 +21,15 @@
 #'     reference_cell_types = c("Tumour"),
 #'     target_cell_types = c("Immune"),
 #'     feature_colname = "Cell.Type",
-#'     plot_image = T
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_grid_metrics_discrete3D(
 #'     grid_metrics = cell_prop_grid_metrics,
 #'     metric_colname = "proportion"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 

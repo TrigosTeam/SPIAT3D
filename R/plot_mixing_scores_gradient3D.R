@@ -19,13 +19,15 @@
 #'     target_cell_type = "Immune",
 #'     radii = seq(20, 100, 10),
 #'     feature_colname = "Cell.Type",
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_mixing_scores_gradient3D(
 #'     mixing_scores_gradient_df = result,
 #'     metric = "MS"
 #' )
+#'
+#' methods::show(fig)
 #' 
 #' @export
 

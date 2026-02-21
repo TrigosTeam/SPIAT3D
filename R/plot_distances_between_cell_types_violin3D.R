@@ -6,7 +6,7 @@
 #' 
 #' @param distances_df A data frame obtained from the output of the 
 #'     calculate_pairwise_distances_between_cell_types3D or
-#'     calculate_minimum_distances_between_cell_tyeps3D functions.
+#'     calculate_minimum_distances_between_cell_types3D functions.
 #'     
 #' @param scales A string to control the facet wrap scales of the ggplot object.
 #'     Either "fixed", "free_x", "free_y" or "free". Would not recommend 
@@ -20,13 +20,15 @@
 #'     cell_types_of_interest = NULL,
 #'     feature_colname = "Cell.Type",
 #'     show_summary = TRUE,
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_distances_between_cell_types_violin3D(
 #'     distances_df = minimum_distances,
 #'     scales = "free_x"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 

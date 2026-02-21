@@ -23,7 +23,7 @@
 #'     radius = 30,
 #'     feature_colname = "Cell.Type",
 #'     show_summary = TRUE,
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_neighbourhood_counts_violin3D(
@@ -31,6 +31,8 @@
 #'     reference_cell_type = "Tumour",
 #'     scales = "free_x"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 

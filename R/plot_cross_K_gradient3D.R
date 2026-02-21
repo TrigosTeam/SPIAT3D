@@ -22,6 +22,8 @@
 #'     cross_K_gradient_df = result
 #' )
 #' 
+#' methods::show(fig)
+#' 
 #' @export
 
 plot_cross_K_gradient3D <- function(cross_K_gradient_df) {

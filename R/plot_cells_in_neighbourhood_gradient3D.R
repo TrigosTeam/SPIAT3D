@@ -27,6 +27,8 @@
 #'     reference_cell_type = "Tumour"
 #' )
 #' 
+#' methods::show(fig)
+#' 
 #' @export
 
 plot_cells_in_neighbourhood_gradient3D <- function(cells_in_neighbourhood_gradient_df, 

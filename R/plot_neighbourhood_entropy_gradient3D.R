@@ -19,13 +19,15 @@
 #'     target_cell_types = c("Tumour", "Immune"),
 #'     radii = seq(20, 100, 10),
 #'     feature_colname = "Cell.Type",
-#'     plot_image = TRUE
+#'     plot_image = FALSE
 #' )
 #' 
 #' fig <- plot_neighbourhood_entropy_gradient3D(
 #'     neighbourhood_entropy_gradient_df = result,
 #'     reference_cell_type = "Tumour"
 #' )
+#' 
+#' methods::show(fig)
 #' 
 #' @export
 
