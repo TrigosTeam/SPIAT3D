@@ -21,8 +21,8 @@
 #'     `colData` slot of the SpatialExperiment object that contains the cell 
 #'     type information. Defaults to "Cell.Type"
 #'
-#' @return A Plotly object plotting the cells and alpha hull clusters of the 
-#'     3D SpatialExperiment Object.
+#' @return A Plotly object plotting the cells and alpha hull clusters of the 3D 
+#'     SpatialExperiment Object.
 #'
 #' @examples
 #' alpha_hull_spe <- alpha_hull_clustering3D(
