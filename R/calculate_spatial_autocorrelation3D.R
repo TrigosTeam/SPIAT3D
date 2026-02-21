@@ -1,3 +1,44 @@
+#' @title Calculate spatial autocorrelation of 3D grid metrics.
+#'
+#' @description This functions calculates the spatial autocorrelation of 3D
+#'     grid metrics, which quantifies the interaction of rectangular prisms with
+#'     similar proportion/entropy values in the 3D grid metrics.
+#' 
+#' @param grid_metrics A data frame containing the proportion/entropy and 
+#'     spatial information for each rectangular prism. Obtained from the output
+#'     of the calculate_cell_proportion_grid_metrics3D and 
+#'     calculate_entropy_grid_metrics3D functions.
+#' @param metric_colname A string specifying the name of the column in 
+#'     `grid_metrics` containing the proportion/entropy information. Should be
+#'     'proportion' or 'entropy'.
+#' @param weight_method A string specifying the method to use to determining 
+#'     whether rectangular prisms are interacting or not, via a weight. A weight
+#'     of 1 means the rectangular prisms are interacting, while a weight 0 means
+#'     they are not. Methods include "IDW" (inverse distance weighting), "rook"
+#'     (adjacent rectangular prisms have a weight of 1, else 0), and "queen"
+#'     (adjacent rectangular prisms, including diagonally, have a weight of 1,
+#'     else 0).
+#'
+#' @return A numeric representing the spatial autocorrelation value.
+#'
+#' @examples
+#' cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     n_splits = 10,
+#'     reference_cell_types = c("Tumour"),
+#'     target_cell_types = c("Immune"),
+#'     feature_colname = "Cell.Type",
+#'     plot_image = T
+#' )
+#' 
+#' spatial_autocorrelation <- calculate_spatial_autocorrelation3D(
+#'     grid_metrics = cell_prop_grid_metrics,
+#'     metric_colname = "proportion",
+#'     weight_method = "queen"
+#' )
+#' 
+#' @export
+
 calculate_spatial_autocorrelation3D <- function(grid_metrics,
                                                 metric_colname,
                                                 weight_method) {

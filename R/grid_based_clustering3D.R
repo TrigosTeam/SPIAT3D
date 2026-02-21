@@ -1,3 +1,42 @@
+#' @title Find cell clusters in 3D spatial data using grid based clustering 
+#'     algorithm.
+#'
+#' @description This function finds cell clusters in a 3D SpatialExperiment 
+#'     object using the grid based clustering algorithm. 
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell.
+#' @param cell_types_of_interest A character vector specifying the cell types of 
+#'     interest.
+#' @param n_splits A positive numeric integer specifying the number splits used
+#'     to divide the x-axis, y-axis and z-axis.
+#' @param minimum_cells_in_cluster A positive numeric. Clusters identified which 
+#'     have less than this specified value are relabelled as not a cluster.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type"
+#' @param plot_image A logical indicating whether to plot 3D spatial data with 
+#'     grid based clusters. Defaults to TRUE.
+#'
+#' @return The same 3D SpatialExperiment object used as input for spe, with an 
+#'     added column in the `colData` slot to specify which grid based cluster 
+#'     each cell belongs to, and added metadata containing information needed to 
+#'     plot the grid based clusters.
+#'
+#' @examples
+#' grid_based_spe <- grid_based_clustering3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     cell_types_of_interest = c("Tumour", "Immune"),
+#'     n_splits = 10,
+#'     minimum_cells_in_cluster = 30,
+#'     feature_colname = "Cell.Type",
+#'     plot_image = TRUE
+#' )
+#' 
+#' @export
+
 grid_based_clustering3D <- function(spe,
                                     cell_types_of_interest,
                                     n_splits,

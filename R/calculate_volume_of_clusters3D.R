@@ -1,3 +1,32 @@
+#' @title Algorithm to determine the volume of cell clusters in 3D spatial data.
+#'
+#' @description This function finds the volume of cell clusters in a 3D 
+#'     SpatialExperiment Object, where the cell clusters have already been 
+#'     identified using an existing SPIAT-3D cell clustering algorithm function.
+#' 
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell. It must also contain the cell clustering 
+#'     information, obtained by passing the SpatialExperiment object through one 
+#'     of the cell clustering algorithm functions in SPIAT-3D 
+#'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
+#' @param cluster_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     clustering information. Should be 'alpha_hull_cluster', 'dbscan_cluster', 
+#'     or 'grid_based_cluster'.
+#'
+#' @return A data frame containing the volume of each cluster, using different
+#'     volume calculation methods, depending on the clustering method used.
+#'
+#' @examples
+#' volume_of_clusters <- calculate_volume_of_clusters3D(
+#'     spe = SPIAT-3D::simulated_spe_with_alpha_hull_clustering,
+#'     cluster_colname = "alpha_hull_cluster"
+#' )
+#' 
+#' @export
+
 calculate_volume_of_clusters3D <- function(spe, 
                                            cluster_colname) {
   

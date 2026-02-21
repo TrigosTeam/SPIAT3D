@@ -1,3 +1,27 @@
+#' @title Calculate grid metrics in 3D spatial data.
+#'
+#' @description This functions divides a 3D SpatialExperiment Object into a 3D 
+#'     grid of rectangular prisms. The number and types of cells in each 
+#'     rectangular prism and the coordinate of each rectangular prism is 
+#'     calculated. The is a supporting function used in 
+#'     calculate_cell_proportion_grid_metrics3D and 
+#'     calculate_entropy_grid_metrics3D.
+#' 
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell. 
+#' @param n_splits A positive numeric integer specifying the number splits used
+#'     to divide the x-axis, y-axis and z-axis.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type".
+#'
+#' @return A list containing the number and type of cells in each rectangular 
+#'     prism, and the coordinate of each rectangular prism.
+#' 
+#' @export
+
 get_spe_grid_metrics3D <- function(spe, 
                                    n_splits, 
                                    feature_colname = "Cell.Type") {

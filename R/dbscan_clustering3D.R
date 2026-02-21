@@ -1,4 +1,46 @@
-library(dbscan)
+#' @title Find cell clusters in 3D spatial data using dbscan clustering 
+#'     algorithm.
+#'
+#' @description This function finds cell clusters in a 3D SpatialExperiment 
+#'     object using the dbscan clustering algorithm. 
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for 
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'     and z-coordinate of each cell.
+#' @param cell_types_of_interest A character vector specifying the cell types of 
+#'     interest.
+#' @param radius A positive numeric. Spheres of specified radius are drawn
+#'     around each cell type of interest and the number of other cell types of
+#'     interest are counted.
+#' @param minimum_cells_in_radius A positive numeric. If the number of cells 
+#'     types of interest within the sphere of another cell type of interest 
+#'     surpasses this specified value, they form a cluster.
+#' @param minimum_cells_in_cluster A positive numeric. Clusters identified with
+#'     dbscan which have less than this specified value are relabelled as not a
+#'     cluster.
+#' @param feature_colname A string specifying the name of the column in the 
+#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#'     type information. Defaults to "Cell.Type"
+#' @param plot_image A logical indicating whether to plot 3D spatial data with 
+#'     alpha hull clusters. Defaults to TRUE.
+#'
+#' @return The same 3D SpatialExperiment object used as input for spe, with an 
+#'     added column in the `colData` slot to specify which dbscan cluster each 
+#'     cell belongs to.
+#'
+#' @examples
+#' dbscan_spe <- dbscan_clustering3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     cell_types_of_interest = c("Tumour", "Immune"),
+#'     radius = 30,
+#'     minimum_cells_in_radius = 10,
+#'     minimum_cells_in_cluster = 30,
+#'     feature_colname = "Cell.Type",
+#'     plot_image = TRUE
+#' )
+#' 
+#' @export
 
 dbscan_clustering3D <- function(spe,
                                 cell_types_of_interest,
@@ -41,6 +83,7 @@ dbscan_clustering3D <- function(spe,
     stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
   
+  # Focus on cell types of interest
   spe_subset <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
   spe_subset_coords <- spatialCoords(spe_subset)
   
