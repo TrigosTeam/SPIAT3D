@@ -12,7 +12,7 @@
 #'     and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of 
 #'     interest. If NULL, all cell types in the `feature_colname` column will be 
-#'     considered.
+#'     considered. Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the 
 #'     `colData` slot of the SpatialExperiment object that contains the cell 
 #'     type information. Defaults to "Cell.Type"
