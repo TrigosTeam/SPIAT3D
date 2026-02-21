@@ -1,3 +1,31 @@
+#' @title Summarise neighbourhood counts data.
+#'
+#' @description This function summarises the neighbourhood counts data, showing 
+#'     mean, min, max, median and standard deviation for each reference and
+#'     target cell type pair.
+#' 
+#' @param neighbourhood_counts_dfs A data frame obtained from the output of the 
+#'     calculate_neighbourhood_counts3D function.
+#'
+#' @return A data frame containing the summarised data.
+#'
+#' @examples
+#' result <- calculate_neighbourhood_counts3D(
+#'     spe = SPIAT-3D::simulated_spe,
+#'     reference_cell_type = "Tumour",
+#'     target_cell_types = c("Tumour", "Immune"),
+#'     radius = 30,
+#'     feature_colname = "Cell.Type",
+#'     show_summary = TRUE,
+#'     plot_image = TRUE
+#' )
+#' 
+#' neighbourhood_counts_summary <- summarise_neighbourhood_counts3D(
+#'     neighbourhood_counts_df = result
+#' )
+#' 
+#' @export
+
 summarise_neighbourhood_counts3D <- function(neighbourhood_counts_df) {
   
   ## Target cell types will be all the columns except the first column
