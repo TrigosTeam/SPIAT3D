@@ -130,15 +130,14 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   
   ## Plot
   if (plot_image) {
-    fig_ACIN <- plot_neighbourhood_counts_gradient3D(result[["neighbourhood_counts"]], reference_cell_type)
+    fig_ANC <- plot_neighbourhood_counts_gradient3D(result[["neighbourhood_counts"]], reference_cell_type)
+    methods::show(fig_ANC)
+    
+    fig_ACIN <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
     methods::show(fig_ACIN)
     
-    fig_ACINP <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
-    methods::show(fig_ACINP)
-    
-    expected_entropy <- calculate_entropy_background3D(spe, target_cell_types, feature_colname)
-    fig_AE <- plot_neighbourhood_entropy_gradient3D(result[["neighbourhood_entropy"]], reference_cell_type)
-    methods::show(fig_AE)
+    fig_ANE <- plot_neighbourhood_entropy_gradient3D(result[["neighbourhood_entropy"]], reference_cell_type)
+    methods::show(fig_ANE)
     
     for (target_cell_type in names(result[["mixing_score"]])) {
       fig_NMS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "NMS")
@@ -147,22 +146,18 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
       methods::show(fig_NMS_MS)
     }
     fig_CK <- plot_cross_K_gradient3D(result[["cross_K"]])
-    fig_CKR <- plot_cross_K_gradient_ratio3D(result[["cross_K"]])
-    fig_CK_CKR <- plot_grid(fig_CK, fig_CKR, nrow = 2)
-    methods::show(fig_CK_CKR)
+    methods::show(fig_CK)
     
     fig_CL <- plot_cross_L_gradient3D(result[["cross_L"]])
-    fig_CLR <- plot_cross_L_gradient_ratio3D(result[["cross_L"]])
-    fig_CL_CLR <- plot_grid(fig_CL, fig_CLR, nrow = 2)
-    methods::show(fig_CL_CLR)
+    methods::show(fig_CL)
     
     for (target_cell_type in names(result[["cross_G"]])) {
       fig_CG <- plot_cross_G_gradient3D(result[["cross_G"]][[target_cell_type]], reference_cell_type, target_cell_type)
       methods::show(fig_CG)
     }
     
-    fig_co_occ <- plot_co_occurrence_gradient3D(result[["co_occurrence"]])
-    methods::show(fig_co_occ)
+    fig_COO <- plot_co_occurrence_gradient3D(result[["co_occurrence"]])
+    methods::show(fig_COO)
   }
   
   return(result)

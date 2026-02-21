@@ -62,11 +62,8 @@ calculate_cross_L_gradient3D <- function(spe,
   result$radius <- radii
   
   if (plot_image) {
-    fig1 <- plot_cross_L_gradient3D(result)
-    fig2 <- plot_cross_L_gradient_ratio3D(result)
-    
-    combined_fig <- plot_grid(fig1, fig2, nrow = 2)
-    methods::show(combined_fig)
+    fig <- plot_cross_L_gradient3D(result)
+    methods::show(fig)
   }
   
   return(result)
