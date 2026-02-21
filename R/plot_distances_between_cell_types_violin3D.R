@@ -1,7 +1,7 @@
 #' @title Function to plot distances between cell types as a set of violin 
 #'     plots.
 #'
-#' @description This function plots the distances between cell types data as a 
+#' @description This function plots the distances between cell types data as
 #'     violin plots, showing the distances for each cell type pair.
 #' 
 #' @param distances_df A data frame obtained from the output of the 
