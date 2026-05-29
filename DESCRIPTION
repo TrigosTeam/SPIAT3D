@@ -3,7 +3,7 @@ Title: Spatial image analysis of tissues in 3D
 Version: 0.1.0
 Authors@R: 
     person("David", "Le", , "david.le@petermac.org", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-0009-0008-1215-4230-ID"))
+           comment = c(ORCID = "0009-0008-1215-4230"))
 Description: SPIAT-3D has a diverse range of spatial metrics which use the 
               x, y, z and cell type identity of each cell to analyse 3D spatial 
               tissue data. Includes 3D cell colocalization metrics, spatial 
