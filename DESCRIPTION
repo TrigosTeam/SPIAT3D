@@ -23,8 +23,7 @@ Imports:
   reshape2,
   gtools,
   DescTools,
-  dplyr,
-
+  dplyr
 URL: https://github.com/TrigosTeam/SPIAT3D
 Suggests: 
     SpatialExperiment,
