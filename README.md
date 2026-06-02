@@ -31,4 +31,4 @@ BiocManager::install("SpatialExperiment")
 
 The vignette with an overview of the package can be accessed from the
 top Menu under About or clicking
-[here](https://tenor.com/en-AU/view/bye-gif-13631410119550334366).
+[here](https://trigosteam.github.io/SPIAT3D/).
