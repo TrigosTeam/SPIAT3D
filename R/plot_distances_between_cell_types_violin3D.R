@@ -18,7 +18,7 @@
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
-#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 #'
 #' # Calculate minimum distances from simulated spe
 #' minimum_distances <- calculate_minimum_distances_between_cell_types3D(

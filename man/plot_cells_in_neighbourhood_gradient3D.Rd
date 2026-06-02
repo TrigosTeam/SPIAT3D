@@ -26,7 +26,7 @@ a line graph, showing average cells in neighbourhood vs radius.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 # Calculate cells in the neighbourhood gradient for simulated spe
 result <- calculate_cells_in_neighbourhood_gradient3D(

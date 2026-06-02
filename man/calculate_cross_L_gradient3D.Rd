@@ -45,7 +45,7 @@ cross K gradient.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 result <- calculate_cross_L_gradient3D(
     spe = simulated_spe,

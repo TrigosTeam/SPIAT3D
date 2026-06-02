@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
-#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 #'
 #' # Calculate mixing scores gradient from simulated spe
 #' result <- calculate_mixing_scores_gradient3D(

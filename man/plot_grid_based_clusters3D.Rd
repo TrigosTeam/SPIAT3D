@@ -43,7 +43,7 @@ grid based clusters have already been identified.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 # Get grid based clusters
 grid_based_spe <- grid_based_clustering3D(

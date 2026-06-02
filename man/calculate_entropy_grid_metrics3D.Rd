@@ -45,7 +45,7 @@ calculate_prevalence_gradient3D.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 entropy_grid_metrics <- calculate_entropy_grid_metrics3D(
     spe = simulated_spe,

@@ -32,7 +32,7 @@ above/below the required threshold.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 # Get cell proportion grid metrics
 cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(

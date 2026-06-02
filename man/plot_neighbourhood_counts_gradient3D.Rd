@@ -26,7 +26,7 @@ line graph, showing average neighbourhood counts vs radius.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 # Calculate neighbourhood counts gradient from simulated spe
 result <- calculate_neighbourhood_counts_gradient3D(

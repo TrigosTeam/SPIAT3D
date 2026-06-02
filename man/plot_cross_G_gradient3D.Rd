@@ -31,7 +31,7 @@ showing cross G vs radius.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
-simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
 # Calculate cross G gradient from simulated spe
 result <- calculate_cross_G_gradient3D(

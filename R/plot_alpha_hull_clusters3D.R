@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
-#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 #'
 #' # Get alpha hull clusters
 #' alpha_hull_spe <- alpha_hull_clustering3D(

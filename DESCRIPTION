@@ -15,7 +15,6 @@ RoxygenNote: 7.3.3
 Imports:
   BiocManager,
   dbscan,
-  alphashape3d,
   apcluster,
   plotly,
   reshape2,
@@ -30,7 +29,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    pkgdown
+    pkgdown,
+    alphashape3d
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 
