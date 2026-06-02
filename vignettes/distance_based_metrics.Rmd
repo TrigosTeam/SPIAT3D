@@ -73,8 +73,9 @@ minimum_distances <- calculate_minimum_distances_between_cell_types3D(
 # Interpretating the distance matrices
 After obtaining the distance matrices from either the pairwise or minimum
 distance functions, SPIAT3D offers ways to interpret the data. This includes
-printing a summary of the distance data and plotting the distance data as
-violin plots.
+printing a summary of the distance data, showing the mean, median, ... for each
+cell-cell pair. This also includes plotting the distance data for each cell-cell
+pair as violin plots.
 ```{r}
 # Print summary of pairwise distance data
 distances_summary <- summarise_distances_between_cell_types3D(
