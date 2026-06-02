@@ -44,6 +44,7 @@ result <- calculate_all_single_radius_cc_metrics3D(
     spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
+    radius = 30,
     feature_colname = "Cell.Type"
 )
 

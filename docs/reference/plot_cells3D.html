@@ -117,7 +117,19 @@ Object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get simulated SpatialExperiment object to use as an example for analysis</span></span></span>
+<span class="r-in"><span><span class="va">simulated_spe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simulated_spe.rds"</span>, package <span class="op">=</span> <span class="st">"SPIAT3D"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">fig</span> <span class="op">&lt;-</span> <span class="fu">plot_cells3D</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    spe <span class="op">=</span> <span class="va">simulated_spe</span>,</span></span>
+<span class="r-in"><span>    plot_cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tumour"</span>, <span class="st">"Immune"</span>, <span class="st">"Endothelial"</span>, <span class="st">"Others"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    plot_colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"orange"</span>, <span class="st">"skyblue"</span>, <span class="st">"tomato"</span>, <span class="st">"lightgray"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">methods</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">fig</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -18,6 +18,8 @@
 #' @return A data frame containing the cell types, their frequencies,
 #'     proportions, and percentages.
 #'
+#' @importFrom ggplot2 ggplot aes geom_bar theme_bw labs element_text geom_text
+#'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
 #' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
@@ -96,7 +98,7 @@ calculate_cell_proportions3D <- function(spe,
 
     labels <- paste(round(cell_proportions$percentage, 1), "%", sep = "")
 
-    fig <- ggplot2::ggplot(cell_proportions, aes(x = factor(cell_type, cell_type), y = percentage, fill = cell_type)) +
+    fig <- ggplot(cell_proportions, aes(x = factor(cell_type, cell_type), y = percentage, fill = cell_type)) +
       geom_bar(stat='identity') +
       theme_bw() +
       labs(title="Cell proportions", x = "Cell type", y = "Percentage") +

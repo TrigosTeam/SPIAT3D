@@ -46,7 +46,7 @@ result <- calculate_mixing_scores3D(
     spe = simulated_spe,
     reference_cell_types = c("Tumour", "Immune"),
     target_cell_types = c("Tumour", "Immune"),
-    radius = 30
+    radius = 30,
     feature_colname = "Cell.Type"
 )
 

@@ -52,7 +52,7 @@ simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "
 
 # Get dbscan clusters
 dbscan_spe <- dbscan_clustering3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     radius = 30,
     minimum_cells_in_radius = 10,
@@ -64,6 +64,7 @@ dbscan_spe <- dbscan_clustering3D(
 # Get borders of dbscan clusters
 spe_with_border_of_clusters <- calculate_border_of_clusters3D(
     spe = dbscan_spe,
+    radius = 10,
     cluster_colname = "dbscan_cluster",
     feature_colname = "Cell.Type",
     plot_image = T

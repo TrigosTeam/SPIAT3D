@@ -26,6 +26,7 @@
 #'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
+#'     radius = 30,
 #'     feature_colname = "Cell.Type"
 #' )
 #'

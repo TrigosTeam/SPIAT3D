@@ -33,6 +33,7 @@
 #'     spe = simulated_spe,
 #'     cell_types_of_interest = c("Tumour", "Immune"),
 #'     alpha = 8,
+#'     minimum_cells_in_cluster = 5,
 #'     feature_colname = "Cell.Type",
 #'     plot_image = TRUE
 #' )
@@ -90,7 +91,7 @@ alpha_hull_clustering3D <- function(spe,
   alpha_hull_clusters <- alphashape3d::components_ashape3d(alpha_hull)
 
   ## Convert spe object to data frame
-  df <- data.frame(SpatialExperiment::spatialCoords(spe), colData(spe))
+  df <- data.frame(SpatialExperiment::spatialCoords(spe), SummarizedExperiment::colData(spe))
 
   df_cell_types_of_interest <- df[df[[feature_colname]] %in% cell_types_of_interest, ]
   df_other_cell_types <- df[!(df[[feature_colname]] %in% cell_types_of_interest), ]

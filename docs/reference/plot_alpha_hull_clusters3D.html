@@ -121,7 +121,49 @@ SpatialExperiment Object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get simulated SpatialExperiment object to use as an example for analysis</span></span></span>
+<span class="r-in"><span><span class="va">simulated_spe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simulated_spe.rds"</span>, package <span class="op">=</span> <span class="st">"SPIAT3D"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get alpha hull clusters</span></span></span>
+<span class="r-in"><span><span class="va">alpha_hull_spe</span> <span class="op">&lt;-</span> <span class="fu"><a href="alpha_hull_clustering3D.html">alpha_hull_clustering3D</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    spe <span class="op">=</span> <span class="va">simulated_spe</span>,</span></span>
+<span class="r-in"><span>    cell_types_of_interest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tumour"</span>, <span class="st">"Immune"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    alpha <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>    minimum_cells_in_cluster <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>    feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span>,</span></span>
+<span class="r-in"><span>    plot_image <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Registered S3 methods overwritten by 'rgl':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   method               from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   knit_print.rglId         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   knit_print.rglOpen3d     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   sew.rglRecordedplot      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in dyn.load(dynlib &lt;- getDynlib(dir)) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   unable to load shared object '/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rgl/libs/rgl.so':</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dlopen(/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rgl/libs/rgl.so, 0x0006): Library not loaded: /opt/X11/lib/libGLU.1.dylib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Referenced from: &lt;4313856D-C021-3570-BF65-7F88B28FE91C&gt; /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rgl/libs/rgl.so</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Reason: tried: '/opt/X11/lib/libGLU.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libGLU.1.dylib' (no such file), '/opt/X11/lib/libGLU.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libGLU.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-11.0.18+10/Contents/Home/lib/server/libGLU.1.dylib' (no such file)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>	Loading rgl's DLL failed. </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> 	You appear to be running macOS Tahoe or newer.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>     	               Tahoe 26.1 is known not to support OpenGL. See the discussion in https://stackoverflow.com/a/66127391</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Trying without OpenGL...</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> .onLoad failed in loadNamespace() for 'rgl', details:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   call: rgl.init(initValue, onlyNULL)</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   error: OpenGL is not available in this build</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot</span></span></span>
+<span class="r-in"><span><span class="va">fig</span> <span class="op">&lt;-</span> <span class="fu">plot_alpha_hull_clusters3D</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    spe_with_alpha_hull <span class="op">=</span> <span class="va">alpha_hull_spe</span>,</span></span>
+<span class="r-in"><span>    plot_cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>    plot_colours <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>    feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'alpha_hull_spe' not found</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">methods</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">fig</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'show': object 'fig' not found</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

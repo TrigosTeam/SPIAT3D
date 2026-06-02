@@ -51,7 +51,7 @@ simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "
 
 pairwise_distances <- calculate_pairwise_distances_between_cell_types3D(
     spe = simulated_spe,
-    cell_types_of_interest = NULL,
+    cell_types_of_interest = c("Tumour", "Immune"),
     feature_colname = "Cell.Type",
     show_summary = TRUE,
     plot_image = TRUE

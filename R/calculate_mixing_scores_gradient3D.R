@@ -76,7 +76,7 @@ calculate_mixing_scores_gradient3D <- function(spe,
   if (plot_image) {
     fig1 <- plot_mixing_scores_gradient3D(result, "NMS")
     fig2 <- plot_mixing_scores_gradient3D(result, "MS")
-    combined_fig <- plot_grid(fig1, fig2, nrow = 2)
+    combined_fig <- cowplot::plot_grid(fig1, fig2, nrow = 2)
     methods::show(combined_fig)
   }
 

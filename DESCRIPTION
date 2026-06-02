@@ -22,7 +22,9 @@ Imports:
   dplyr,
   magrittr,
   viridis,
-  grDevices
+  grDevices,
+  SummarizedExperiment,
+  cowplot
 URL: https://github.com/TrigosTeam/SPIAT3D
 Suggests: 
     SpatialExperiment,

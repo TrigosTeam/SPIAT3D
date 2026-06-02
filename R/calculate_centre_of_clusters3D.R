@@ -29,7 +29,7 @@
 #'
 #' # Get dbscan clusters
 #' dbscan_spe <- dbscan_clustering3D(
-#'     spe = SPIAT-3D::simulated_spe,
+#'     spe = simulated_spe,
 #'     cell_types_of_interest = c("Tumour", "Immune"),
 #'     radius = 30,
 #'     minimum_cells_in_radius = 10,
@@ -40,7 +40,7 @@
 #'
 #' # Get centre of dbscan clusters
 #' cluster_centres <- calculate_center_of_clusters3D(
-#'     spe = dbscan_spe
+#'     spe = dbscan_spe,
 #'     cluster_colname = "dbscan_cluster"
 #' )
 #'
@@ -64,7 +64,7 @@ calculate_center_of_clusters3D <- function(spe,
   n_clusters <- max(spe[[cluster_colname]])
 
   # Get spe coords
-  spe_coords <- spatialCoords(spe)
+  spe_coords <- SpatialExperiment::spatialCoords(spe)
 
   ## For each cluster, determine the number of cells in each cluster of each cluster
   result <- data.frame(matrix(nrow = n_clusters, ncol = 4))

@@ -50,6 +50,7 @@ alpha_hull_spe <- alpha_hull_clustering3D(
     spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     alpha = 8,
+    minimum_cells_in_cluster = 5,
     feature_colname = "Cell.Type",
     plot_image = FALSE
 )

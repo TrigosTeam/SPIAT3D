@@ -78,9 +78,6 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
   if (!is.character(cell_types_outside_cluster)) {
     stop("`cell_types_outside_cluster` is not a character vector.")
   }
-  if (!(is.numeric(radius) && length(radius) == 1 && radius > 0)) {
-    stop("`radius` is not a positive numeric.")
-  }
   if (!is.character(cluster_colname)) {
     stop("`cluster_colname` is not a character. This should be 'alpha_hull_cluster', 'dbscan_cluster', or 'grid_based_cluster', depending on the chosen method.")
   }
