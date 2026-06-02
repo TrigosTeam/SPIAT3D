@@ -1,8 +1,8 @@
 ---
-title: "introduction"
+title: "Cell colocalization metrics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{introduction}
+  %\VignetteIndexEntry{Cell colocalization metrics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
