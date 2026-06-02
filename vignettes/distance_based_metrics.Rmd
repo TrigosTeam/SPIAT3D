@@ -17,3 +17,93 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(SPIAT3D)
 ```
+
+# Introduction
+SPIAT3D has two distance based metrics that have been adapted from the original
+SPIAT. This vignette will go through both of them. Firstly, you will need 3D
+spatial data to analyse, I will be using a simulated dataset available in this
+package.
+
+```{r}
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.RDS", package = "SPIAT3D"))
+
+print(simulated_spe)
+
+```
+
+# Pairwise distance between cells
+The first distance based metric is the 'pairwise distance between cells' metric
+which involves computing and tabulating the all distances between all cell types
+that the user is interested in. This outputs a distance matrix, showing the
+distance for each cell-cell pair.
+
+Be warned when using this function, its very storage and time demanding, and it
+may not be suitable for use for large datasets.
+
+```{r}
+# Calculate pairwise distance between cells
+pairwise_distances <- calculate_pairwise_distances_between_cell_types3D(
+    spe = simulated_spe,
+    cell_types_of_interest = c("Tumour", "Immune"),
+    feature_colname = "Cell.Type",
+    show_summary = FALSE,
+    plot_image = FALSE
+)
+```
+
+# Minimum distance between cells
+The second distance based metric is the 'minimum distance between cells' metric
+which involves computing and tabulating only the minimum distances between the
+cell types which the user is interested. This outputs a similar, but smaller
+distance matrix to the pairwise distance between cells function, showing the
+minimum distance for each cell-cell pair.
+
+```{r}
+# Calculate minimum distance between cells
+minimum_distances <- calculate_minimum_distances_between_cell_types3D(
+    spe = simulated_spe,
+    cell_types_of_interest = NULL,
+    feature_colname = "Cell.Type",
+    show_summary = FALSE,
+    plot_image = FALSE
+)
+```
+
+# Interpretating the distance matrices
+After obtaining the distance matrices from either the pairwise or minimum
+distance functions, SPIAT3D offers ways to interpret the data. This includes
+printing a summary of the distance data and plotting the distance data as
+violin plots.
+```{r}
+# Print summary of pairwise distance data
+distances_summary <- summarise_distances_between_cell_types3D(
+    distances_df = pairwise_distances
+)
+print(distances_summary)
+
+# Plot violin plots of minimum distance data
+fig <- plot_distances_between_cell_types_violin3D(
+    distances_df = minimum_distances,
+    scales = "free_x"
+)
+methods::show(fig)
+```
+
+# Further analysis of distance matrices
+For our own spatial analysis, we found that it was a good idea to represent the
+3D spatial data using a single value, rather than a large matrix of values. How
+you choose to interpret the distance matrices is up to you.
+
+What we adopted to use was the average minimum distance between cells (AMD). We
+ignored pairwise distance as this was a bit too slow to run. Calculating AMD on
+several 3D datasets gives you a quantitative way to compare the datasets.
+```{r}
+# Get Tumour/Immune AMD
+AMD <- distances_summary$mean[distances_summary$pair == "Tumour/Immune"]
+print(AMD)
+```
+
+
+
+
