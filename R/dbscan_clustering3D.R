@@ -140,7 +140,7 @@ dbscan_clustering3D <- function(spe,
                    y = ~Cell.Y.Position,
                    z = ~Cell.Z.Position,
                    color = ~dbscan_cluster,
-                   colors = rainbow(length(unique(df$dbscan_cluster))),
+                   colors = viridis::viridis(length(unique(df$dbscan_cluster))),
                    marker = list(size = 2)) %>%
       layout(scene = list(xaxis = list(title = 'x'),
                           yaxis = list(title = 'y'),

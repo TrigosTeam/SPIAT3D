@@ -79,9 +79,9 @@ plot_alpha_hull_clusters3D <- function(spe_with_alpha_hull,
                paste(unknown_cell_types, collapse = ", ")))
   }
 
-  ## If no colours inputted, use rainbow palette
+  ## If no colours inputted, use viridis palette
   if (is.null(plot_colours)) {
-    plot_colours <- rainbow(length(plot_cell_types))
+    plot_colours <- viridis::viridis(length(plot_cell_types))
   }
 
   ## User inputs mismatching cell types and colours

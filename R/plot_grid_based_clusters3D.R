@@ -80,8 +80,8 @@ plot_grid_based_clusters3D <- function(spe_with_grid,
                paste(unknown_cell_types, collapse = ", ")))
   }
 
-  ## If no colours inputted, use rainbow palette
-  if (is.null(plot_colours)) plot_colours <- rainbow(length(plot_cell_types))
+  ## If no colours inputted, use viridis palette
+  if (is.null(plot_colours)) plot_colours <- viridis::viridis(length(plot_cell_types))
 
   ## User inputs mismatching cell types and colours
   if (length(plot_cell_types) != length(plot_colours)) stop("Length of plot_cell_types is not equal to length of plot_colours")
