@@ -46,7 +46,7 @@ object using the alpha hull clustering algorithm.
 }
 \examples{
 alpha_hull_spe <- alpha_hull_clustering3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = SPIAT3D::simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     alpha = 8,
     feature_colname = "Cell.Type",
