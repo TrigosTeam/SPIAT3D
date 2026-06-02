@@ -20,14 +20,19 @@ showing mean, min, max, median and standard deviation for each cell type
 pair.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate minimum distances between cells in simulated spe
 minimum_distances <- calculate_minimum_distances_between_cell_types3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = NULL,
     feature_colname = "Cell.Type",
     show_summary = FALSE,
     plot_image = FALSE
 )
 
+# Get summary
 distances_summary <- summarise_distances_between_cell_types3D(
     distances_df = minimum_distances
 )

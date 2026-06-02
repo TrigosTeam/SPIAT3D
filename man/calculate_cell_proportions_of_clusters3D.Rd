@@ -43,17 +43,24 @@ already been identified using an existing SPIAT-3D cell clustering
 algorithm function.
 }
 \examples{
-alpha_hull_spe <- alpha_hull_clustering3D(
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Get dbscan clusters
+dbscan_spe <- dbscan_clustering3D(
     spe = SPIAT-3D::simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
-    alpha = 8,
+    radius = 30,
+    minimum_cells_in_radius = 10,
+    minimum_cells_in_cluster = 30,
     feature_colname = "Cell.Type",
     plot_image = TRUE
 )
 
+# Get cell proportions that make up dbscan clusters
 cluster_cell_props <- calculate_cell_proportions_of_clusters3D(
-    spe = alpha_hull_spe,
-    cluster_colname = "alpha_hull_cluster",
+    spe = dbscan_spe,
+    cluster_colname = "dbscan_cluster",
     feature_colname = "Cell.Type",
     plot_image = T
 )

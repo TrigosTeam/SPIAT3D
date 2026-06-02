@@ -46,8 +46,11 @@ summarise the results and plot violin plots of the pairwise distances
 between cell types.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 pairwise_distances <- calculate_pairwise_distances_between_cell_types3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = NULL,
     feature_colname = "Cell.Type",
     show_summary = TRUE,

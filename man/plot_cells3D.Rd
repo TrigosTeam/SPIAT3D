@@ -39,10 +39,13 @@ This functions plots the cells of 3D spatial data in a 3D
 SpatialExperiment Object.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 fig <- plot_cells3D(
-    spe = SPIAT-3D::simulated_spe,
-    plot_cell_types = NULL,
-    plot_colours = NULL,
+    spe = simulated_spe,
+    plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
+    plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
     feature_colname = "Cell.Type"
 )
 

@@ -53,8 +53,11 @@ This function finds cell clusters in a 3D SpatialExperiment
 object using the dbscan clustering algorithm.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 dbscan_spe <- dbscan_clustering3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     radius = 30,
     minimum_cells_in_radius = 10,

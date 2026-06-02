@@ -37,8 +37,11 @@ normalized mixing score, neighbourhood counts, cells in neighbourhood,
 neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_all_single_radius_cc_metrics3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     feature_colname = "Cell.Type"

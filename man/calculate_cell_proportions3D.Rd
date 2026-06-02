@@ -36,10 +36,13 @@ in a 3D SpatialExperiment object. It can optionally plot a bar chart of
 the cell proportions.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 cell_proportions <- calculate_cell_proportions3D(
-    spe = SPIAT-3D::simulated_spe, 
-    cell_types_of_interest = NULL, 
-    feature_colname = "Cell.Type", 
+    spe = simulated_spe,
+    cell_types_of_interest = NULL,
+    feature_colname = "Cell.Type",
     plot_image = TRUE
 )
 

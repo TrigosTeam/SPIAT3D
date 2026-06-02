@@ -25,8 +25,12 @@ This function plots the cells in neighbourhood gradient data as
 a line graph, showing average cells in neighbourhood vs radius.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate cells in the neighbourhood gradient for simulated spe
 result <- calculate_cells_in_neighbourhood_gradient3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radii = seq(20, 100, 10),
@@ -34,6 +38,7 @@ result <- calculate_cells_in_neighbourhood_gradient3D(
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_cells_in_neighbourhood_gradient3D(
     cells_in_neighbourhood_gradient_df = result,
     reference_cell_type = "Tumour"

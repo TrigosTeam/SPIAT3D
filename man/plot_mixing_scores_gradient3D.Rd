@@ -22,8 +22,12 @@ a line graph, showing either mixing scores or normalised mixing scores vs
 radius.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate mixing scores gradient from simulated spe
 result <- calculate_mixing_scores_gradient3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_type = "Immune",
     radii = seq(20, 100, 10),
@@ -31,6 +35,7 @@ result <- calculate_mixing_scores_gradient3D(
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_mixing_scores_gradient3D(
     mixing_scores_gradient_df = result,
     metric = "MS"

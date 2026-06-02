@@ -36,8 +36,12 @@ equivalently, the proportion of rectangular prisms of the 3D grid metrics
 has a value above the required threshold, for a gradient of thresholds.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Get cell proportion grid metrics
 cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     n_splits = 10,
     reference_cell_types = c("Tumour"),
     target_cell_types = c("Immune"),
@@ -45,6 +49,7 @@ cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
     plot_image = T
 )
 
+# Get prevalence gradient from cell proportion grid metrics
 prevalence_gradient <- calculate_prevalence_gradient3D(
     grid_metrics = cell_prop_grid_metrics,
     metric_colname = "proportion",

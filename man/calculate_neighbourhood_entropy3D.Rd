@@ -39,8 +39,11 @@ reference and target cell around each reference cell, for each target
 cell type.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_neighbourhood_entropy3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radius = 30,

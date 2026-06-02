@@ -34,17 +34,24 @@ estimated by taking the average of the x, y, and z coordinates of
 all cells within a cluster.
 }
 \examples{
-alpha_hull_spe <- alpha_hull_clustering3D(
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Get dbscan clusters
+dbscan_spe <- dbscan_clustering3D(
     spe = SPIAT-3D::simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
-    alpha = 8,
+    radius = 30,
+    minimum_cells_in_radius = 10,
+    minimum_cells_in_cluster = 30,
     feature_colname = "Cell.Type",
     plot_image = TRUE
 )
 
+# Get centre of dbscan clusters
 cluster_centres <- calculate_center_of_clusters3D(
-    spe = alpha_hull_spe
-    cluster_colname = "alpha_hull_cluster",
+    spe = dbscan_spe
+    cluster_colname = "dbscan_cluster"
 )
 
 }

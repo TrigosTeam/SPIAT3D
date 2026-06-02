@@ -45,8 +45,12 @@ This function finds cell clusters in a 3D SpatialExperiment
 object using the alpha hull clustering algorithm.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Alpha hull clustering
 alpha_hull_spe <- alpha_hull_clustering3D(
-    spe = SPIAT3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     alpha = 8,
     feature_colname = "Cell.Type",

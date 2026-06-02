@@ -29,8 +29,12 @@ plots, showing the neighbourhood counts for each reference and target
 cell type pair.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate neighbourhood counts from spe
 result <- calculate_neighbourhood_counts3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radius = 30,
@@ -39,6 +43,7 @@ result <- calculate_neighbourhood_counts3D(
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_neighbourhood_counts_violin3D(
     neighbourhood_counts_df = result,
     reference_cell_type = "Tumour",

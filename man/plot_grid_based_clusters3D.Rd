@@ -42,8 +42,12 @@ displays the grid based clusters in a 3D SpatialExperiment Object where
 grid based clusters have already been identified.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Get grid based clusters
 grid_based_spe <- grid_based_clustering3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     n_splits = 10,
     minimum_cells_in_cluster = 30,
@@ -51,6 +55,8 @@ grid_based_spe <- grid_based_clustering3D(
     plot_image = FALSE
 )
 
+
+# Plot
 fig <- plot_grid_based_clusters3D(
     spe_with_grid = grid_based_spe,
     plot_cell_types = NULL,

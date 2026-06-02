@@ -24,14 +24,19 @@ This function plots the distances between cell types data as
 violin plots, showing the distances for each cell type pair.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate minimum distances from simulated spe
 minimum_distances <- calculate_minimum_distances_between_cell_types3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = NULL,
     feature_colname = "Cell.Type",
     show_summary = TRUE,
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_distances_between_cell_types_violin3D(
     distances_df = minimum_distances,
     scales = "free_x"

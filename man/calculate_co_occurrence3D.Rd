@@ -40,8 +40,11 @@ in the SpatialExperiment Object, for each target cell type and for a
 single radius value.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_co_occurrence3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radii = 30

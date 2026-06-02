@@ -33,8 +33,11 @@ SpatialExperiment object across a subset of cell types chosen by the
 user.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 background_entropy <- calculate_entropy_background3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     feature_colname = "Cell.Type"
 )

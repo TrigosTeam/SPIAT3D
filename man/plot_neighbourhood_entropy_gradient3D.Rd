@@ -25,8 +25,12 @@ This function plots the neighbourhood entropy gradient data as a
 line graph, showing average neighbourhood entropy vs radius.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Calculate neighbourhood entropy gradient from simulated spe
 result <- calculate_neighbourhood_entropy_gradient3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radii = seq(20, 100, 10),
@@ -34,6 +38,7 @@ result <- calculate_neighbourhood_entropy_gradient3D(
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_neighbourhood_entropy_gradient3D(
     neighbourhood_entropy_gradient_df = result,
     reference_cell_type = "Tumour"

@@ -44,8 +44,11 @@ around each reference cell, for each target cell type, and calculates the
 average number across all radii.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_neighbourhood_counts_gradient3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radii = seq(20, 100, 10),

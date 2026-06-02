@@ -44,8 +44,11 @@ values if the 3D spatial data followed a complete spatial randomness
 pattern. This is calculated for a single radius value.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_cross_G3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_type = "Immune",
     radius = 30,

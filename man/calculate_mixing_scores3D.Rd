@@ -39,8 +39,11 @@ SpatialExperiment Object. See paper on theory behind mixing scores (I
 ain't explaining it here).
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 result <- calculate_mixing_scores3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     reference_cell_types = c("Tumour", "Immune"),
     target_cell_types = c("Tumour", "Immune"),
     radius = 30

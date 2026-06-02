@@ -25,8 +25,12 @@ proportion/entropy values of each rectangular prism using a continuous
 color scale for the proportion/entropy values.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
+# Get cell proportion grid metrics from simulated spe
 cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     n_splits = 10,
     reference_cell_types = c("Tumour"),
     target_cell_types = c("Immune"),
@@ -34,6 +38,7 @@ cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
     plot_image = FALSE
 )
 
+# Plot
 fig <- plot_grid_metrics_continuous3D(
     grid_metrics = cell_prop_grid_metrics,
     metric_colname = "proportion"

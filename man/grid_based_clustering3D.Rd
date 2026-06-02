@@ -47,8 +47,11 @@ This function finds cell clusters in a 3D SpatialExperiment
 object using the grid based clustering algorithm.
 }
 \examples{
+# Get simulated SpatialExperiment object to use as an example for analysis
+simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+
 grid_based_spe <- grid_based_clustering3D(
-    spe = SPIAT-3D::simulated_spe,
+    spe = simulated_spe,
     cell_types_of_interest = c("Tumour", "Immune"),
     n_splits = 10,
     minimum_cells_in_cluster = 30,
