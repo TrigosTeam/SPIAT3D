@@ -20,7 +20,10 @@ Imports:
   plotly,
   reshape2,
   gtools,
-  dplyr
+  dplyr,
+  magrittr,
+  viridis,
+  grDevices
 URL: https://github.com/TrigosTeam/SPIAT3D
 Suggests: 
     SpatialExperiment,
