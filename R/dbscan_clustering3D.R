@@ -36,7 +36,7 @@
 #' dbscan_spe <- dbscan_clustering3D(
 #'     spe = simulated_spe,
 #'     cell_types_of_interest = c("Tumour", "Immune"),
-#'     radius = 30,
+#'     radius = 8,
 #'     minimum_cells_in_radius = 10,
 #'     minimum_cells_in_cluster = 30,
 #'     feature_colname = "Cell.Type",

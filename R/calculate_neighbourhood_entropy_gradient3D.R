@@ -29,7 +29,7 @@
 #' result <- calculate_neighbourhood_entropy_gradient3D(
 #'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
-#'     target_cell_types = c("Tumour", "Immune"),
+#'     target_cell_types = "Immune",
 #'     radii = seq(20, 100, 10),
 #'     feature_colname = "Cell.Type",
 #'     plot_image = TRUE
