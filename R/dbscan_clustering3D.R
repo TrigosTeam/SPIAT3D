@@ -124,7 +124,7 @@ dbscan_clustering3D <- function(spe,
   df <- rbind(df_cell_types_of_interest, df_other_cell_types)
 
   spe <- SpatialExperiment::SpatialExperiment(
-    assay = matrix(data = NA, nrow = nrow(df), ncol = nrow(df)),
+    assay = matrix(data = NA, nrow = 0, ncol = nrow(df)),
     colData = df,
     spatialCoordsNames = c("Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position"),
     metadata = spe@metadata)
