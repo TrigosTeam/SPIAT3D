@@ -1,48 +1,51 @@
 #' @title Calculate cell proportion grid metrics in 3D spatial data.
 #'
-#' @description This functions divides a 3D SpatialExperiment Object into a 3D 
-#'     grid of rectangular prisms. The cell proportions in each rectangular 
+#' @description This functions divides a 3D SpatialExperiment Object into a 3D
+#'     grid of rectangular prisms. The cell proportions in each rectangular
 #'     prism is calculated. The output can be used for other SPIAT-3D metrics:
 #'     calculate_spatial_autocorrelation3D, calculate_prevalence3D,
 #'     calculate_prevalence_gradient3D.
-#' 
-#' @param spe A SpatialExperiment object containing 3D spatial information for 
-#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
-#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
-#'     and z-coordinate of each cell. 
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
+#'     and z-coordinate of each cell.
 #' @param n_splits A positive numeric integer specifying the number splits used
 #'     to divide the x-axis, y-axis and z-axis.
-#' @param reference_cell_types A character vector specifying the reference cell 
+#' @param reference_cell_types A character vector specifying the reference cell
 #'     types.
 #' @param target_cell_types A character vector specifying the target cell types.
-#' @param feature_colname A string specifying the name of the column in the 
-#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#' @param feature_colname A string specifying the name of the column in the
+#'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information. Defaults to "Cell.Type".
 #' @param plot_image A logical indicating whether to plot cell proportion grid
 #'     metrics. Defaults to TRUE.
 #'
-#' @return A data frame containing the cell proportion and spatial information 
+#' @return A data frame containing the cell proportion and spatial information
 #'     for each rectangular prism.
 #'
 #' @examples
+#' # Get simulated SpatialExperiment object to use as an example for analysis
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#'
 #' cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
-#'     spe = SPIAT-3D::simulated_spe,
+#'     spe = simulated_spe,
 #'     n_splits = 10,
 #'     reference_cell_types = c("Tumour"),
 #'     target_cell_types = c("Immune"),
 #'     feature_colname = "Cell.Type",
 #'     plot_image = T
 #' )
-#' 
+#'
 #' @export
 
-calculate_cell_proportion_grid_metrics3D <- function(spe, 
+calculate_cell_proportion_grid_metrics3D <- function(spe,
                                                      n_splits,
                                                      reference_cell_types,
                                                      target_cell_types,
                                                      feature_colname = "Cell.Type",
                                                      plot_image = TRUE) {
-  
+
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
     stop("`spe` is not a SpatialExperiment object.")
@@ -81,17 +84,17 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   if (!is.logical(plot_image)) {
     stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
-  
+
   # Add grid metrics to spe
   spe <- get_spe_grid_metrics3D(spe, n_splits, feature_colname)
-  
+
   # Get grid_prism_cell_matrix from spe
   grid_prism_cell_matrix <- spe@metadata$grid_metrics$grid_prism_cell_matrix
-  
+
   ## Define data frame which contains all results
   n_grid_prisms <- n_splits^3
   result <- data.frame(row.names = seq(n_grid_prisms))
-  
+
   # Fill in the result data frame
   if (length(reference_cell_types) == 1) {
     result$reference <- grid_prism_cell_matrix[[reference_cell_types]]
@@ -107,15 +110,15 @@ calculate_cell_proportion_grid_metrics3D <- function(spe,
   }
   result$total <- result$reference + result$target
   result$proportion <- result$target / result$total
-  
+
   # Add grid_prism_coordinates info to result
   result <- cbind(result, spe@metadata$grid_metrics$grid_prism_coordinates)
-  
+
   ## Plot
   if (plot_image) {
     fig <- plot_grid_metrics_continuous3D(result, "proportion")
     methods::show(fig)
   }
-  
+
   return(result)
 }

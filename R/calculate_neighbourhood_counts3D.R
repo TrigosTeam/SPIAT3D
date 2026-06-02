@@ -1,18 +1,18 @@
 #' @title Calculate neighbourhood counts on 3D spatial data.
 #'
-#' @description This function calculates the neighbourhood counts on a 3D 
+#' @description This function calculates the neighbourhood counts on a 3D
 #'     SpatialExperiment Object. This metric finds the number of target cells
 #'     around each reference cell, for each target cell type.
-#' 
-#' @param spe A SpatialExperiment object containing 3D spatial information for 
-#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
-#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell.
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radius A positive numeric specifying the radius value.
-#' @param feature_colname A string specifying the name of the column in the 
-#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#' @param feature_colname A string specifying the name of the column in the
+#'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information. Defaults to "Cell.Type".
 #' @param show_summary A logical indicating whether to print a summary of
 #'     neighbourhood counts results. Defaults to TRUE.
@@ -23,8 +23,11 @@
 #'     reference cell (rows) and for each target cell type (columns).
 #'
 #' @examples
+#' # Get simulated SpatialExperiment object to use as an example for analysis
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#'
 #' result <- calculate_neighbourhood_counts3D(
-#'     spe = SPIAT-3D::simulated_spe,
+#'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
 #'     radius = 30,
@@ -32,18 +35,18 @@
 #'     show_summary = TRUE,
 #'     plot_image = TRUE
 #' )
-#' 
+#'
 #' @export
 
-calculate_neighbourhood_counts3D <- function(spe, 
-                                             reference_cell_type, 
-                                             target_cell_types, 
-                                             radius, 
+calculate_neighbourhood_counts3D <- function(spe,
+                                             reference_cell_type,
+                                             target_cell_types,
+                                             radius,
                                              feature_colname = "Cell.Type",
                                              show_summary = TRUE,
                                              plot_image = TRUE) {
-  
-  
+
+
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
     stop("`spe` is not a SpatialExperiment object.")
@@ -73,7 +76,7 @@ calculate_neighbourhood_counts3D <- function(spe,
   if (!is.logical(plot_image)) {
     stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
-  
+
   ## For reference_cell_type, check it is found in the spe object
   if (!(reference_cell_type %in% spe[[feature_colname]])) {
     warning(paste("The reference_cell_type", reference_cell_type,"is not found in the spe object"))
@@ -85,56 +88,56 @@ calculate_neighbourhood_counts3D <- function(spe,
     warning(paste("The following cell types in target_cell_types are not found in the spe object:\n   ",
                   paste(unknown_cell_types, collapse = ", ")))
   }
-  
+
   if (is.null(spe[["Cell.ID"]])) {
     warning("Temporarily adding Cell.ID column to your spe")
     spe$Cell.ID <- paste("Cell", seq(ncol(spe)), sep = "_")
-  }  
-  
+  }
+
   # Get spe coords
-  spe_coords <- data.frame(spatialCoords(spe))
-  
+  spe_coords <- data.frame(SpatialExperiment::spatialCoords(spe))
+
   # Get reference_cell_type coords
   reference_cell_type_coords <- spe_coords[spe[[feature_colname]] == reference_cell_type, ]
-  
+
   result <- data.frame(ref_cell_id = spe$Cell.ID[spe[[feature_colname]] == reference_cell_type])
-  
+
   for (target_cell_type in target_cell_types) {
-    
+
     if (sum(spe[[feature_colname]] == target_cell_type) == 0) {
       result[[target_cell_type]] <- NA
       next
     }
-    
+
     ## Get target_cell_type coords
     target_cell_type_coords <- spe_coords[spe[[feature_colname]] == target_cell_type, ]
-    
+
     ## Determine number of target cells specified distance for each reference cell
-    ref_tar_result <- dbscan::frNN(target_cell_type_coords, 
+    ref_tar_result <- dbscan::frNN(target_cell_type_coords,
                                    eps = radius,
-                                   query = reference_cell_type_coords, 
+                                   query = reference_cell_type_coords,
                                    sort = FALSE)
-    
+
     n_targets <- rapply(ref_tar_result$id, length)
-    
-    
+
+
     # Don't want to include the reference cell as one of the target cells
     if (reference_cell_type == target_cell_type) n_targets <- n_targets - 1
-    
+
     ## Add to data frame
     result[[target_cell_type]] <- n_targets
   }
-  
+
   ## Print summary
   if (show_summary) {
-    print(summarise_neighbourhood_counts3D(result))    
+    print(summarise_neighbourhood_counts3D(result))
   }
-  
+
   ## Plot
   if (plot_image) {
     fig <- plot_neighbourhood_counts_violin3D(result, reference_cell_type)
     methods::show(fig)
   }
-  
+
   return(result)
 }

@@ -1,39 +1,42 @@
 #' @title Apply all cell colocalization metrics on 3D spatial data.
 #'
-#' @description This function finds the output of all cell colocalization 
-#'     metrics on a 3D SpatialExperiment Object. Metrics include: mixing score, 
-#'     normalized mixing score, neighbourhood counts, cells in neighbourhood, 
+#' @description This function finds the output of all cell colocalization
+#'     metrics on a 3D SpatialExperiment Object. Metrics include: mixing score,
+#'     normalized mixing score, neighbourhood counts, cells in neighbourhood,
 #'     neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
-#' 
-#' @param spe A SpatialExperiment object containing 3D spatial information for 
-#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position", 
-#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate 
+#'
+#' @param spe A SpatialExperiment object containing 3D spatial information for
+#'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
+#'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell.
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
-#' @param feature_colname A string specifying the name of the column in the 
-#'     `colData` slot of the SpatialExperiment object that contains the cell 
+#' @param feature_colname A string specifying the name of the column in the
+#'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information. Defaults to "Cell.Type"
 #'
-#' @return A list containing the output of each metric, for each applicable 
+#' @return A list containing the output of each metric, for each applicable
 #'     reference-target cell pair.
 #'
 #' @examples
+#' # Get simulated SpatialExperiment object to use as an example for analysis
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#'
 #' result <- calculate_all_single_radius_cc_metrics3D(
-#'     spe = SPIAT-3D::simulated_spe,
+#'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
 #'     feature_colname = "Cell.Type"
 #' )
-#' 
+#'
 #' @export
 
-calculate_all_single_radius_cc_metrics3D <- function(spe, 
-                                                     reference_cell_type, 
-                                                     target_cell_types, 
-                                                     radius, 
+calculate_all_single_radius_cc_metrics3D <- function(spe,
+                                                     reference_cell_type,
+                                                     target_cell_types,
+                                                     radius,
                                                      feature_colname = "Cell.Type") {
-  
+
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
     stop("`spe` is not a SpatialExperiment object.")
@@ -57,7 +60,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   if (is.null(spe[[feature_colname]])) {
     stop(paste("No column called", feature_colname, "found in spe object."))
   }
-  
+
   ## For reference_cell_type, check it is found in the spe object
   if (!(reference_cell_type %in% spe[[feature_colname]])) {
     warning(paste("The reference_cell_type", reference_cell_type,"is not found in the spe object"))
@@ -69,7 +72,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
     warning(paste("The following cell types in target_cell_types are not found in the spe object:\n   ",
                   paste(unknown_cell_types, collapse = ", ")))
   }
-  
+
   # Define result
   result <- list("neighbourhood_counts" = list(),
                  "cells_in_neighbourhood" = list(),
@@ -79,17 +82,17 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                  "cross_L" = list(),
                  "cross_G" = list(),
                  "co_occurrence" = list())
-  
+
   # Define other constants
-  mixing_score_df_colnames <- c("ref_cell_type", 
-                                "tar_cell_type", 
+  mixing_score_df_colnames <- c("ref_cell_type",
+                                "tar_cell_type",
                                 "n_ref_cells",
-                                "n_tar_cells", 
+                                "n_tar_cells",
                                 "n_ref_tar_interactions",
-                                "n_ref_ref_interactions", 
-                                "mixing_score", 
+                                "n_ref_ref_interactions",
+                                "mixing_score",
                                 "normalised_mixing_score")
-  
+
   cross_K_df_colnames <- c("reference",
                            "expected",
                            target_cell_types)
@@ -97,37 +100,37 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                            "expected_cross_G")
   co_occurrence_df_colnames <- c("reference",
                                  target_cell_types)
-  
+
   # Get rough dimensions of window for cross_K
-  spe_coords <- data.frame(spatialCoords(spe))
+  spe_coords <- data.frame(SpatialExperiment::spatialCoords(spe))
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
   width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
   height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
   ## Get volume of the window the cells are in
   volume <- length * width * height
-  
+
   # All single radius cc metrics stem from calculate_neighbourhood_entropy3D function
-  neighbourhood_entropy_df <- calculate_neighbourhood_entropy3D(spe, 
-                                                                reference_cell_type, 
-                                                                target_cell_types, 
-                                                                radius, 
-                                                                feature_colname)  
-  
+  neighbourhood_entropy_df <- calculate_neighbourhood_entropy3D(spe,
+                                                                reference_cell_type,
+                                                                target_cell_types,
+                                                                radius,
+                                                                feature_colname)
+
   ## Cells in neighbourhood ----------
   result[["neighbourhood_counts"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", target_cell_types)]
-  
+
   ## Cells in neighbourhood proportion ----------
   result[["cells_in_neighbourhood"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_prop", sep = ""))]
-  
+
   ## neighbourhood_entropy --------------
   result[["neighbourhood_entropy"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_entropy", sep = ""))]
-  
+
   ## Mixing score -----------------
   for (target_cell_type in target_cell_types) {
     mixing_score_df <- data.frame(matrix(nrow = 1, ncol = length(mixing_score_df_colnames)))
     colnames(mixing_score_df) <- mixing_score_df_colnames
     mixing_score_df$ref_cell_type <- reference_cell_type
-    
+
     # No need to fill in mixing_score_df if the reference and target cell is the same
     if (reference_cell_type != target_cell_type) {
       mixing_score_df$tar_cell_type <- target_cell_type
@@ -142,40 +145,40 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
       result[["mixing_score"]][[target_cell_type]] <- mixing_score_df
     }
   }
-  
+
   ## Cross_K ---------------------
   cross_K_df <- data.frame(matrix(nrow = 1, ncol = length(cross_K_df_colnames)))
   colnames(cross_K_df) <- cross_K_df_colnames
   cross_K_df$reference <- reference_cell_type
   cross_K_df$expected <- (4 / 3) * pi * radius^3
-  
+
   for (target_cell_type in target_cell_types) {
-    cross_K_df[[target_cell_type]] <- (((volume * sum(neighbourhood_entropy_df[[target_cell_type]])) / sum(spe[[feature_colname]] == reference_cell_type)) / sum(spe[[feature_colname]] == target_cell_type)) 
+    cross_K_df[[target_cell_type]] <- (((volume * sum(neighbourhood_entropy_df[[target_cell_type]])) / sum(spe[[feature_colname]] == reference_cell_type)) / sum(spe[[feature_colname]] == target_cell_type))
   }
   result[["cross_K"]] <- cross_K_df
-  
+
   ## Cross_L ---------------------
   cross_L_df <- cross_K_df
   cross_L_df[ , c("expected", target_cell_types)] <- (cross_L_df[ , c("expected", target_cell_types)] / (4 * pi / 3)) ^ (1/3)
   result[["cross_L"]] <- cross_L_df
-  
+
   ## Cross_G ---------------------
   for (target_cell_type in target_cell_types) {
     cross_G_df <- data.frame(matrix(nrow = 1, ncol = length(cross_G_df_colnames)))
     colnames(cross_G_df) <- cross_G_df_colnames
-    
+
     reference_target_interactions <- neighbourhood_entropy_df[[target_cell_type]]
     n_target_cells <- sum(spe[[feature_colname]] == target_cell_type)
     target_cell_type_intensity <- n_target_cells / volume
     observed_cross_G <- sum(reference_target_interactions != 0) / length(reference_target_interactions)
     expected_cross_G <- 1 - exp(-1 * target_cell_type_intensity * (4 / 3) * pi * radius^3)
-    
+
     cross_G_df$observed_cross_G <- observed_cross_G
     cross_G_df$expected_cross_G <- expected_cross_G
     result[["cross_G"]][[target_cell_type]] <- cross_G_df
   }
-  
-  
+
+
   ## Co_occurrence ---------------
   all_cell_types <- unique(spe[[feature_colname]])
   neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
@@ -185,26 +188,26 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                                                               feature_colname,
                                                               F,
                                                               F)
-  
+
   neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
-  
+
   co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(co_occurrence_df_colnames)))
   colnames(co_occurrence_df) <- co_occurrence_df_colnames
   co_occurrence_df$reference <- reference_cell_type
-  
+
   n_cells_in_spe <- length(spe[[feature_colname]])
   n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
-  
+
   for (target_cell_type in target_cell_types) {
     n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
     n_target_cells_in_spe <- sum(spe[[feature_colname]] == target_cell_type)
     target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe
     target_cell_type_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_spe
-    
+
     co_occurrence_df[[target_cell_type]] <- target_cell_type_co_occurrence
   }
   result[["co_occurrence"]] <- co_occurrence_df
-  
+
   return(result)
 }

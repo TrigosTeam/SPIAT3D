@@ -25,8 +25,12 @@
 #'     plot the alpha hull clusters.
 #'
 #' @examples
+#' # Get simulated SpatialExperiment object to use as an example for analysis
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D")
+#'
+#' # Alpha hull clustering
 #' alpha_hull_spe <- alpha_hull_clustering3D(
-#'     spe = SPIAT3D::simulated_spe,
+#'     spe = simulated_spe,
 #'     cell_types_of_interest = c("Tumour", "Immune"),
 #'     alpha = 8,
 #'     feature_colname = "Cell.Type",
@@ -75,18 +79,18 @@ alpha_hull_clustering3D <- function(spe,
 
   ## Subset for the chosen cell_types_of_interest
   spe_subset <- spe[ , spe[[feature_colname]] %in% cell_types_of_interest]
-  spe_subset_coords <- spatialCoords(spe_subset)
+  spe_subset_coords <- SpatialExperiment::spatialCoords(spe_subset)
 
   ## Get the alpha hull
-  alpha_hull <- ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
+  alpha_hull <- alphashape3d::ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
 
   if (sum(alpha_hull$triang[, 9]) == 0) stop("alpha value is too small? No alpha hulls identified")
 
   ## Determine which alpha hull cluster each cell_type_of_interest belongs to
-  alpha_hull_clusters <- components_ashape3d(alpha_hull)
+  alpha_hull_clusters <- alphashape3d::components_ashape3d(alpha_hull)
 
   ## Convert spe object to data frame
-  df <- data.frame(spatialCoords(spe), colData(spe))
+  df <- data.frame(SpatialExperiment::spatialCoords(spe), colData(spe))
 
   df_cell_types_of_interest <- df[df[[feature_colname]] %in% cell_types_of_interest, ]
   df_other_cell_types <- df[!(df[[feature_colname]] %in% cell_types_of_interest), ]
@@ -106,13 +110,13 @@ alpha_hull_clustering3D <- function(spe,
                                                            alpha_hull_clusters, 0)
 
     ## Get the alpha hull again...
-    alpha_hull <- ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
+    alpha_hull <- alphashape3d::ashape3d(as.matrix(spe_subset_coords), alpha = alpha)
   }
 
   ## Convert data frame to spe object
   df <- rbind(df_cell_types_of_interest, df_other_cell_types)
 
-  spe <- SpatialExperiment(
+  spe <- SpatialExperiment::SpatialExperiment(
     assay = matrix(data = NA, nrow = nrow(df), ncol = nrow(df)),
     colData = df,
     spatialCoordsNames = c("Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position"),
