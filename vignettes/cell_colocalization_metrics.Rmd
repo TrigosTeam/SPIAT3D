@@ -298,7 +298,82 @@ print(co_occurrence)
 
 
 # Gradient-based forms of these metrics
+These 9 metrics are calculated for a single distance/sphere radius – this gives 
+users the ability to choose the type of cellular interactions they are 
+interested in. For example, setting this distance to be slightly larger than the 
+diameter of a cell may implicate cell-cell interactions, while using a much 
+larger distance may provide information about indirect communication between 
+cells. 
+
+However, to avoid making an (often arbitrary) decision on the radius, an 
+alternative is to observe how these metrics behave across a gradient of 
+increasing sphere radii and plotting the output of the chosen metric against 
+this gradient of sphere radii. This is traditionally how the CK, CL and CG are 
+calculated.
+
+For MS, NMS, CK, CL, CG, and COO, a single value is outputted for each sphere 
+radius, and the gradient-based graph can be plotted. In contrast, for NC, CIN, 
+and NE, each reference cell has its own corresponding value. Therefore, to plot 
+the gradient-based graph for these metrics, an average value across all 
+reference cells is calculated for each sphere radius.
+
+By calculating these cell colocalization metrics across a gradient, we can 
+understand how the levels of interaction between cells varies at different 
+distances.
+
+```{r}
+# Calculating cells in neighbourhood gradient
+cells_in_neighbourhood_gradient <- calculate_cells_in_neighbourhood_gradient3D(
+    spe = simulated_spe,
+    reference_cell_type = "Tumour",
+    target_cell_types = c("Tumour", "Immune"),
+    radii = seq(20, 100, 10),
+    feature_colname = "Cell.Type",
+    plot_image = TRUE
+)
+
+# Calculating cross L gradient
+cross_L_gradient <- calculate_cross_L_gradient3D(
+    spe = simulated_spe,
+    reference_cell_type = "Tumour",
+    target_cell_types = c("Tumour", "Immune"),
+    radii = seq(20, 100, 10),
+    feature_colname = "Cell.Type",
+    plot_image = FALSE
+)
+
+# Note that these gradient based functions have their own plotting function so
+# that you don't have to re-run the function to plot the analysis.
+plot_cross_L_gradient3D(cross_L_gradient)
+```
+
 
 # Combining all these functions
+I have two special functions that allow you to calculate all these metrics at 
+once. One function for a single radius, and another function for a gradient of
+radii. 
 
+I found this useful for large analysis projects, where I got lazy writing
+each function one by one.
+
+```{r}
+# Function to calculate all cell colocalization metrics for a single radius
+single_radius_cc_output <- calculate_all_single_radius_cc_metrics3D(
+    spe = simulated_spe,
+    reference_cell_type = "Tumour",
+    target_cell_types = c("Tumour", "Immune"),
+    radius = 30,
+    feature_colname = "Cell.Type"
+)
+
+# Function to calculate all cell colocalization metrics for a gradient of radii
+gradient_cc_output <- calculate_all_gradient_cc_metrics3D(
+    spe = simulated_spe,
+    reference_cell_type = "Tumour",
+    target_cell_types = c("Tumour", "Immune"),
+    radii = seq(20, 100, 10),
+    feature_colname = "Cell.Type",
+    plot_image = FALSE # I'm not going to plot, because there are many plots
+)
+```
 
