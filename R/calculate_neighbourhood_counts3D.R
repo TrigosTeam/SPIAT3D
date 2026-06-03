@@ -130,7 +130,7 @@ calculate_neighbourhood_counts3D <- function(spe,
 
   ## Print summary
   if (show_summary) {
-    print(summarise_neighbourhood_counts3D(result))
+    print(summarise_neighbourhood_metric3D(result))
   }
 
   ## Plot

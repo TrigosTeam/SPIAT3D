@@ -51,7 +51,7 @@ result <- calculate_cross_G3D(
     spe = simulated_spe,
     reference_cell_type = "Tumour",
     target_cell_type = "Immune",
-    radius = 30,
+    radius = 5,
     feature_colname = "Cell.Type"
 )
 
