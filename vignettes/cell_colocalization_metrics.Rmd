@@ -78,7 +78,7 @@ Here, the red cells represent the "reference" cell type, while the blue and
 purple cells represent the "target" cell type.
 ```{r out.width='80%'}
 # Showing nice image to describe cell colocalization concept
-knitr::include_graphics(system.file("extdata", "cell_colocalization.png", package = "SPIAT3D"))
+knitr::include_graphics("figures/cell_colocalization.png")
 ```
 
 # 1. Neighbourhood counts (NC)
@@ -91,10 +91,11 @@ neighbourhood_counts <- calculate_neighbourhood_counts3D(
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radius = 30,
-    feature_colname = "Cell.Type",
-    show_summary = TRUE,
-    plot_image = TRUE
+    feature_colname = "Cell.Type"
 )
+
+# Summarise data
+summarise_neighbourhood_metric3D(neighbourhood_counts)
 ```
 
 # 2. Cells in neighbourhood (CIN)
@@ -117,6 +118,7 @@ cells_in_neighbourhood <- calculate_cells_in_neighbourhood3D(
     feature_colname = "Cell.Type"
 )
 
+# Summarise data
 summarise_neighbourhood_metric3D(cells_in_neighbourhood)
 ```
 
@@ -137,7 +139,7 @@ balanced, so entropy is maxed at 1. But on the right, its dominated by blue
 cells, so entropy is 0.
 ```{r out.width='80%'}
 # Showing nice image to describe neighbourhood entropy concept
-knitr::include_graphics(system.file("extdata", "neighbourhood_entropy.png", package = "SPIAT3D"))
+knitr::include_graphics("figures/neighbourhood_entropy.png")
 ```
 
 Note that it makes zero sense to make the reference and target cell type the 
@@ -151,6 +153,7 @@ neighbourhood_entropy <- calculate_neighbourhood_entropy3D(
     feature_colname = "Cell.Type"
 )
 
+# Summarise data
 summarise_neighbourhood_metric3D(neighbourhood_entropy)
 ```
 

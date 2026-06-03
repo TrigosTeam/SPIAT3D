@@ -77,9 +77,7 @@ calculate_mixing_scores3D <- function(spe,
                                                                   reference_cell_type,
                                                                   c(reference_cell_type, target_cell_type),
                                                                   radius,
-                                                                  feature_colname,
-                                                                  FALSE,
-                                                                  FALSE)
+                                                                  feature_colname)
 
       # Get number of ref-ref interactions
       # Halve it to avoid counting each ref-ref interaction twice

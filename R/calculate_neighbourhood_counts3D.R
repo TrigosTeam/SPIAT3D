@@ -14,10 +14,6 @@
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information. Defaults to "Cell.Type".
-#' @param show_summary A logical indicating whether to print a summary of
-#'     neighbourhood counts results. Defaults to TRUE.
-#' @param plot_image A logical indicating whether to plot violin plots of
-#'     neighbourhood counts results. Defaults to TRUE.
 #'
 #' @return A data frame containing the neighbourhood counts values for each
 #'     reference cell (rows) and for each target cell type (columns).
@@ -31,9 +27,7 @@
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
 #'     radius = 30,
-#'     feature_colname = "Cell.Type",
-#'     show_summary = TRUE,
-#'     plot_image = TRUE
+#'     feature_colname = "Cell.Type"
 #' )
 #'
 #' @export
@@ -42,9 +36,7 @@ calculate_neighbourhood_counts3D <- function(spe,
                                              reference_cell_type,
                                              target_cell_types,
                                              radius,
-                                             feature_colname = "Cell.Type",
-                                             show_summary = TRUE,
-                                             plot_image = TRUE) {
+                                             feature_colname = "Cell.Type") {
 
 
   # Check input parameters
@@ -69,12 +61,6 @@ calculate_neighbourhood_counts3D <- function(spe,
   }
   if (is.null(spe[[feature_colname]])) {
     stop(paste("No column called", feature_colname, "found in spe object."))
-  }
-  if (!is.logical(show_summary)) {
-    stop("`show_summary` is not a logical (TRUE or FALSE).")
-  }
-  if (!is.logical(plot_image)) {
-    stop("`plot_image` is not a logical (TRUE or FALSE).")
   }
 
   ## For reference_cell_type, check it is found in the spe object
@@ -126,17 +112,6 @@ calculate_neighbourhood_counts3D <- function(spe,
 
     ## Add to data frame
     result[[target_cell_type]] <- n_targets
-  }
-
-  ## Print summary
-  if (show_summary) {
-    print(summarise_neighbourhood_metric3D(result))
-  }
-
-  ## Plot
-  if (plot_image) {
-    fig <- plot_neighbourhood_counts_violin3D(result, reference_cell_type)
-    methods::show(fig)
   }
 
   return(result)

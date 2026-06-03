@@ -49,9 +49,9 @@ are part of the border of the alpha hull."
 Check out the image below, I'm not lying, each circle only touches two points.
 Image from [link](https://doc.cgal.org/latest/Alpha_shapes_2/). Points enclosed
 between the circles are part of the alpha hull itself.
-```{r}
+```{r out.width='60%'}
 # Showing nice image to describe alpha hulls
-knitr::include_graphics(system.file("extdata", "alphashape.png", package = "SPIAT3D"))
+knitr::include_graphics("figures/alphashape.png")
 ```
 
 This applies to 2D and can be extended to 3D by using spheres instead. The
@@ -184,12 +184,13 @@ of a cluster. If the number of cluster cells found in each sphere is:
 Check out the image below. The orange cell is inside the cluster because its
 surrounded by too many red cells, the purple cell is part of the cluster border
 because its only near one red cell and the blue cell is all by itself.
-```{r}
+```{r out.width='50%'}
 # Showing nice image to describe how to find border of clusters
-knitr::include_graphics(system.file("extdata", "border_of_clusters.png", package = "SPIAT3D"))
+knitr::include_graphics("figures/border_of_clusters.png")
 ```
+
 The threshold used is the median number of cluster cells found in all the
-spheres, as this provied a robust threshold value.
+spheres, as this provided a robust threshold value.
 
 # 2. Borders of each cluster
 ```{r}

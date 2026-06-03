@@ -31,9 +31,7 @@ result <- summarise_neighbourhood_metric3D(
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radius = 30,
-    feature_colname = "Cell.Type",
-    show_summary = FALSE,
-    plot_image = FALSE
+    feature_colname = "Cell.Type"
 )
 
 # Get summary

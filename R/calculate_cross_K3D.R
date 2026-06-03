@@ -79,9 +79,7 @@ calculate_cross_K3D <- function(spe,
                                                               reference_cell_type,
                                                               target_cell_types,
                                                               radius,
-                                                              feature_colname,
-                                                              show_summary = FALSE,
-                                                              plot_image = FALSE)
+                                                              feature_colname)
 
   # Calculate cross K-fucnction for each target cell type
   for (target_cell_type in target_cell_types) {

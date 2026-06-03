@@ -56,9 +56,7 @@ calculate_neighbourhood_counts_gradient3D <- function(spe,
                                                                 reference_cell_type,
                                                                 target_cell_types,
                                                                 radii[i],
-                                                                feature_colname,
-                                                                FALSE,
-                                                                FALSE)
+                                                                feature_colname)
 
     if (is.null(neighbourhood_counts_df)) return(NULL)
 

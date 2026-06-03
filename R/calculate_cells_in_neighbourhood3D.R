@@ -43,9 +43,7 @@ calculate_cells_in_neighbourhood3D <- function(spe,
                                                               reference_cell_type,
                                                               c(reference_cell_type, target_cell_types),
                                                               radius,
-                                                              feature_colname,
-                                                              FALSE,
-                                                              FALSE)
+                                                              feature_colname)
 
   if (is.null(neighbourhood_counts_df)) return(NULL)
 

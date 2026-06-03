@@ -9,9 +9,7 @@ calculate_neighbourhood_counts3D(
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type",
-  show_summary = TRUE,
-  plot_image = TRUE
+  feature_colname = "Cell.Type"
 )
 }
 \arguments{
@@ -54,9 +52,7 @@ result <- calculate_neighbourhood_counts3D(
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radius = 30,
-    feature_colname = "Cell.Type",
-    show_summary = TRUE,
-    plot_image = TRUE
+    feature_colname = "Cell.Type"
 )
 
 }

@@ -31,7 +31,7 @@ the image below for a 2D and 3D visual representation.
 
 ```{r out.width='80%'}
 # Showing nice image to describe spatial heterogeneity concept
-knitr::include_graphics(system.file("extdata", "spatial_heterogeneity.png", package = "SPIAT3D"))
+knitr::include_graphics("figures/spatial_heterogeneity.png")
 ```
 
 This vignette will go through how to use the spatial heterogeneity metrics. 

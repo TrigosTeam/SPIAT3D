@@ -186,9 +186,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                                                               reference_cell_type,
                                                               all_cell_types,
                                                               radius,
-                                                              feature_colname,
-                                                              F,
-                                                              F)
+                                                              feature_colname)
 
   neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
 

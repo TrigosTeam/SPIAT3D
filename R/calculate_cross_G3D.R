@@ -49,9 +49,7 @@ calculate_cross_G3D <- function(spe,
                                                               reference_cell_type,
                                                               target_cell_type,
                                                               radius,
-                                                              feature_colname,
-                                                              show_summary = FALSE,
-                                                              plot_image = FALSE)
+                                                              feature_colname)
 
   reference_target_interactions <- neighbourhood_counts_df[[target_cell_type]]
 
