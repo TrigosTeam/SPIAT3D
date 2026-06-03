@@ -80,7 +80,7 @@ function.</p>
 <span>  <span class="va">radius</span>,</span>
 <span>  <span class="va">cluster_colname</span>,</span>
 <span>  feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span>,</span>
-<span>  plot_image <span class="op">=</span> <span class="cn">T</span></span>
+<span>  plot_image <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +96,11 @@ and z-coordinate of each cell. It must also contain the cell clustering
 information, obtained by passing the SpatialExperiment object through one
 of the cell clustering algorithm functions in SPIAT-3D
 (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).</p></dd>
+
+
+<dt id="arg-radius">radius<a class="anchor" aria-label="anchor" href="#arg-radius"></a></dt>
+<dd><p>A positive numeric specifying the radius value. Use a larger
+value for a thicker border.</p></dd>
 
 
 <dt id="arg-cluster-colname">cluster_colname<a class="anchor" aria-label="anchor" href="#arg-cluster-colname"></a></dt>

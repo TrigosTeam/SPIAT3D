@@ -15,7 +15,7 @@
 #'     considered. Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information. Defaults to "Cell.Type".
 #' @param show_summary A logical indicating whether to print a summary of the
 #'     pairwise distances for each cell type pair. Defaults to TRUE.
 #' @param plot_image A logical indicating whether to plot violin plots of the

@@ -27,12 +27,6 @@ and z-coordinate of each cell.}
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
 type information. Defaults to "Cell.Type".}
-
-\item{show_summary}{A logical indicating whether to print a summary of
-neighbourhood counts results. Defaults to TRUE.}
-
-\item{plot_image}{A logical indicating whether to plot violin plots of
-neighbourhood counts results. Defaults to TRUE.}
 }
 \value{
 A data frame containing the neighbourhood counts values for each

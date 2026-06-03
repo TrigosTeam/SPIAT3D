@@ -25,11 +25,11 @@ and z-coordinate of each cell.}
 \item{target_cell_types}{A character vector specifying the target cell types.}
 
 \item{radii}{A positive, ascending numeric vector specifying the set of
-radius values used to calculate each metric over a gradient}
+radius values used to calculate each metric over a gradient.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information. Defaults to "Cell.Type".}
 
 \item{plot_image}{A logical indicating whether to plot analysis of all
 metrics. Defaults to TRUE.}

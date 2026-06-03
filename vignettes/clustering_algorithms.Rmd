@@ -155,10 +155,15 @@ that collectively define your cluster.
 # Further analysis of the clusters
 Once you have identified the clusters, SPIAT3D offers several functions that can
 help analyse certain aspects of the clusters. These include:
+
 1. identifying the cells that make up each cluster
+
 2. identifying the cells that border each cluster
+
 3. determining how close other cells are to each cluster
+
 4. calculating the approximate centre of each cluster
+
 5. calculating the volume of each cluster
 
 

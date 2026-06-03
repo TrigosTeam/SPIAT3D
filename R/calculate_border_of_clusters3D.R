@@ -13,6 +13,8 @@
 #'     information, obtained by passing the SpatialExperiment object through one
 #'     of the cell clustering algorithm functions in SPIAT-3D
 #'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
+#' @param radius A positive numeric specifying the radius value. Use a larger
+#'     value for a thicker border.
 #' @param cluster_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     clustering information. Should be 'alpha_hull_cluster', 'dbscan_cluster',
@@ -59,7 +61,7 @@ calculate_border_of_clusters3D <- function(spe,
                                            radius,
                                            cluster_colname,
                                            feature_colname = "Cell.Type",
-                                           plot_image = T) {
+                                           plot_image = TRUE) {
 
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {

@@ -28,7 +28,7 @@ Defaults to NULL.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information. Defaults to "Cell.Type".}
 }
 \value{
 A Plotly object plotting the cells of the 3D SpatialExperiment

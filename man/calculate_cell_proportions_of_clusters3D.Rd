@@ -18,7 +18,7 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 and z-coordinate of each cell. It must also contain the cell clustering
 information, obtained by passing the SpatialExperiment object through one
 of the cell clustering algorithm functions in SPIAT-3D
-(alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D)}
+(alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).}
 
 \item{cluster_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell

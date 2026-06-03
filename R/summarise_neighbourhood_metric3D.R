@@ -17,7 +17,7 @@
 #' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 #'
 #' # Calculate neighbourhood counts from simulated spe
-#' result <- summarise_neighbourhood_metric3D(
+#' result <- calculate_neighbourhood_counts3D(
 #'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),

@@ -16,7 +16,7 @@
 #'     Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information. Defaults to "Cell.Type".
 #'
 #' @return A Plotly object plotting the cells of the 3D SpatialExperiment
 #'     Object.

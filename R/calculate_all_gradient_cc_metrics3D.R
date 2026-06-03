@@ -14,10 +14,10 @@
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of
-#'     radius values used to calculate each metric over a gradient
+#'     radius values used to calculate each metric over a gradient.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information. Defaults to "Cell.Type".
 #' @param plot_image A logical indicating whether to plot analysis of all
 #'     metrics. Defaults to TRUE.
 #'

@@ -10,7 +10,7 @@ calculate_border_of_clusters3D(
   radius,
   cluster_colname,
   feature_colname = "Cell.Type",
-  plot_image = T
+  plot_image = TRUE
 )
 }
 \arguments{
@@ -21,6 +21,9 @@ and z-coordinate of each cell. It must also contain the cell clustering
 information, obtained by passing the SpatialExperiment object through one
 of the cell clustering algorithm functions in SPIAT-3D
 (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).}
+
+\item{radius}{A positive numeric specifying the radius value. Use a larger
+value for a thicker border.}
 
 \item{cluster_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell

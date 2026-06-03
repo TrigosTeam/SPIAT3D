@@ -100,20 +100,18 @@ function.</p></dd>
 <span class="r-in"><span><span class="va">simulated_spe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"simulated_spe.rds"</span>, package <span class="op">=</span> <span class="st">"SPIAT3D"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate neighbourhood counts from simulated spe</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">summarise_neighbourhood_metric3D</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_neighbourhood_counts3D.html">calculate_neighbourhood_counts3D</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    spe <span class="op">=</span> <span class="va">simulated_spe</span>,</span></span>
 <span class="r-in"><span>    reference_cell_type <span class="op">=</span> <span class="st">"Tumour"</span>,</span></span>
 <span class="r-in"><span>    target_cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tumour"</span>, <span class="st">"Immune"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    radius <span class="op">=</span> <span class="fl">30</span>,</span></span>
 <span class="r-in"><span>    feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in summarise_neighbourhood_metric3D(spe = simulated_spe, reference_cell_type = "Tumour",     target_cell_types = c("Tumour", "Immune"), radius = 30, feature_colname = "Cell.Type"):</span> unused arguments (spe = simulated_spe, reference_cell_type = "Tumour", target_cell_types = c("Tumour", "Immune"), radius = 30, feature_colname = "Cell.Type")</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get summary</span></span></span>
 <span class="r-in"><span><span class="va">neighbourhood_counts_summary</span> <span class="op">&lt;-</span> <span class="fu">summarise_neighbourhood_metric3D</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    neighbourhood_metric_df <span class="op">=</span> <span class="va">result</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
