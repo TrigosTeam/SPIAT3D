@@ -145,7 +145,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
     for (target_cell_type in names(result[["mixing_score"]])) {
       fig_NMS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "NMS")
       fig_MS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "MS")
-      fig_NMS_MS <- plot_grid(fig_NMS, fig_MS, nrow = 2)
+      fig_NMS_MS <- cowplot::plot_grid(fig_NMS, fig_MS, nrow = 2)
       methods::show(fig_NMS_MS)
     }
     fig_CK <- plot_cross_K_gradient3D(result[["cross_K"]])
