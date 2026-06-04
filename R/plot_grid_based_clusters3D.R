@@ -87,7 +87,7 @@ plot_grid_based_clusters3D <- function(spe_with_grid,
   if (length(plot_cell_types) != length(plot_colours)) stop("Length of plot_cell_types is not equal to length of plot_colours")
 
   ## Convert spe object to data frame
-  df <- data.frame(SpatialExperiment::spatialCoords(spe_with_grid), colData(spe_with_grid))
+  df <- data.frame(SpatialExperiment::spatialCoords(spe_with_grid), SummarizedExperiment::colData(spe_with_grid))
 
   ## Factor for feature column
   df[[feature_colname]] <- factor(df[[feature_colname]], levels = plot_cell_types)

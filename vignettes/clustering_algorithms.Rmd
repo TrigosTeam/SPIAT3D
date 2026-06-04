@@ -130,26 +130,25 @@ you're gonna end up with a bunch of differently sized rectangular prisms that
 that collectively define your cluster.
 
 ```{r}
-# # Grid based clusters
-# grid_based_spe <- grid_based_clustering3D(
-#     spe = simulated_spe,
-#     cell_types_of_interest = c("Tumour", "Immune"),
-#     n_splits = 10,
-#     minimum_cells_in_cluster = 30,
-#     feature_colname = "Cell.Type",
-#     plot_image = TRUE
-# )
-# 
-# # Can also plot grid based clusters separately with your own colours :) for each
-# # cell type. No, you can't change the color of the prisms which form the 
-# # clusters :(
-# fig <- plot_grid_based_clusters3D(
-#     spe_with_grid = grid_based_spe,
-#     plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
-#     plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
-#     feature_colname = "Cell.Type"
-# )
-# methods::show(fig)
+# Grid based clusters
+grid_based_spe <- grid_based_clustering3D(
+    spe = simulated_spe,
+    cell_types_of_interest = c("Tumour", "Immune"),
+    n_splits = 10,
+    minimum_cells_in_cluster = 30,
+    feature_colname = "Cell.Type",
+    plot_image = TRUE
+)
+
+# Can also plot grid based clusters separately with your own colours :) for each
+# cell type. No, you can't change the color of the prisms which form the
+# clusters :(
+plot_grid_based_clusters3D(
+    spe_with_grid = grid_based_spe,
+    plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
+    plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
+    feature_colname = "Cell.Type"
+)
 ```
 
 # Further analysis of the clusters

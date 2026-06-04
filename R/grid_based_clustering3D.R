@@ -350,7 +350,15 @@ grid_based_clustering3D <- function(spe,
 
 
     }
-    colnames(result[[n_clusters]]) <- c("x", "y", "z", "l", "w", "h")
+    # If we recursively divide and we don't get sub-rectangular prisms to keep, handle this case separately
+    # I.e. if result[[n_clusters]] remained an empty data frame, and nothing was rbind to it
+    if (length(result[[n_clusters]]) != 0) {
+      colnames(result[[n_clusters]]) <- c("x", "y", "z", "l", "w", "h")
+    }
+    else {
+      result[[n_clusters]] <- NULL
+    }
+
     n_clusters <- n_clusters + 1
 
     # Remove grid prisms which have just been examined
