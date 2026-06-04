@@ -4,8 +4,8 @@
 #'     grid of rectangular prisms. The number and types of cells in each
 #'     rectangular prism and the coordinate of each rectangular prism is
 #'     calculated. The is a supporting function used in
-#'     calculate_cell_proportion_grid_metrics3D and
-#'     calculate_entropy_grid_metrics3D.
+#'     calculate_cell_proportion_grid_metrics3D,
+#'     calculate_entropy_grid_metrics3D and grid_based_clustering3D.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
