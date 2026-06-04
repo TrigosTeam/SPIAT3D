@@ -28,8 +28,8 @@ This functions divides a 3D SpatialExperiment Object into a 3D
 grid of rectangular prisms. The number and types of cells in each
 rectangular prism and the coordinate of each rectangular prism is
 calculated. The is a supporting function used in
-calculate_cell_proportion_grid_metrics3D and
-calculate_entropy_grid_metrics3D.
+calculate_cell_proportion_grid_metrics3D,
+calculate_entropy_grid_metrics3D and grid_based_clustering3D.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
