@@ -2,8 +2,9 @@ pandoc: 3.6.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  basics_of_the_SpatialExperiment_object: basics_of_the_SpatialExperiment_object.html
   cell_colocalization_metrics: cell_colocalization_metrics.html
   clustering_algorithms: clustering_algorithms.html
   distance_based_metrics: distance_based_metrics.html
   spatial_heterogeneity_metrics: spatial_heterogeneity_metrics.html
-last_built: 2026-06-03T06:36Z
+last_built: 2026-06-05T02:47Z

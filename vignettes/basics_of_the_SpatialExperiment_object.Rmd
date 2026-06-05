@@ -1,0 +1,137 @@
+---
+title: "Basics of the SpatialExperiment object"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basics of the SpatialExperiment object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SPIAT3D)
+```
+
+In this vignette, I want to shortly go through some of the specifics of using a
+SpatialExperiment object. This includes how to make one, and the key features
+of one that SPIAT3D exploits.
+
+# Making a SpatialExperiment object
+The following code is an example of how to convert a data frame into a
+SpatialExperiment object. What if I don't have a data frame? Convert your data
+into a simple data frame with the required data, then go from here.
+
+For SPIAT3D, the only data required is the x,y,z coordinates of each cell type
+and the cell type identity of each cell type (e.g. Tumour, Immune, etc.). 
+
+SPIAT3D does not utilise any protein or mRNA markers, so you don't to worry
+about that when converting to a SpatialExperiment object, at least, not with
+SPIAT3D.
+
+The SpatialExperiment function from the SpatialExperiment package allows you to
+create a SpatialExperiment object and it has 3 necessary inputs:
+
+1. assay: this would be your assay data. This might be from a Seurat object,
+containing your protein marker information. But as stated before, SPIAT3D won't
+use this information, so you can either include it, or set the assay parameter
+to an empty assay, shown in the example below.
+
+2. colData: this would be your data frame.
+
+3. spatialCoordsNames: this would be the column names of your data frame which
+correspond to the x, y, and z coordinates of each cell.
+
+You can also include metadata - this might be extra information attached to your
+original data that you still want to keep with the SpatialExperiment object.
+This is shown in the example below.
+
+```{r}
+# Sample data frame with x,y,z coords and cell type identity
+df <- data.frame("x" = runif(10),
+                 "y" = runif(10),
+                 "z" = runif(10),
+                 "cell_type" = c(rep("Tumour", 5), rep("Immune", 5)))
+
+head(df)
+
+# This code converts the df into a SpatialExperiment object spe
+spe <- SpatialExperiment::SpatialExperiment(
+  assay = matrix(data = NA, nrow = 0, ncol = nrow(df)),
+  colData = df,
+  spatialCoordsNames = c("x", "y", "z"),
+  metadata = list("example metadata"))
+```
+
+# Accessing information from a SpatialExperiment object
+SPIAT3D is able to obtain the x,y,z coordinates and cell type identity of each
+cell in the SpatialExperiment object, to use for subsequent analysis. You can do
+that to by yourself.
+
+You can extract the x,y,z coordinates and cell type identity of each cell. If
+you put any metadata or an assay in the SpatialExperiment object, you can get
+that back too.
+```{r}
+# Getting the coordinates
+spe_coords <- SpatialExperiment::spatialCoords(spe)
+head(spe_coords)
+
+# Getting the cell type identity
+# This depends on the original name of the column of the data frame containing 
+# the cell types
+cell_types <- spe$cell_type 
+head(cell_types)
+
+# Getting the metadata
+spe_metadata <- spe@metadata
+head(spe_metadata)
+
+# Getting the assay
+# This code might be wrong fyi, I'm not an expert of getting the assay
+spe_assay <- spe@assays@data[[1]]
+head(spe_assay)
+
+```
+# Updating a Spatial Experiment object so it is compatible with SPIAT3D
+SPIAT3D requires your SpatialExperiment object is formatted in a specific way,
+particularly in regards to the x,y,z coordinates.
+
+The naming used to refer to the x,y,z coordinates must be "Cell.X.Position",
+"Cell.Y.Position" and "Cell.Z.Position", for the x,y,z coordinates respectively.
+It's named this way to mirror the naming in SPIAT. The code below shows you how
+to do this.
+
+```{r}
+# Changing the names of the x,y,z coordinates so it works with SPIAT3D
+colnames(SpatialExperiment::spatialCoords(spe)) <- c("Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position")
+head(SpatialExperiment::spatialCoords(spe))
+```
+# Note about SPIAT3D functions and feature_colname
+All of the SPIAT3D functions have a parameter called 'feature_colname', which
+refers to:
+
+The original name of the column of the data frame containing the cell types. Or,
+the name of the column in the SpatialExperiment object containing the cell 
+types.
+
+In our example, this is "cell_type". SPIAT3D default feature_colname to 
+"Cell.Type". You just have to make sure to input the correct name that matches
+with you SpatialExperiment object. You can also change your SpatialExperiment
+object to use "Cell.Type" instead, as shown below.
+
+```{r}
+# Printing colData of SpatialExperiment object, it should include what you have
+# used to refer to your cell types.
+print(colnames(SummarizedExperiment::colData(spe)))
+
+# Changing name of cell types to "Cell.Type", I will keep the other column name
+# the same.
+colnames(SummarizedExperiment::colData(spe)) <- c("Cell.Type", "sample_id")
+print(colnames(SummarizedExperiment::colData(spe)))
+```
+

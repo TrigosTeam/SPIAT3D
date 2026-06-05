@@ -11,7 +11,6 @@ Description: SPIAT-3D has a diverse range of spatial metrics which use the
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports:
   BiocManager,
   dbscan,
@@ -24,7 +23,8 @@ Imports:
   viridis,
   grDevices,
   SummarizedExperiment,
-  cowplot
+  cowplot,
+  RANN
 URL: https://github.com/TrigosTeam/SPIAT3D
 Suggests: 
     SpatialExperiment,
@@ -39,3 +39,4 @@ VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
 LazyData: true
+Config/roxygen2/version: 8.0.0
