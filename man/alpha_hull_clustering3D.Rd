@@ -48,6 +48,15 @@ object using the alpha hull clustering algorithm.
 # Get simulated SpatialExperiment object to use as an example for analysis
 simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
+
+# Alpha hull clustering depends on alphashape3d package, which depends on rgl
+# package, and you might need to run this code, as newer mac versions don't
+# support rgl.
+if (Sys.info()[["sysname"]] == "Darwin") {
+  options(rgl.useNULL = TRUE)
+  options(rgl.printRglwidget = TRUE)
+}
+
 # Alpha hull clustering
 alpha_hull_spe <- alpha_hull_clustering3D(
     spe = simulated_spe,

@@ -61,25 +61,37 @@ also miss clusters as a result), while a large alpha value can result in fewer,
 larger and less curved clusters.
 
 ```{r}
-# # Alpha hull clustering
-# alpha_hull_spe <- alpha_hull_clustering3D(
-#     spe = simulated_spe,
-#     cell_types_of_interest = c("Tumour", "Immune"),
-#     alpha = 8,
-#     minimum_cells_in_cluster = 5,
-#     feature_colname = "Cell.Type",
-#     plot_image = TRUE
-# )
-# 
-# # Can also plot alpha hull clusters separately with your own colours :) for
-# # each cell type. No, you can't change the color of the alpha hulls :(
-# fig <- plot_alpha_hull_clusters3D(
-#     spe_with_alpha_hull = alpha_hull_spe,
-#     plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
-#     plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
-#     feature_colname = "Cell.Type"
-# )
-# methods::show(fig)
+# Alpha hull clustering
+
+# Alpha hull clustering depends on alphashape3d package, which depends on rgl
+# package, and you might need to run this code, as newer mac versions don't
+# support rgl.
+if (Sys.info()[["sysname"]] == "Darwin") {
+  options(rgl.useNULL = TRUE)
+  options(rgl.printRglwidget = TRUE)
+}
+
+# Note that the alpha value is very sensitive, at least in this data.
+# Too high and you can't identify separate clusters, especially when the
+# clusters are close togehter, but too low, and you miss some cells in each 
+# cluster.
+alpha_hull_spe <- alpha_hull_clustering3D(
+    spe = simulated_spe,
+    cell_types_of_interest = c("Tumour", "Immune"),
+    alpha = 4.5,
+    minimum_cells_in_cluster = 5,
+    feature_colname = "Cell.Type",
+    plot_image = FALSE
+)
+
+# Plot alpha hull clusters separately with your own colours :) for
+# each cell type. No, you can't change the color of the alpha hulls :(
+plot_alpha_hull_clusters3D(
+    spe_with_alpha_hull = alpha_hull_spe,
+    plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
+    plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
+    feature_colname = "Cell.Type"
+)
 ```
 
 
@@ -168,10 +180,10 @@ help analyse certain aspects of the clusters. These include:
 
 # 1. Cell proportions of each cluster
 ```{r}
-# Using dbscan clusters
+# Using alpha hull clusters
 cluster_cell_props <- calculate_cell_proportions_of_clusters3D(
-    spe = dbscan_spe,
-    cluster_colname = "dbscan_cluster",
+    spe = alpha_hull_spe,
+    cluster_colname = "alpha_hull_cluster",
     feature_colname = "Cell.Type",
     plot_image = T
 )
@@ -214,14 +226,14 @@ plot_cells3D(spe_with_border_of_clusters, feature_colname = "cluster_border")
 
 # 3. Minimum distances to each cluster
 ```{r}
-# Using dbscan clusters
+# Using grid based clusters
 # For some reason, using methods::show on a facet ggplot object can show
 # several plots, only the last plot matters?
 minimum_distances_to_clusters <- calculate_minimum_distances_to_clusters3D(
-    spe = dbscan_spe,
+    spe = grid_based_spe,
     cell_types_inside_cluster = c("Tumour"),
     cell_types_outside_cluster = c("Tumour", "Immune"),
-    cluster_colname = "dbscan_cluster",
+    cluster_colname = "grid_based_cluster",
     feature_colname = "Cell.Type",
     plot_image = TRUE
 )
@@ -252,11 +264,11 @@ Another way for the grid based clustering method is to sum the volume of each
 rectangular prism that makes up each grid based cluster.
 ```{r}
 # Using alpha hull clusters
-# volume_of_alpha_hull_clusters <- calculate_volume_of_clusters3D(
-#     spe = alpha_hull_spe,
-#     cluster_colname = "alpha_hull_cluster"
-# )
-# print(volume_of_alpha_hull_clusters)
+volume_of_alpha_hull_clusters <- calculate_volume_of_clusters3D(
+    spe = alpha_hull_spe,
+    cluster_colname = "alpha_hull_cluster"
+)
+print(volume_of_alpha_hull_clusters)
 
 # Using dbscan clusters
 volume_of_dbscan_clusters <- calculate_volume_of_clusters3D(
@@ -266,9 +278,9 @@ volume_of_dbscan_clusters <- calculate_volume_of_clusters3D(
 print(volume_of_dbscan_clusters)
 
 # Using grid based clusters
-# volume_of_grid_based_clusters <- calculate_volume_of_clusters3D(
-#     spe = grid_based_spe,
-#     cluster_colname = "grid_based_cluster"
-# )
-# print(volume_of_grid_based_clusters)
+volume_of_grid_based_clusters <- calculate_volume_of_clusters3D(
+    spe = grid_based_spe,
+    cluster_colname = "grid_based_cluster"
+)
+print(volume_of_grid_based_clusters)
 ```
