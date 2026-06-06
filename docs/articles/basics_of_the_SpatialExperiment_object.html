@@ -147,19 +147,22 @@ SpatialExperiment object. This is shown in the example below.</p>
 <span><span class="co">#&gt; 5 0.007399441 0.40232824 0.9805397    Tumour</span></span>
 <span><span class="co">#&gt; 6 0.466393497 0.19566983 0.7415215    Immune</span></span>
 <span></span>
+<span><span class="co"># Example metadata</span></span>
+<span><span class="va">df_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"stuff"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># This code converts the df into a SpatialExperiment object spe</span></span>
 <span><span class="va">spe</span> <span class="op">&lt;-</span> <span class="fu">SpatialExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment.html" class="external-link">SpatialExperiment</a></span><span class="op">(</span></span>
-<span>  assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NA</span>, nrow <span class="op">=</span> <span class="fl">0</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NA</span>, nrow <span class="op">=</span> <span class="fl">0</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>, <span class="co"># ncol must match #cells in your data</span></span>
 <span>  colData <span class="op">=</span> <span class="va">df</span>,</span>
 <span>  spatialCoordsNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
-<span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"example metadata"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  metadata <span class="op">=</span> <span class="va">df_metadata</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="accessing-information-from-a-spatialexperiment-object">Accessing information from a SpatialExperiment object<a class="anchor" aria-label="anchor" href="#accessing-information-from-a-spatialexperiment-object"></a>
 </h2>
 <p>SPIAT3D is able to obtain the x,y,z coordinates and cell type
 identity of each cell in the SpatialExperiment object, to use for
-subsequent analysis. You can do that to by yourself.</p>
+subsequent analysis. You can do that to by yourself too.</p>
 <p>You can extract the x,y,z coordinates and cell type identity of each
 cell. If you put any metadata or an assay in the SpatialExperiment
 object, you can get that back too.</p>
@@ -186,7 +189,10 @@ object, you can get that back too.</p>
 <span><span class="va">spe_metadata</span> <span class="op">&lt;-</span> <span class="va">spe</span><span class="op">@</span><span class="va">metadata</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">spe_metadata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "example metadata"</span></span>
+<span><span class="co">#&gt; [1] "stuff"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
 <span></span>
 <span><span class="co"># Getting the assay</span></span>
 <span><span class="co"># This code might be wrong fyi, I'm not an expert of getting the assay</span></span>
@@ -226,8 +232,9 @@ types. Or, the name of the column in the SpatialExperiment object
 containing the cell types.</p>
 <p>In our example, this is “cell_type”. SPIAT3D default feature_colname
 to “Cell.Type”. You just have to make sure to input the correct name
-that matches with you SpatialExperiment object. You can also change your
-SpatialExperiment object to use “Cell.Type” instead, as shown below.</p>
+that matches with your SpatialExperiment object. You can also change
+your SpatialExperiment object to use “Cell.Type” instead, as shown
+below.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Printing colData of SpatialExperiment object, it should include what you have</span></span>
 <span><span class="co"># used to refer to your cell types.</span></span>
