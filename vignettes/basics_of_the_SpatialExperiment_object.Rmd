@@ -60,18 +60,21 @@ df <- data.frame("x" = runif(10),
 
 head(df)
 
+# Example metadata
+df_metadata <- list("stuff", c(1, 2, 3))
+
 # This code converts the df into a SpatialExperiment object spe
 spe <- SpatialExperiment::SpatialExperiment(
-  assay = matrix(data = NA, nrow = 0, ncol = nrow(df)),
+  assay = matrix(data = NA, nrow = 0, ncol = nrow(df)), # ncol must match #cells in your data
   colData = df,
   spatialCoordsNames = c("x", "y", "z"),
-  metadata = list("example metadata"))
+  metadata = df_metadata)
 ```
 
 # Accessing information from a SpatialExperiment object
 SPIAT3D is able to obtain the x,y,z coordinates and cell type identity of each
 cell in the SpatialExperiment object, to use for subsequent analysis. You can do
-that to by yourself.
+that to by yourself too.
 
 You can extract the x,y,z coordinates and cell type identity of each cell. If
 you put any metadata or an assay in the SpatialExperiment object, you can get
@@ -121,7 +124,7 @@ types.
 
 In our example, this is "cell_type". SPIAT3D default feature_colname to 
 "Cell.Type". You just have to make sure to input the correct name that matches
-with you SpatialExperiment object. You can also change your SpatialExperiment
+with your SpatialExperiment object. You can also change your SpatialExperiment
 object to use "Cell.Type" instead, as shown below.
 
 ```{r}

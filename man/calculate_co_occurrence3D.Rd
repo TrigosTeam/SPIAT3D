@@ -34,10 +34,10 @@ type (columns).
 }
 \description{
 This function calculates the co-occurrence on a 3D
-SpatialExperiment Object. This metric finds the proportion of target
-cells around reference cells relative to the proportion of target cells
-in the SpatialExperiment Object, for each target cell type and for a
-single radius value.
+SpatialExperiment Object. This metric finds the average proportion of
+target cells around the reference cells relative to the proportion of
+target cells in the SpatialExperiment Object, for each target cell type
+and for a single radius value.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

@@ -24,7 +24,8 @@ Imports:
   grDevices,
   SummarizedExperiment,
   cowplot,
-  RANN
+  RANN,
+  Hmisc
 URL: https://github.com/TrigosTeam/SPIAT3D
 Suggests: 
     SpatialExperiment,

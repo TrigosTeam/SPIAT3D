@@ -43,7 +43,7 @@ There are 9 different cell colocalization metrics available in SPIAT3D:
 9. Co-occurrence (COO)
 
 This vignette will go through how to use these colocalization metrics, plus some
-extra stuff :). Firstly, you will need 3D spatial data to analyse, I will be 
+extra stuff :). Firstly, you will need 3D spatial data to analyse. I will be 
 using a simulated dataset available in this package.
 
 ```{r}
@@ -60,7 +60,7 @@ plot_cells3D(simulated_spe,
 
 # The basic premise of these metrics
 These metrics all work in a similar way. For the cell types you are interested
-in, draw a sphere around then. Tally the number of cells inside each sphere and
+in, draw a sphere around them. Tally the number of cells inside each sphere and
 use this to calculate the cell colocalization metric. The method of calculation
 is what distinguishes each metric, each providing slightly different information 
 to help quantify colocalization. The radius of the sphere and the cell types of
@@ -131,8 +131,8 @@ If things are unbalanced and there is alot of one thing compared to another,
 entropy is low.
 
 If we extend this idea to CIN, we calculate neighbourhood entropy (NE) by 
-seeing if the proportion of interacting reference and target cells is similar/
-balanced (~50:50) around each reference cell.
+seeing if the proportion of interacting reference and target cells is 
+similar/balanced (i.e. 50% reference and 50% target) around each reference cell.
 
 In the image below, the proportion of red and blue cells around the red cell is 
 balanced, so entropy is maxed at 1. But on the right, its dominated by blue 
@@ -159,7 +159,7 @@ summarise_neighbourhood_metric3D(neighbourhood_entropy)
 
 
 # 4 and 5. Mixing score (MS) and normalised mixing score (NMS)
-I've combined these two metrics, because their both outputted by the same
+I've combined these two metrics here, because their both outputted by the same
 function.
 
 The mixing score metric operates differently to NC, CIN and NE because it 
@@ -202,7 +202,7 @@ of the tissue it is analysing.
 It is calculated by finding the average number of target cells interacting with
 each reference cell, and then, finding the density of target cells in the 
 tissue (which requires tissue volume). The ratio between these two values gives 
-the oobserved CK.
+the observed CK.
 
 The expected CK is the CK value when the cells in the tissue are arranged
 randomly following a complete spatial randomness arrangement. An observed CK 
@@ -274,8 +274,8 @@ print(cross_G)
 Co-occurrence (COO) is a spatial metric implemented in the squidpy package,
 which has been adapted to SPIAT3D.
 
-For a given sphere radius, a COO metric is calculated by determining the 
-proportion of target cells found within the sphere of each reference cell, and 
+For a given sphere radius, a COO metric is calculated by determining the average
+proportion of target cells found within the spheres of the reference cells, and 
 comparing this to the overall proportion of target cells found within the 
 tissue. 
 

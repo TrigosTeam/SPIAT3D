@@ -21,7 +21,7 @@ library(SPIAT3D)
 # Introduction
 SPIAT3D has two distance based metrics that have been adapted from the original
 SPIAT. This vignette will go through both of them. Firstly, you will need 3D
-spatial data to analyse, I will be using a simulated dataset available in this
+spatial data to analyse. I will be using a simulated dataset available in this
 package.
 
 ```{r}
@@ -58,9 +58,9 @@ pairwise_distances <- calculate_pairwise_distances_between_cell_types3D(
 # Minimum distance between cells
 The second distance based metric is the 'minimum distance between cells' metric
 which involves computing and tabulating only the minimum distances between the
-cell types which the user is interested. This outputs a similar, but smaller
-distance matrix to the pairwise distance between cells function, showing the
-minimum distance for each cell-cell pair.
+cell types which the user is interested in. This outputs a similar, but smaller
+distance matrix compared to the pairwise distance between cells function, 
+showing the minimum distance for each cell-cell pair.
 
 ```{r}
 # Calculate minimum distance between cells

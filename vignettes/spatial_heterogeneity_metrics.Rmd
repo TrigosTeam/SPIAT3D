@@ -35,7 +35,7 @@ knitr::include_graphics("figures/spatial_heterogeneity.png")
 ```
 
 This vignette will go through how to use the spatial heterogeneity metrics. 
-Firstly, you will need 3D spatial data to analyse, I will be using a simulated 
+Firstly, you will need 3D spatial data to analyse. I will be using a simulated 
 dataset available in this package.
 
 ```{r}
@@ -76,7 +76,11 @@ plot_grid_metrics_continuous3D(cell_prop_grid_metrics, "proportion")
 ```
 
 If we select a group of cell types, we can find the entropy of each rectangular
-prism. The equation for entropy can be found in our manuscript/paper.
+prism. The equation for entropy can be found in our manuscript/paper. But,
+essentially, for example, if you are interested in Tumour and Immune cells,
+entropy will be higher in a rectangular prism if the proportion of Tumour and
+Immune cells in the rectangular prism is similar (i.e. 50% Tumour and 50% 
+Immune).
 
 ```{r}
 entropy_grid_metrics <- calculate_entropy_grid_metrics3D(
@@ -93,11 +97,11 @@ plot_grid_metrics_continuous3D(entropy_grid_metrics, "entropy")
 
 # Prevalence and prevalence gradient
 After obtaining your grid metrics, we can calculate 'prevalence'. If we choose a
-threshold, prevalence is simply the proportion of the rectangular prisms have a 
+threshold, prevalence is simply the proportion of rectangular prisms that have a 
 metric value above (or below) this threshold.
 
-The metric values always range from 0 to 1 due to how the values are calculated,
-so the threshold must be between 0 and 1.
+The metric values (proportion or entropy) always range from 0 to 1 due to how 
+the values are calculated, so the threshold must be between 0 and 1.
 
 Instead of choosing a single threshold, prevalence gradient uses a range of
 threshold values, from 0 to 1. The relationship between prevalence and threshold
@@ -106,7 +110,7 @@ a useful value for analysis too.
 
 How do you interpret the prevalence gradient?
 
-The graph can only be horizontal/flat or go down, it can't go up because when
+The graph can only be horizontal/flat or go down. It can't go up because when
 the threshold rises, the number of rectangular prisms that surpass this 
 threshold must drop (or stay constant).
 
