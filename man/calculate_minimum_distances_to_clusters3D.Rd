@@ -9,7 +9,7 @@ calculate_minimum_distances_to_clusters3D(
   cell_types_inside_cluster,
   cell_types_outside_cluster,
   cluster_colname,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = T
 )
 }
@@ -17,13 +17,18 @@ calculate_minimum_distances_to_clusters3D(
 \item{spe}{A SpatialExperiment object containing 3D spatial information for
 the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
-and z-coordinate of each cell.}
+and z-coordinate of each cell. It must also contain the cell clustering
+information, obtained by passing the SpatialExperiment object through one
+of the cell clustering algorithm functions in SPIAT3D
+(alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).}
 
 \item{cell_types_inside_cluster}{A character vector specifying the cell types
-inside the cell clusters that are of interest.}
+inside the cell clusters that are of interest. Minimum distances will be
+calculated TO these cell types.}
 
 \item{cell_types_outside_cluster}{A character vector specifying the cell
-types outside the cell clusters that are of interest.}
+types outside the cell clusters that are of interest. Minimum distances
+will be calculated FROM these cell types.}
 
 \item{cluster_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
@@ -32,22 +37,21 @@ or 'grid_based_cluster'.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot violin plots of the
 minimum distances each non-cluster cell to each cluster. Defaults to
 TRUE.}
 }
 \value{
-A data frame containing information about the reference cell, the
-nearest cell of another type, and the distance between them for each cell
-type pair.
+A data frame containing information about the minimum distances
+between FROM non-clusters TO cluster cells, for each cluster.
 }
 \description{
 This function calculates the minimum distances between
 non-cluster cells to cluster cells in a  3D SpatialExperiment object,
 where the cell clusters have already been identified using an existing
-SPIAT-3D cell clustering algorithm function.
+SPIAT3D cell clustering algorithm function.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

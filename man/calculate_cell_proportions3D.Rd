@@ -7,7 +7,7 @@
 calculate_cell_proportions3D(
   spe,
   cell_types_of_interest = NULL,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -23,8 +23,8 @@ considered.}
 \code{colData} slot of the SpatialExperiment object that contains the cell
 type information.}
 
-\item{plot_image}{A logical indicating whether to plot violin plots of the
-minimum distances between cell type pairs. Defaults to TRUE.}
+\item{plot_image}{A logical indicating whether to plot bar plots of the cell
+proportions of each cell type. Defaults to TRUE.}
 }
 \value{
 A data frame containing the cell types, their frequencies,
@@ -45,5 +45,7 @@ cell_proportions <- calculate_cell_proportions3D(
     feature_colname = "Cell.Type",
     plot_image = TRUE
 )
+
+print(cell_proportions)
 
 }

@@ -21,7 +21,7 @@ showing cross L vs radius.
 # Get simulated SpatialExperiment object to use as an example for analysis
 simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 
-# Calculate cross G gradient from simulated spe
+# Calculate cross L gradient from simulated spe
 result <- calculate_cross_L_gradient3D(
     spe = simulated_spe,
     reference_cell_type = "Tumour",

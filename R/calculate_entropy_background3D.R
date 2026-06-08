@@ -13,7 +13,7 @@
 #'     considered.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A numeric representing the background entropy.
 #'
@@ -31,7 +31,7 @@
 
 calculate_entropy_background3D <- function(spe,
                                            cell_types_of_interest,
-                                           feature_colname = "Cell.Type") {
+                                           feature_colname) {
 
   # NULL case: entropy is undefined
   if (is.null(cell_types_of_interest)) return(NA)

@@ -37,7 +37,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                                                      reference_cell_type,
                                                      target_cell_types,
                                                      radius,
-                                                     feature_colname = "Cell.Type") {
+                                                     feature_colname) {
 
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {
@@ -108,7 +108,8 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   length <- round(max(spe_coords$Cell.X.Position) - min(spe_coords$Cell.X.Position))
   width  <- round(max(spe_coords$Cell.Y.Position) - min(spe_coords$Cell.Y.Position))
   height <- round(max(spe_coords$Cell.Z.Position) - min(spe_coords$Cell.Z.Position))
-  ## Get volume of the window the cells are in
+
+  # Get volume of the window the cells are in
   volume <- length * width * height
 
   # All single radius cc metrics stem from calculate_neighbourhood_entropy3D function
@@ -118,13 +119,13 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                                                                 radius,
                                                                 feature_colname)
 
-  ## Cells in neighbourhood ----------
+  ## Neighbourhood counts ----------
   result[["neighbourhood_counts"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", target_cell_types)]
 
-  ## Cells in neighbourhood proportion ----------
+  ## Cells in neighbourhood ----------
   result[["cells_in_neighbourhood"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_prop", sep = ""))]
 
-  ## neighbourhood_entropy --------------
+  ## Neighbourhood_entropy --------------
   result[["neighbourhood_entropy"]] <- neighbourhood_entropy_df[ , c("ref_cell_id", paste(target_cell_types, "_entropy", sep = ""))]
 
   ## Mixing score -----------------

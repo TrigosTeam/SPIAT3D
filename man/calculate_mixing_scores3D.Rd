@@ -9,7 +9,7 @@ calculate_mixing_scores3D(
   reference_cell_types,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ types.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A data frame containing the mixing score values and associated
@@ -35,8 +35,8 @@ information for each valid reference and target cell type combination.
 }
 \description{
 This function calculates the mixing scores on a 3D
-SpatialExperiment Object. See paper on theory behind mixing scores (I
-ain't explaining it here).
+SpatialExperiment Object. See paper or cell colocalization metrics
+vignette on theory behind mixing scores (I ain't explaining it here).
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

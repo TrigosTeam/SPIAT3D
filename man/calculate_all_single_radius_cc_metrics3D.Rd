@@ -9,7 +9,7 @@ calculate_all_single_radius_cc_metrics3D(
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{

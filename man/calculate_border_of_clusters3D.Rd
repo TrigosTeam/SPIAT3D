@@ -9,7 +9,7 @@ calculate_border_of_clusters3D(
   spe,
   radius,
   cluster_colname,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -19,7 +19,7 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 and z-coordinate of each cell. It must also contain the cell clustering
 information, obtained by passing the SpatialExperiment object through one
-of the cell clustering algorithm functions in SPIAT-3D
+of the cell clustering algorithm functions in SPIAT3D
 (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).}
 
 \item{radius}{A positive numeric specifying the radius value. Use a larger
@@ -32,7 +32,7 @@ or 'grid_based_cluster'.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot cell clusters with
 bordering cells. Defaults to TRUE.}
@@ -41,12 +41,12 @@ bordering cells. Defaults to TRUE.}
 The same 3D SpatialExperiment object used as input for spe, with an
 added column in the \code{colData} slot called 'cluster_border' to specify
 which cells form the border of the clusters, and which cells are outside
-or inside the cluster.
+or infiltrating the cluster.
 }
 \description{
 This function finds which cells form the border of cell clusters
-on in a 3D SpatialExperiment Object, where the cell clusters have already
-been identified using an existing SPIAT-3D cell clustering algorithm
+in a 3D SpatialExperiment Object, where the cell clusters have already
+been identified using an existing SPIAT3D cell clustering algorithm
 function.
 }
 \examples{

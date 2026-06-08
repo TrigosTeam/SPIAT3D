@@ -11,7 +11,7 @@ dbscan_clustering3D(
   radius,
   minimum_cells_in_radius,
   minimum_cells_in_cluster,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -22,7 +22,7 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 and z-coordinate of each cell.}
 
 \item{cell_types_of_interest}{A character vector specifying the cell types of
-interest.}
+interest. Clusters containing only these cells will be found.}
 
 \item{radius}{A positive numeric. Spheres of specified radius are drawn
 around each cell type of interest and the number of other cell types of
@@ -32,16 +32,15 @@ interest are counted.}
 types of interest within the sphere of another cell type of interest
 surpasses this specified value, they form a cluster.}
 
-\item{minimum_cells_in_cluster}{A positive numeric. Clusters identified with
-dbscan which have less than this specified value are relabelled as not a
-cluster.}
+\item{minimum_cells_in_cluster}{A positive numeric. Clusters identified which
+have less than this specified value are relabelled as not a cluster.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot 3D spatial data with
-alpha hull clusters. Defaults to TRUE.}
+dbscan clusters. Defaults to TRUE.}
 }
 \value{
 The same 3D SpatialExperiment object used as input for spe, with an

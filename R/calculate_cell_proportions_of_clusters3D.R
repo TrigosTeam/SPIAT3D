@@ -10,7 +10,7 @@
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell. It must also contain the cell clustering
 #'     information, obtained by passing the SpatialExperiment object through one
-#'     of the cell clustering algorithm functions in SPIAT-3D
+#'     of the cell clustering algorithm functions in SPIAT3D
 #'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
 #' @param cluster_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell

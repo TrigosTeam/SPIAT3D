@@ -2,8 +2,8 @@
 #'     3D spatial data.
 #'
 #' @description This function finds which cells form the border of cell clusters
-#'     on in a 3D SpatialExperiment Object, where the cell clusters have already
-#'     been identified using an existing SPIAT-3D cell clustering algorithm
+#'     in a 3D SpatialExperiment Object, where the cell clusters have already
+#'     been identified using an existing SPIAT3D cell clustering algorithm
 #'     function.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
@@ -11,7 +11,7 @@
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell. It must also contain the cell clustering
 #'     information, obtained by passing the SpatialExperiment object through one
-#'     of the cell clustering algorithm functions in SPIAT-3D
+#'     of the cell clustering algorithm functions in SPIAT3D
 #'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
 #' @param radius A positive numeric specifying the radius value. Use a larger
 #'     value for a thicker border.
@@ -21,14 +21,14 @@
 #'     or 'grid_based_cluster'.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #' @param plot_image A logical indicating whether to plot cell clusters with
 #' bordering cells. Defaults to TRUE.
 #'
 #' @return The same 3D SpatialExperiment object used as input for spe, with an
 #'     added column in the `colData` slot called 'cluster_border' to specify
 #'     which cells form the border of the clusters, and which cells are outside
-#'     or inside the cluster.
+#'     or infiltrating the cluster.
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
@@ -60,7 +60,7 @@
 calculate_border_of_clusters3D <- function(spe,
                                            radius,
                                            cluster_colname,
-                                           feature_colname = "Cell.Type",
+                                           feature_colname,
                                            plot_image = TRUE) {
 
   # Check input parameters

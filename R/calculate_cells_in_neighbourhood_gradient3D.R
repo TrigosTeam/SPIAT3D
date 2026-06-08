@@ -1,10 +1,9 @@
-#' @title Calculate cells in neighbourhood (gradient version) on 3D spatial
-#'     data.
+#' @title Calculate cells in neighbourhood gradient on 3D spatial data.
 #'
-#' @description This function calculates the cells in neighbourhood (gradient
-#'     version) on a 3D SpatialExperiment Object. This metric finds the
-#'     proportion of target cells around each reference cell, for each target
-#'     cell type, and calculates the average proportion across all radii.
+#' @description This function calculates the cells in neighbourhood gradient on
+#'     a 3D SpatialExperiment Object. This metric finds the proportion of target
+#'     cells around each reference cell, for each target cell type, and
+#'     calculates the average proportion across all radii.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -13,15 +12,15 @@
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of
-#'     radius values used to calculate cells in neighbourhood over a gradient.
+#'     radius values to calculate over a gradient.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #' @param plot_image A logical indicating whether to plot cells in neighbourhood
 #'     gradient as a line graph. Defaults to TRUE.
 #'
-#' @return A data frame containing the cells in neighbourhood values for each
-#'     target cell type (columns) across each radii (rows).
+#' @return A data frame containing the average cells in neighbourhood values for
+#'     each target cell type (columns) across each radii (rows).
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
@@ -42,7 +41,7 @@ calculate_cells_in_neighbourhood_gradient3D <- function(spe,
                                                         reference_cell_type,
                                                         target_cell_types,
                                                         radii,
-                                                        feature_colname = "Cell.Type",
+                                                        feature_colname,
                                                         plot_image = TRUE) {
 
   if (!(is.numeric(radii) && length(radii) > 1)) {

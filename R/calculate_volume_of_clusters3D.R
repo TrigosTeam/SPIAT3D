@@ -2,14 +2,14 @@
 #'
 #' @description This function finds the volume of cell clusters in a 3D
 #'     SpatialExperiment Object, where the cell clusters have already been
-#'     identified using an existing SPIAT-3D cell clustering algorithm function.
+#'     identified using an existing SPIAT3D cell clustering algorithm function.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell. It must also contain the cell clustering
 #'     information, obtained by passing the SpatialExperiment object through one
-#'     of the cell clustering algorithm functions in SPIAT-3D
+#'     of the cell clustering algorithm functions in SPIAT3D
 #'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
 #' @param cluster_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
@@ -38,6 +38,8 @@
 #'     spe = dbscan_spe,
 #'     cluster_colname = "dbscan_cluster"
 #' )
+#'
+#' print(volume_of_clusters)
 #'
 #' @export
 

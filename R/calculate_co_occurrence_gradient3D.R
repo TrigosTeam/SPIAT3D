@@ -1,10 +1,10 @@
 #' @title Calculate co-occurrence gradient on 3D spatial data.
 #'
 #' @description This function calculates the co-occurrence gradient on a 3D
-#'     SpatialExperiment Object. This metric finds the proportion of target
-#'     cells around reference cells relative to the proportion of target cells
-#'     in the SpatialExperiment Object, for each target cell type, and across
-#'     all radii values.
+#'     SpatialExperiment Object. This metric finds the average proportion of
+#'     target cells around reference cells relative to the proportion of target
+#'     cells in the SpatialExperiment Object, for each target cell type, and
+#'     across all radii values.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -13,10 +13,10 @@
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of
-#'     radius values used to calculate cells in neighbourhood over a gradient.
+#'     radius values to calculate over a gradient.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #' @param plot_image A logical indicating whether to plot co-occurrence gradient
 #'     as a line graph. Defaults to TRUE.
 #'
@@ -42,7 +42,7 @@ calculate_co_occurrence_gradient3D <- function(spe,
                                                reference_cell_type,
                                                target_cell_types,
                                                radii,
-                                               feature_colname = "Cell.Type",
+                                               feature_colname,
                                                plot_image = TRUE) {
 
   if (!(is.numeric(radii) && length(radii) > 1)) {

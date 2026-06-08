@@ -113,6 +113,42 @@ calculate_minimum_distances_between_cell_types3D functions.</p></dd>
 <span class="r-in"><span>    distances_df <span class="op">=</span> <span class="va">minimum_distances</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">distances_summary</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       pair      mean       min        max    median   std_dev</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Endothelial/Endothelial  2.979453 0.6831898   6.937478  2.925393  1.104779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       Endothelial/Immune 12.654097 3.3221814  24.479371 12.911569  3.879947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       Endothelial/Others  5.328105 0.7943177  14.724923  4.880922  2.596639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       Endothelial/Tumour 11.576752 3.4067634  19.825019 11.646110  3.224015</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       Immune/Endothelial 50.726244 3.3221814 117.108044 48.779054 21.834912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            Immune/Immune  5.860977 1.1111424  25.306576  4.770140  3.753818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            Immune/Others  4.402321 0.5099885  12.159201  3.984803  2.166658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            Immune/Tumour  5.485948 0.5010763  20.592097  4.036541  3.912928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       Others/Endothelial 56.347373 0.7943177 124.401031 58.879693 25.909955</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           Others/Immune  8.917021 0.5099885  24.974685  8.621085  3.673304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           Others/Others  2.711372 0.5218880   8.882190  2.659742  1.023207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12           Others/Tumour  9.284483 0.5134595  29.495659  8.993733  3.865217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      Tumour/Endothelial 50.255591 3.4067634 117.009810 50.625863 20.600120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14           Tumour/Immune  5.125293 0.5010763  21.044513  4.266425  3.248407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           Tumour/Others  4.697746 0.5134595  10.943291  4.375426  2.164845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16           Tumour/Tumour  4.733487 0.6332032  23.159638  3.635878  3.573109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      reference      target</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Endothelial Endothelial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Endothelial      Immune</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Endothelial      Others</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Endothelial      Tumour</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       Immune Endothelial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       Immune      Immune</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       Immune      Others</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       Immune      Tumour</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       Others Endothelial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      Others      Immune</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      Others      Others</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      Others      Tumour</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      Tumour Endothelial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      Tumour      Immune</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      Tumour      Others</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16      Tumour      Tumour</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

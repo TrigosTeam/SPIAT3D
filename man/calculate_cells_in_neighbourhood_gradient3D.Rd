@@ -2,15 +2,14 @@
 % Please edit documentation in R/calculate_cells_in_neighbourhood_gradient3D.R
 \name{calculate_cells_in_neighbourhood_gradient3D}
 \alias{calculate_cells_in_neighbourhood_gradient3D}
-\title{Calculate cells in neighbourhood (gradient version) on 3D spatial
-data.}
+\title{Calculate cells in neighbourhood gradient on 3D spatial data.}
 \usage{
 calculate_cells_in_neighbourhood_gradient3D(
   spe,
   reference_cell_type,
   target_cell_types,
   radii,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -25,24 +24,24 @@ and z-coordinate of each cell.}
 \item{target_cell_types}{A character vector specifying the target cell types.}
 
 \item{radii}{A positive, ascending numeric vector specifying the set of
-radius values used to calculate cells in neighbourhood over a gradient.}
+radius values to calculate over a gradient.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot cells in neighbourhood
 gradient as a line graph. Defaults to TRUE.}
 }
 \value{
-A data frame containing the cells in neighbourhood values for each
-target cell type (columns) across each radii (rows).
+A data frame containing the average cells in neighbourhood values for
+each target cell type (columns) across each radii (rows).
 }
 \description{
-This function calculates the cells in neighbourhood (gradient
-version) on a 3D SpatialExperiment Object. This metric finds the
-proportion of target cells around each reference cell, for each target
-cell type, and calculates the average proportion across all radii.
+This function calculates the cells in neighbourhood gradient on
+a 3D SpatialExperiment Object. This metric finds the proportion of target
+cells around each reference cell, for each target cell type, and
+calculates the average proportion across all radii.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

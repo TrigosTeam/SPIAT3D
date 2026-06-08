@@ -10,7 +10,7 @@ grid_based_clustering3D(
   cell_types_of_interest,
   n_splits,
   minimum_cells_in_cluster,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -21,7 +21,7 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 and z-coordinate of each cell.}
 
 \item{cell_types_of_interest}{A character vector specifying the cell types of
-interest.}
+interest. Clusters containing only these cells will be found.}
 
 \item{n_splits}{A positive numeric integer specifying the number splits used
 to divide the x-axis, y-axis and z-axis.}
@@ -31,7 +31,7 @@ have less than this specified value are relabelled as not a cluster.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot 3D spatial data with
 grid based clusters. Defaults to TRUE.}

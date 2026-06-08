@@ -82,7 +82,7 @@ calculate_entropy_grid_metrics3D and grid_based_clustering3D.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_spe_grid_metrics3D</span><span class="op">(</span><span class="va">spe</span>, <span class="va">n_splits</span>, feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_spe_grid_metrics3D</span><span class="op">(</span><span class="va">spe</span>, <span class="va">n_splits</span>, <span class="va">feature_colname</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -97,14 +97,14 @@ and z-coordinate of each cell.</p></dd>
 
 
 <dt id="arg-n-splits">n_splits<a class="anchor" aria-label="anchor" href="#arg-n-splits"></a></dt>
-<dd><p>A positive numeric integer specifying the number splits used
-to divide the x-axis, y-axis and z-axis.</p></dd>
+<dd><p>A positive numeric integer specifying the number of splits
+used to divide the x-axis, y-axis and z-axis.</p></dd>
 
 
 <dt id="arg-feature-colname">feature_colname<a class="anchor" aria-label="anchor" href="#arg-feature-colname"></a></dt>
 <dd><p>A string specifying the name of the column in the
 <code>colData</code> slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".</p></dd>
+type information.</p></dd>
 
 </dl></div>
     <div id="value">

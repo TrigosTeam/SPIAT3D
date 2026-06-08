@@ -15,7 +15,7 @@
 #'     considered. Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #' @param show_summary A logical indicating whether to print a summary of the
 #'     minimum distances for each cell type pair. Defaults to TRUE.
 #' @param plot_image A logical indicating whether to plot violin plots of the
@@ -41,7 +41,7 @@
 
 calculate_minimum_distances_between_cell_types3D <- function(spe,
                                                              cell_types_of_interest = NULL,
-                                                             feature_colname = "Cell.Type",
+                                                             feature_colname,
                                                              show_summary = TRUE,
                                                              plot_image = TRUE) {
 

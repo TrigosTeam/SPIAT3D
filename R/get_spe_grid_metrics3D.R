@@ -11,11 +11,11 @@
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell.
-#' @param n_splits A positive numeric integer specifying the number splits used
-#'     to divide the x-axis, y-axis and z-axis.
+#' @param n_splits A positive numeric integer specifying the number of splits
+#'     used to divide the x-axis, y-axis and z-axis.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A list containing the number and type of cells in each rectangular
 #'     prism, and the coordinate of each rectangular prism.
@@ -34,7 +34,7 @@
 
 get_spe_grid_metrics3D <- function(spe,
                                    n_splits,
-                                   feature_colname = "Cell.Type") {
+                                   feature_colname) {
 
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {

@@ -37,4 +37,6 @@ distances_summary <- summarise_distances_between_cell_types3D(
     distances_df = minimum_distances
 )
 
+print(distances_summary)
+
 }

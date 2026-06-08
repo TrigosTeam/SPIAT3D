@@ -9,13 +9,15 @@
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of
-#'     interest.
+#'     interest. Clusters containing only these cells will be found.
 #' @param alpha A positive numeric. A smaller alpha value results in clusters
 #'     with more intricate borders. A large alpha value results in clusters with
 #'     smooth and simple boundaries.
+#' @param minimum_cells_in_cluster A positive numeric. Clusters identified which
+#'     have less than this specified value are relabelled as not a cluster.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #' @param plot_image A logical indicating whether to plot 3D spatial data with
 #'     alpha hull clusters. Defaults to TRUE.
 #'
@@ -27,7 +29,6 @@
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
 #' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
-#'
 #'
 #' # Alpha hull clustering depends on alphashape3d package, which depends on rgl
 #' # package, and you might need to run this code, as newer mac versions don't
@@ -53,7 +54,7 @@ alpha_hull_clustering3D <- function(spe,
                                     cell_types_of_interest,
                                     alpha,
                                     minimum_cells_in_cluster,
-                                    feature_colname = "Cell.Type",
+                                    feature_colname,
                                     plot_image = TRUE) {
 
   # Check input parameters
@@ -65,7 +66,7 @@ alpha_hull_clustering3D <- function(spe,
     stop("spe cannot contain cell types that are an empty string or a string of only spaces.")
   }
 
-  ## Check cell types of interst are found in the spe object
+  ## Check cell types of interest are found in the spe object
   unknown_cell_types <- setdiff(cell_types_of_interest, spe[[feature_colname]])
   if (length(unknown_cell_types) != 0) {
     stop(paste("The following cell types in cell_types_of_interest are not found in the spe object:\n   ",

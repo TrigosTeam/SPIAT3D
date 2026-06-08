@@ -11,10 +11,10 @@
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of
-#'     radius values used.
+#'     radius values used to calculate over a gradient.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #' @param plot_image A logical indicating whether to plot cross L gradient as a
 #'     line graph showing both the observed cross L values for each cell type
 #'     and expected cross L values. Defaults to TRUE.
@@ -41,7 +41,7 @@ calculate_cross_L_gradient3D <- function(spe,
                                          reference_cell_type,
                                          target_cell_types,
                                          radii,
-                                         feature_colname = "Cell.Type",
+                                         feature_colname,
                                          plot_image = TRUE) {
 
   if (!(is.numeric(radii) && length(radii) > 1)) {

@@ -4,7 +4,7 @@
 #'     displays the grid based clusters in a 3D SpatialExperiment Object where
 #'     grid based clusters have already been identified.
 #'
-#' @param spe A SpatialExperiment object containing 3D spatial information for
+#' @param spe_with_grid A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell. It must also contain the cell clustering
@@ -15,11 +15,11 @@
 #'     Defaults to NULL.
 #' @param plot_colours A string vector specifying the colours of the cell types
 #'     when plotting. Must match the number of cell types specified in
-#'     `plot_cell_types`. If NULL, the rainbow color pallete will be used.
+#'     `plot_cell_types`. If NULL, the viridis color pallete will be used.
 #'     Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #'
 #' @return A Plotly object plotting the cells and grid based clusters of the 3D
 #'     SpatialExperiment Object.
@@ -57,7 +57,7 @@
 plot_grid_based_clusters3D <- function(spe_with_grid,
                                        plot_cell_types = NULL,
                                        plot_colours = NULL,
-                                       feature_colname = "Cell.Type") {
+                                       feature_colname) {
 
   # Check input parameters
   if (class(spe_with_grid) != "SpatialExperiment") {

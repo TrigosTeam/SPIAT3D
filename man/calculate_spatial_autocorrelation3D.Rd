@@ -47,7 +47,7 @@ cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
     reference_cell_types = c("Tumour"),
     target_cell_types = c("Immune"),
     feature_colname = "Cell.Type",
-    plot_image = T
+    plot_image = TRUE
 )
 
 # Calculate spatial autocorrelation from cell proportion grid metrics

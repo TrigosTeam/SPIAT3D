@@ -4,12 +4,7 @@
 \alias{plot_cells3D}
 \title{Function to plot cells in 3D spatial data.}
 \usage{
-plot_cells3D(
-  spe,
-  plot_cell_types = NULL,
-  plot_colours = NULL,
-  feature_colname = "Cell.Type"
-)
+plot_cells3D(spe, plot_cell_types = NULL, plot_colours = NULL, feature_colname)
 }
 \arguments{
 \item{spe}{A SpatialExperiment object containing 3D spatial information for
@@ -23,12 +18,12 @@ Defaults to NULL.}
 
 \item{plot_colours}{A string vector specifying the colours of the cell types
 when plotting. Must match the number of cell types specified in
-\code{plot_cell_types}. If NULL, the rainbow color pallete will be used.
+\code{plot_cell_types}. If NULL, the viridis color pallete will be used.
 Defaults to NULL.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A Plotly object plotting the cells of the 3D SpatialExperiment

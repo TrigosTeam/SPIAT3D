@@ -8,7 +8,7 @@ calculate_entropy_grid_metrics3D(
   spe,
   n_splits,
   cell_types_of_interest,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -22,12 +22,11 @@ and z-coordinate of each cell.}
 to divide the x-axis, y-axis and z-axis.}
 
 \item{cell_types_of_interest}{A character vector specifying the cell types of
-interest. If NULL, all cell types in the \code{feature_colname} column will be
-considered.}
+interest.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot entropy grid metrics.
 Defaults to TRUE.}
@@ -39,7 +38,7 @@ rectangular prism.
 \description{
 This functions divides a 3D SpatialExperiment Object into a 3D
 grid of rectangular prisms. The entropy values in each rectangular prism
-is calculated. The output can be used for other SPIAT-3D metrics:
+is calculated. The output can be used for other SPIAT3D metrics:
 calculate_spatial_autocorrelation3D, calculate_prevalence3D,
 calculate_prevalence_gradient3D.
 }
@@ -52,7 +51,7 @@ entropy_grid_metrics <- calculate_entropy_grid_metrics3D(
     n_splits = 10,
     cell_types_of_interest = c("Tumour", "Immune"),
     feature_colname = "Cell.Type",
-    plot_image = T
+    plot_image = TRUE
 )
 
 }

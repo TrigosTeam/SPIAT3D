@@ -30,6 +30,8 @@
 #'     neighbourhood_metric_df = result
 #' )
 #'
+#' print(neighbourhood_counts_summary)
+#'
 #' @export
 
 summarise_neighbourhood_metric3D <- function(neighbourhood_metric_df) {

@@ -1,4 +1,4 @@
-#' @title Calculate neighbourhood entropy gradient on 3D spatial data.
+#' @title Calculate neighbourhood entropy on 3D spatial data.
 #'
 #' @description This function calculates the neighbourhood entropy on a 3D
 #'     SpatialExperiment Object. This metric finds the entropy between
@@ -14,7 +14,7 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A data frame containing the neighbourhood entropy values for each
 #'     reference cell (rows) and for each target cell type (columns).
@@ -37,7 +37,7 @@ calculate_neighbourhood_entropy3D <- function(spe,
                                               reference_cell_type,
                                               target_cell_types,
                                               radius,
-                                              feature_colname = "Cell.Type") {
+                                              feature_colname) {
 
   # Check target_cell_types
   if (!(is.character(target_cell_types) && length(target_cell_types) >= 2)) {

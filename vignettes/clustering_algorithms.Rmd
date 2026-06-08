@@ -34,7 +34,8 @@ print(simulated_spe)
 
 plot_cells3D(simulated_spe,
              plot_cell_types = c("Tumour", "Immune", "Endothelial", "Others"),
-             plot_colours = c("orange", "skyblue", "tomato", "lightgray"))
+             plot_colours = c("orange", "skyblue", "tomato", "lightgray"),
+             feature_colname = "Cell.Type")
 
 ```
 

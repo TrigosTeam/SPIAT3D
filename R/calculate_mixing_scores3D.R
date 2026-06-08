@@ -1,8 +1,8 @@
 #' @title Calculate mixing scores on 3D spatial data.
 #'
 #' @description This function calculates the mixing scores on a 3D
-#'     SpatialExperiment Object. See paper on theory behind mixing scores (I
-#'     ain't explaining it here).
+#'     SpatialExperiment Object. See paper or cell colocalization metrics
+#'     vignette on theory behind mixing scores (I ain't explaining it here).
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -14,7 +14,7 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A data frame containing the mixing score values and associated
 #'     information for each valid reference and target cell type combination.
@@ -37,7 +37,7 @@ calculate_mixing_scores3D <- function(spe,
                                       reference_cell_types,
                                       target_cell_types,
                                       radius,
-                                      feature_colname = "Cell.Type") {
+                                      feature_colname) {
 
   # Define result
   result <- data.frame()

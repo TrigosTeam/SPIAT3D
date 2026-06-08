@@ -8,7 +8,7 @@
 calculate_minimum_distances_between_cell_types3D(
   spe,
   cell_types_of_interest = NULL,
-  feature_colname = "Cell.Type",
+  feature_colname,
   show_summary = TRUE,
   plot_image = TRUE
 )
@@ -25,7 +25,7 @@ considered. Defaults to NULL.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{show_summary}{A logical indicating whether to print a summary of the
 minimum distances for each cell type pair. Defaults to TRUE.}

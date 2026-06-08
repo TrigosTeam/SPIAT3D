@@ -79,7 +79,7 @@ object using the grid based clustering algorithm.</p>
 <span>  <span class="va">cell_types_of_interest</span>,</span>
 <span>  <span class="va">n_splits</span>,</span>
 <span>  <span class="va">minimum_cells_in_cluster</span>,</span>
-<span>  feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span>,</span>
+<span>  <span class="va">feature_colname</span>,</span>
 <span>  plot_image <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,7 +97,7 @@ and z-coordinate of each cell.</p></dd>
 
 <dt id="arg-cell-types-of-interest">cell_types_of_interest<a class="anchor" aria-label="anchor" href="#arg-cell-types-of-interest"></a></dt>
 <dd><p>A character vector specifying the cell types of
-interest.</p></dd>
+interest. Clusters containing only these cells will be found.</p></dd>
 
 
 <dt id="arg-n-splits">n_splits<a class="anchor" aria-label="anchor" href="#arg-n-splits"></a></dt>
@@ -113,7 +113,7 @@ have less than this specified value are relabelled as not a cluster.</p></dd>
 <dt id="arg-feature-colname">feature_colname<a class="anchor" aria-label="anchor" href="#arg-feature-colname"></a></dt>
 <dd><p>A string specifying the name of the column in the
 <code>colData</code> slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"</p></dd>
+type information.</p></dd>
 
 
 <dt id="arg-plot-image">plot_image<a class="anchor" aria-label="anchor" href="#arg-plot-image"></a></dt>

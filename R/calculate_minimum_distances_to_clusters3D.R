@@ -3,30 +3,34 @@
 #' @description This function calculates the minimum distances between
 #'     non-cluster cells to cluster cells in a  3D SpatialExperiment object,
 #'     where the cell clusters have already been identified using an existing
-#'     SPIAT-3D cell clustering algorithm function.
+#'     SPIAT3D cell clustering algorithm function.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
-#'     and z-coordinate of each cell.
+#'     and z-coordinate of each cell. It must also contain the cell clustering
+#'     information, obtained by passing the SpatialExperiment object through one
+#'     of the cell clustering algorithm functions in SPIAT3D
+#'     (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).
 #' @param cell_types_inside_cluster A character vector specifying the cell types
-#'     inside the cell clusters that are of interest.
+#'     inside the cell clusters that are of interest. Minimum distances will be
+#'     calculated TO these cell types.
 #' @param cell_types_outside_cluster A character vector specifying the cell
-#'     types outside the cell clusters that are of interest.
+#'     types outside the cell clusters that are of interest. Minimum distances
+#'     will be calculated FROM these cell types.
 #' @param cluster_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     clustering information. Should be 'alpha_hull_cluster', 'dbscan_cluster',
 #'     or 'grid_based_cluster'.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #' @param plot_image A logical indicating whether to plot violin plots of the
 #'     minimum distances each non-cluster cell to each cluster. Defaults to
 #'     TRUE.
 #'
-#' @return A data frame containing information about the reference cell, the
-#'     nearest cell of another type, and the distance between them for each cell
-#'     type pair.
+#' @return A data frame containing information about the minimum distances
+#'     between FROM non-clusters TO cluster cells, for each cluster.
 #'
 #' @importFrom ggplot2 ggplot aes geom_violin facet_grid labeller labs stat_summary theme_bw theme element_blank element_text
 #'
@@ -61,7 +65,7 @@ calculate_minimum_distances_to_clusters3D <- function(spe,
                                                       cell_types_inside_cluster,
                                                       cell_types_outside_cluster,
                                                       cluster_colname,
-                                                      feature_colname = "Cell.Type",
+                                                      feature_colname,
                                                       plot_image = T) {
 
   # Check input parameters

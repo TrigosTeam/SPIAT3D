@@ -13,7 +13,7 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A data frame containing the neighbourhood counts values for each
 #'     reference cell (rows) and for each target cell type (columns).
@@ -36,7 +36,7 @@ calculate_neighbourhood_counts3D <- function(spe,
                                              reference_cell_type,
                                              target_cell_types,
                                              radius,
-                                             feature_colname = "Cell.Type") {
+                                             feature_colname) {
 
 
   # Check input parameters

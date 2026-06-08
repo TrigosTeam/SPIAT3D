@@ -9,7 +9,7 @@ calculate_cross_K3D(
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ and z-coordinate of each cell.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A data frame containing observed cross K-function values for each
@@ -34,8 +34,8 @@ target cell type and expected cross K-function values.
 }
 \description{
 This function calculates the cross K-function on a 3D
-SpatialExperiment Object. See paper on theory behind cross K-function (I
-ain't explaining it here).
+SpatialExperiment Object. See paper or cell colocalization metrics
+vignette on theory behind cross K-function (I ain't explaining it here).
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

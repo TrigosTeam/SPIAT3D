@@ -19,16 +19,16 @@ calculate_entropy_grid_metrics3D functions.}
 \item{threshold}{A numeric between 0 and 1 representing the threshold value.}
 
 \item{above}{A logical indicating whether to calculate the proportion of
-rectangular prisms which surpass the threshold (TRUE) or do not (FALSE).
-Defaults to TRUE.}
+rectangular prisms which have a metric value above the threshold (TRUE)
+or below the threshold (FALSE). Defaults to TRUE.}
 }
 \value{
 A numeric representing the prevalence value.
 }
 \description{
 This functions calculates the 'prevalence', or equivalently,
-the proportion of rectangular prisms of the 3D grid metrics has a value
-above/below the required threshold.
+the proportion of rectangular prisms of the 3D grid metrics that have a
+value above/below the required threshold.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
@@ -41,7 +41,7 @@ cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
     reference_cell_types = c("Tumour"),
     target_cell_types = c("Immune"),
     feature_colname = "Cell.Type",
-    plot_image = T
+    plot_image = TRUE
 )
 
 # Get prevalence from cell proportion grid metrics

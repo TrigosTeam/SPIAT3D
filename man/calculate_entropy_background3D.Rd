@@ -4,11 +4,7 @@
 \alias{calculate_entropy_background3D}
 \title{Calculate the background entropy of 3D spatial data.}
 \usage{
-calculate_entropy_background3D(
-  spe,
-  cell_types_of_interest,
-  feature_colname = "Cell.Type"
-)
+calculate_entropy_background3D(spe, cell_types_of_interest, feature_colname)
 }
 \arguments{
 \item{spe}{A SpatialExperiment object containing 3D spatial information for
@@ -22,7 +18,7 @@ considered.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A numeric representing the background entropy.

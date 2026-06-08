@@ -2,7 +2,8 @@
 #'
 #' @description This functions calculates the 'prevalence gradient', or
 #'     equivalently, the proportion of rectangular prisms of the 3D grid metrics
-#'     has a value above the required threshold, for a gradient of thresholds.
+#'     that have a value above the required threshold, for a gradient of
+#'     thresholds.
 #'
 #' @param grid_metrics A data frame containing the proportion/entropy and
 #'     spatial information for each rectangular prism. Obtained from the output
@@ -29,14 +30,14 @@
 #'     reference_cell_types = c("Tumour"),
 #'     target_cell_types = c("Immune"),
 #'     feature_colname = "Cell.Type",
-#'     plot_image = T
+#'     plot_image = TRUE
 #' )
 #'
 #' # Get prevalence gradient from cell proportion grid metrics
 #' prevalence_gradient <- calculate_prevalence_gradient3D(
 #'     grid_metrics = cell_prop_grid_metrics,
 #'     metric_colname = "proportion",
-#'     show_AUC = T,
+#'     show_AUC = TRUE,
 #'     plot_image = TRUE
 #' )
 #'
@@ -44,8 +45,8 @@
 
 calculate_prevalence_gradient3D <- function(grid_metrics,
                                             metric_colname,
-                                            show_AUC = T,
-                                            plot_image = T) {
+                                            show_AUC = TRUE,
+                                            plot_image = TRUE) {
 
   ## Check input parameters
   if (!(is.character(metric_colname))) {

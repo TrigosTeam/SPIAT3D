@@ -2,14 +2,14 @@
 % Please edit documentation in R/calculate_neighbourhood_entropy3D.R
 \name{calculate_neighbourhood_entropy3D}
 \alias{calculate_neighbourhood_entropy3D}
-\title{Calculate neighbourhood entropy gradient on 3D spatial data.}
+\title{Calculate neighbourhood entropy on 3D spatial data.}
 \usage{
 calculate_neighbourhood_entropy3D(
   spe,
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ and z-coordinate of each cell.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A data frame containing the neighbourhood entropy values for each

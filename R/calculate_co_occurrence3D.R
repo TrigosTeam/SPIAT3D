@@ -1,4 +1,4 @@
-#' @title Calculate co-occurrence gradient on 3D spatial data.
+#' @title Calculate co-occurrence on 3D spatial data.
 #'
 #' @description This function calculates the co-occurrence on a 3D
 #'     SpatialExperiment Object. This metric finds the average proportion of
@@ -15,7 +15,7 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A data frame containing the co-occurrence values for each target cell
 #'     type (columns).
@@ -38,7 +38,7 @@ calculate_co_occurrence3D <- function(spe,
                                       reference_cell_type,
                                       target_cell_types,
                                       radius,
-                                      feature_colname = "Cell.Type") {
+                                      feature_colname) {
 
   # Get all cell types in spe
   all_cell_types <- unique(spe[[feature_colname]])

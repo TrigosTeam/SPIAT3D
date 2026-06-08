@@ -30,6 +30,8 @@
 #'     distances_df = minimum_distances
 #' )
 #'
+#' print(distances_summary)
+#'
 #' @export
 
 summarise_distances_between_cell_types3D <- function(distances_df) {

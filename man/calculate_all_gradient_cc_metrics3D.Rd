@@ -10,7 +10,7 @@ calculate_all_gradient_cc_metrics3D(
   reference_cell_type,
   target_cell_types,
   radii,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = T
 )
 }
@@ -29,7 +29,7 @@ radius values used to calculate each metric over a gradient.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot analysis of all
 metrics. Defaults to TRUE.}

@@ -12,8 +12,8 @@
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information.
-#' @param plot_image A logical indicating whether to plot violin plots of the
-#'     minimum distances between cell type pairs. Defaults to TRUE.
+#' @param plot_image A logical indicating whether to plot bar plots of the cell
+#'     proportions of each cell type. Defaults to TRUE.
 #'
 #' @return A data frame containing the cell types, their frequencies,
 #'     proportions, and percentages.
@@ -31,12 +31,14 @@
 #'     plot_image = TRUE
 #' )
 #'
+#' print(cell_proportions)
+#'
 #' @export
 
 
 calculate_cell_proportions3D <- function(spe,
                                          cell_types_of_interest = NULL,
-                                         feature_colname = "Cell.Type",
+                                         feature_colname,
                                          plot_image = TRUE) {
 
   # Check input parameters

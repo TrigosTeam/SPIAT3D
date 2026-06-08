@@ -80,7 +80,7 @@ where alpha hull clusters have already been identified.</p>
 <span>  <span class="va">spe_with_alpha_hull</span>,</span>
 <span>  plot_cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  feature_colname <span class="op">=</span> <span class="st">"Cell.Type"</span></span>
+<span>  <span class="va">feature_colname</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,7 +88,16 @@ where alpha hull clusters have already been identified.</p>
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-plot-cell-types">plot_cell_types<a class="anchor" aria-label="anchor" href="#arg-plot-cell-types"></a></dt>
+<dl><dt id="arg-spe-with-alpha-hull">spe_with_alpha_hull<a class="anchor" aria-label="anchor" href="#arg-spe-with-alpha-hull"></a></dt>
+<dd><p>A SpatialExperiment object containing 3D spatial
+information for the cells. Naming of spatial coordinates MUST be
+"Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" for the
+x-coordinate, y-coordinate and z-coordinate of each cell. It must also
+contain the cell clustering information, obtained by passing the
+SpatialExperiment object through the alpha_hull_clustering3D function.</p></dd>
+
+
+<dt id="arg-plot-cell-types">plot_cell_types<a class="anchor" aria-label="anchor" href="#arg-plot-cell-types"></a></dt>
 <dd><p>A string vector specifying the cell types to plot. If
 NULL, all cell types in the <code>feature_colname</code> column will be considered.
 Defaults to NULL.</p></dd>
@@ -97,23 +106,14 @@ Defaults to NULL.</p></dd>
 <dt id="arg-plot-colours">plot_colours<a class="anchor" aria-label="anchor" href="#arg-plot-colours"></a></dt>
 <dd><p>A string vector specifying the colours of the cell types
 when plotting. Must match the number of cell types specified in
-<code>plot_cell_types</code>. If NULL, the rainbow color pallete will be used.
+<code>plot_cell_types</code>. If NULL, the viridis color pallete will be used.
 Defaults to NULL.</p></dd>
 
 
 <dt id="arg-feature-colname">feature_colname<a class="anchor" aria-label="anchor" href="#arg-feature-colname"></a></dt>
 <dd><p>A string specifying the name of the column in the
 <code>colData</code> slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"</p></dd>
-
-
-<dt id="arg-spe">spe<a class="anchor" aria-label="anchor" href="#arg-spe"></a></dt>
-<dd><p>A SpatialExperiment object containing 3D spatial information for
-the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
-"Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
-and z-coordinate of each cell. It must also contain the cell clustering
-information, obtained by passing the SpatialExperiment object through the
-alpha_hull_clustering3D function.</p></dd>
+type information.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -39,4 +39,6 @@ neighbourhood_counts_summary <- summarise_neighbourhood_metric3D(
     neighbourhood_metric_df = result
 )
 
+print(neighbourhood_counts_summary)
+
 }

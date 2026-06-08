@@ -12,11 +12,11 @@
 #'     Defaults to NULL.
 #' @param plot_colours A string vector specifying the colours of the cell types
 #'     when plotting. Must match the number of cell types specified in
-#'     `plot_cell_types`. If NULL, the rainbow color pallete will be used.
+#'     `plot_cell_types`. If NULL, the viridis color pallete will be used.
 #'     Defaults to NULL.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A Plotly object plotting the cells of the 3D SpatialExperiment
 #'     Object.
@@ -39,7 +39,7 @@
 plot_cells3D <- function(spe,
                          plot_cell_types = NULL,
                          plot_colours = NULL,
-                         feature_colname = "Cell.Type") {
+                         feature_colname) {
 
   # Check input parameters
   if (class(spe) != "SpatialExperiment") {

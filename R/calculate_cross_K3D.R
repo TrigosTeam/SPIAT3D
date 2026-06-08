@@ -1,8 +1,8 @@
 #' @title Calculate cross K-function on 3D spatial data.
 #'
 #' @description This function calculates the cross K-function on a 3D
-#'     SpatialExperiment Object. See paper on theory behind cross K-function (I
-#'     ain't explaining it here).
+#'     SpatialExperiment Object. See paper or cell colocalization metrics
+#'     vignette on theory behind cross K-function (I ain't explaining it here).
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -13,7 +13,7 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #'
 #' @return A data frame containing observed cross K-function values for each
 #'     target cell type and expected cross K-function values.
@@ -36,7 +36,7 @@ calculate_cross_K3D <- function(spe,
                                 reference_cell_type,
                                 target_cell_types,
                                 radius,
-                                feature_colname = "Cell.Type") {
+                                feature_colname) {
 
   # Check if inputs are valid
   if (is.null(spe[[feature_colname]])) stop(paste("No column called", feature_colname, "found in spe object"))

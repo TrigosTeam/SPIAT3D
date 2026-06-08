@@ -9,7 +9,7 @@ calculate_neighbourhood_counts3D(
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ and z-coordinate of each cell.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A data frame containing the neighbourhood counts values for each

@@ -9,21 +9,20 @@
 #'     "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 #'     and z-coordinate of each cell.
 #' @param cell_types_of_interest A character vector specifying the cell types of
-#'     interest.
+#'     interest. Clusters containing only these cells will be found.
 #' @param radius A positive numeric. Spheres of specified radius are drawn
 #'     around each cell type of interest and the number of other cell types of
 #'     interest are counted.
 #' @param minimum_cells_in_radius A positive numeric. If the number of cells
 #'     types of interest within the sphere of another cell type of interest
 #'     surpasses this specified value, they form a cluster.
-#' @param minimum_cells_in_cluster A positive numeric. Clusters identified with
-#'     dbscan which have less than this specified value are relabelled as not a
-#'     cluster.
+#' @param minimum_cells_in_cluster A positive numeric. Clusters identified which
+#'     have less than this specified value are relabelled as not a cluster.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type"
+#'     type information.
 #' @param plot_image A logical indicating whether to plot 3D spatial data with
-#'     alpha hull clusters. Defaults to TRUE.
+#'     dbscan clusters. Defaults to TRUE.
 #'
 #' @return The same 3D SpatialExperiment object used as input for spe, with an
 #'     added column in the `colData` slot to specify which dbscan cluster each
@@ -50,7 +49,7 @@ dbscan_clustering3D <- function(spe,
                                 radius,
                                 minimum_cells_in_radius,
                                 minimum_cells_in_cluster,
-                                feature_colname = "Cell.Type",
+                                feature_colname,
                                 plot_image = TRUE) {
 
   # Check input parameters

@@ -9,7 +9,7 @@ calculate_mixing_scores_gradient3D(
   reference_cell_type,
   target_cell_type,
   radii,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -24,14 +24,14 @@ and z-coordinate of each cell.}
 \item{target_cell_type}{A string specifying the target cell type.}
 
 \item{radii}{A positive, ascending numeric vector specifying the set of
-radius values used.}
+radius values to calculate over a gradient.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot mixing scores gradient
-as a  line graph. Defaults to TRUE.}
+as a line graph. Defaults to TRUE.}
 }
 \value{
 A data frame containing mixing score values and associated
@@ -39,8 +39,9 @@ information across each radii (rows).
 }
 \description{
 This function calculates the mixing scores gradient on a 3D
-SpatialExperiment Object. See paper on theory behind mixing scores
-gradient (I ain't explaining it here).
+SpatialExperiment Object. See paper or cell colocalization metrics
+vignette on theory behind mixing scores gradient (I ain't explaining it
+here).
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

@@ -1,8 +1,8 @@
 #' @title Calculate prevalence of 3D grid metrics.
 #'
 #' @description This functions calculates the 'prevalence', or equivalently,
-#'     the proportion of rectangular prisms of the 3D grid metrics has a value
-#'     above/below the required threshold.
+#'     the proportion of rectangular prisms of the 3D grid metrics that have a
+#'     value above/below the required threshold.
 #'
 #' @param grid_metrics A data frame containing the proportion/entropy and
 #'     spatial information for each rectangular prism. Obtained from the output
@@ -13,8 +13,8 @@
 #'     'proportion' or 'entropy'.
 #' @param threshold A numeric between 0 and 1 representing the threshold value.
 #' @param above A logical indicating whether to calculate the proportion of
-#'     rectangular prisms which surpass the threshold (TRUE) or do not (FALSE).
-#'     Defaults to TRUE.
+#'     rectangular prisms which have a metric value above the threshold (TRUE)
+#'     or below the threshold (FALSE). Defaults to TRUE.
 #'
 #' @return A numeric representing the prevalence value.
 #'
@@ -29,7 +29,7 @@
 #'     reference_cell_types = c("Tumour"),
 #'     target_cell_types = c("Immune"),
 #'     feature_colname = "Cell.Type",
-#'     plot_image = T
+#'     plot_image = TRUE
 #' )
 #'
 #' # Get prevalence from cell proportion grid metrics

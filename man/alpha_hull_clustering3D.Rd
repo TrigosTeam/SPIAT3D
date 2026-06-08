@@ -10,7 +10,7 @@ alpha_hull_clustering3D(
   cell_types_of_interest,
   alpha,
   minimum_cells_in_cluster,
-  feature_colname = "Cell.Type",
+  feature_colname,
   plot_image = TRUE
 )
 }
@@ -21,15 +21,18 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 and z-coordinate of each cell.}
 
 \item{cell_types_of_interest}{A character vector specifying the cell types of
-interest.}
+interest. Clusters containing only these cells will be found.}
 
 \item{alpha}{A positive numeric. A smaller alpha value results in clusters
 with more intricate borders. A large alpha value results in clusters with
 smooth and simple boundaries.}
 
+\item{minimum_cells_in_cluster}{A positive numeric. Clusters identified which
+have less than this specified value are relabelled as not a cluster.}
+
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
+type information.}
 
 \item{plot_image}{A logical indicating whether to plot 3D spatial data with
 alpha hull clusters. Defaults to TRUE.}
@@ -47,7 +50,6 @@ object using the alpha hull clustering algorithm.
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
 simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
-
 
 # Alpha hull clustering depends on alphashape3d package, which depends on rgl
 # package, and you might need to run this code, as newer mac versions don't

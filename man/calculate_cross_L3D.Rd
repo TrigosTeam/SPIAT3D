@@ -9,7 +9,7 @@ calculate_cross_L3D(
   reference_cell_type,
   target_cell_types,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ and z-coordinate of each cell.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A data frame containing observed cross L-function values for each
@@ -35,7 +35,7 @@ target cell type and expected cross L-function values.
 \description{
 This function calculates the cross L-function on a 3D
 SpatialExperiment Object, which is the linearised transformation of the
-cross L-function.
+cross K-function.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

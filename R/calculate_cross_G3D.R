@@ -15,13 +15,9 @@
 #' @param radius A positive numeric specifying the radius value.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
-#' @param plot_image A logical indicating whether to plot cross G gradient as a
-#'     line graph showing both the observed and expected cross G values.
-#'     Defaults to TRUE.
+#'     type information.
 #'
-#' @return A data frame containing observed and expected cross G values across
-#'     each radii (rows).
+#' @return A data frame containing observed and expected cross G value.
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
@@ -41,7 +37,7 @@ calculate_cross_G3D <- function(spe,
                                 reference_cell_type,
                                 target_cell_type,
                                 radius,
-                                feature_colname = "Cell.Type") {
+                                feature_colname) {
 
   ### Calculate the observed cross_G
   # Get the number of target cells in the radius around each reference cell

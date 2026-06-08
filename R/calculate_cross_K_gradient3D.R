@@ -1,8 +1,8 @@
 #' @title Calculate cross K gradient on 3D spatial data.
 #'
 #' @description This function calculates the cross K gradient on a 3D
-#'     SpatialExperiment Object. See paper on theory behind cross K gradient (I
-#'     ain't explaining it here).
+#'     SpatialExperiment Object. See paper or cell colocalization metrics
+#'     vignette on theory behind cross K gradient (I ain't explaining it here).
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -11,10 +11,10 @@
 #' @param reference_cell_type A string specifying the reference cell type.
 #' @param target_cell_types A character vector specifying the target cell types.
 #' @param radii A positive, ascending numeric vector specifying the set of
-#'     radius values used.
+#'     radius values to calculate over a gradient.
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
-#'     type information. Defaults to "Cell.Type".
+#'     type information.
 #' @param plot_image A logical indicating whether to plot cross K gradient as a
 #'     line graph showing both the observed cross K values for each cell type
 #'     and expected cross K values. Defaults to TRUE.
@@ -41,7 +41,7 @@ calculate_cross_K_gradient3D <- function(spe,
                                          reference_cell_type,
                                          target_cell_types,
                                          radii,
-                                         feature_colname = "Cell.Type",
+                                         feature_colname,
                                          plot_image = TRUE) {
 
   # Check if radii input is valid

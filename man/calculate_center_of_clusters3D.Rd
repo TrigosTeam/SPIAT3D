@@ -12,7 +12,7 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 and z-coordinate of each cell. It must also contain the cell clustering
 information, obtained by passing the SpatialExperiment object through one
-of the cell clustering algorithm functions in SPIAT-3D
+of the cell clustering algorithm functions in SPIAT3D
 (alpha_hull_clustering3D, grid_based_clustering3D, dbscan_clustering3D).}
 
 \item{cluster_colname}{A string specifying the name of the column in the
@@ -27,7 +27,7 @@ cell cluster.
 \description{
 This function finds the centre of cell clusters in a 3D
 SpatialExperiment Object, where the cell clusters have already been
-identified using an existing SPIAT-3D cell clustering algorithm function.
+identified using an existing SPIAT3D cell clustering algorithm function.
 We assume the cell clusters have uniform density and that the centre of
 each cell cluster is defined by its centre of mass, which can be
 estimated by taking the average of the x, y, and z coordinates of
@@ -53,5 +53,7 @@ cluster_centres <- calculate_center_of_clusters3D(
     spe = dbscan_spe,
     cluster_colname = "dbscan_cluster"
 )
+
+print(cluster_centres)
 
 }

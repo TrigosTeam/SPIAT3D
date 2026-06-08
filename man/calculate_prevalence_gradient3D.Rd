@@ -7,8 +7,8 @@
 calculate_prevalence_gradient3D(
   grid_metrics,
   metric_colname,
-  show_AUC = T,
-  plot_image = T
+  show_AUC = TRUE,
+  plot_image = TRUE
 )
 }
 \arguments{
@@ -33,7 +33,8 @@ A data frame containing the prevalence values for each threshold.
 \description{
 This functions calculates the 'prevalence gradient', or
 equivalently, the proportion of rectangular prisms of the 3D grid metrics
-has a value above the required threshold, for a gradient of thresholds.
+that have a value above the required threshold, for a gradient of
+thresholds.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
@@ -46,14 +47,14 @@ cell_prop_grid_metrics <- calculate_cell_proportion_grid_metrics3D(
     reference_cell_types = c("Tumour"),
     target_cell_types = c("Immune"),
     feature_colname = "Cell.Type",
-    plot_image = T
+    plot_image = TRUE
 )
 
 # Get prevalence gradient from cell proportion grid metrics
 prevalence_gradient <- calculate_prevalence_gradient3D(
     grid_metrics = cell_prop_grid_metrics,
     metric_colname = "proportion",
-    show_AUC = T,
+    show_AUC = TRUE,
     plot_image = TRUE
 )
 

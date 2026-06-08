@@ -9,7 +9,7 @@ calculate_cross_G3D(
   reference_cell_type,
   target_cell_type,
   radius,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
@@ -26,15 +26,10 @@ and z-coordinate of each cell.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
-
-\item{plot_image}{A logical indicating whether to plot cross G gradient as a
-line graph showing both the observed and expected cross G values.
-Defaults to TRUE.}
+type information.}
 }
 \value{
-A data frame containing observed and expected cross G values across
-each radii (rows).
+A data frame containing observed and expected cross G value.
 }
 \description{
 This function calculates the cross G on a 3D SpatialExperiment

@@ -4,7 +4,7 @@
 \alias{get_spe_grid_metrics3D}
 \title{Calculate grid metrics in 3D spatial data.}
 \usage{
-get_spe_grid_metrics3D(spe, n_splits, feature_colname = "Cell.Type")
+get_spe_grid_metrics3D(spe, n_splits, feature_colname)
 }
 \arguments{
 \item{spe}{A SpatialExperiment object containing 3D spatial information for
@@ -12,12 +12,12 @@ the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
 "Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
 and z-coordinate of each cell.}
 
-\item{n_splits}{A positive numeric integer specifying the number splits used
-to divide the x-axis, y-axis and z-axis.}
+\item{n_splits}{A positive numeric integer specifying the number of splits
+used to divide the x-axis, y-axis and z-axis.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type".}
+type information.}
 }
 \value{
 A list containing the number and type of cells in each rectangular

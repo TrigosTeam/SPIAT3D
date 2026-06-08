@@ -8,29 +8,29 @@ plot_alpha_hull_clusters3D(
   spe_with_alpha_hull,
   plot_cell_types = NULL,
   plot_colours = NULL,
-  feature_colname = "Cell.Type"
+  feature_colname
 )
 }
 \arguments{
+\item{spe_with_alpha_hull}{A SpatialExperiment object containing 3D spatial
+information for the cells. Naming of spatial coordinates MUST be
+"Cell.X.Position", "Cell.Y.Position", "Cell.Z.Position" for the
+x-coordinate, y-coordinate and z-coordinate of each cell. It must also
+contain the cell clustering information, obtained by passing the
+SpatialExperiment object through the alpha_hull_clustering3D function.}
+
 \item{plot_cell_types}{A string vector specifying the cell types to plot. If
 NULL, all cell types in the \code{feature_colname} column will be considered.
 Defaults to NULL.}
 
 \item{plot_colours}{A string vector specifying the colours of the cell types
 when plotting. Must match the number of cell types specified in
-\code{plot_cell_types}. If NULL, the rainbow color pallete will be used.
+\code{plot_cell_types}. If NULL, the viridis color pallete will be used.
 Defaults to NULL.}
 
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
-type information. Defaults to "Cell.Type"}
-
-\item{spe}{A SpatialExperiment object containing 3D spatial information for
-the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
-"Cell.Y.Position", "Cell.Z.Position" for the x-coordinate, y-coordinate
-and z-coordinate of each cell. It must also contain the cell clustering
-information, obtained by passing the SpatialExperiment object through the
-alpha_hull_clustering3D function.}
+type information.}
 }
 \value{
 A Plotly object plotting the cells and alpha hull clusters of the 3D
