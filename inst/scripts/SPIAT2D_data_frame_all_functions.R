@@ -293,8 +293,8 @@ calculate_all_single_radius_cc_metrics2D <- function(spatial_df,
 
   for (target_cell_type in target_cell_types) {
 
-    # Account for case where target cell type is not present in data
-    if (sum(spatial_df[[feature_colname]] == target_cell_type) == 0) {
+    # Account for case where not enough target cells in the data
+    if (sum(spatial_df[[feature_colname]] == target_cell_type) <= 1) {
       co_occurrence_df[[target_cell_type]] <- NA
       next
     }
@@ -632,8 +632,8 @@ calculate_co_occurrence2D <- function(spatial_df,
 
   for (target_cell_type in target_cell_types) {
 
-    # Account for case where target cell type is not present in data
-    if (sum(spatial_df[[feature_colname]] == target_cell_type) == 0) {
+    # Account for case where not enough target cells in the data
+    if (sum(spatial_df[[feature_colname]] == target_cell_type) <= 1) {
       co_occurrence_df[[target_cell_type]] <- NA
       next
     }

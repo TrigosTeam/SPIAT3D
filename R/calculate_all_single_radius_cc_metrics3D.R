@@ -206,7 +206,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
 
   for (target_cell_type in target_cell_types) {
 
-    if (sum(spe[[feature_colname]] == target_cell_type) == 0) {
+    if (sum(spe[[feature_colname]] == target_cell_type) <= 1) {
       co_occurrence_df[[target_cell_type]] <- NA
       next
     }
