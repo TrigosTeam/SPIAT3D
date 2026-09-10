@@ -205,6 +205,12 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   n_cells_in_all_cell_type_radius <- sum(rapply(n_cells_in_all_cell_type_radius$id, base::length))
 
   for (target_cell_type in target_cell_types) {
+
+    if (sum(spe[[feature_colname]] == target_cell_type) == 0) {
+      co_occurrence_df[[target_cell_type]] <- NA
+      next
+    }
+
     n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
 

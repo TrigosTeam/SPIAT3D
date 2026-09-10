@@ -65,6 +65,12 @@ calculate_co_occurrence3D <- function(spe,
 
   for (target_cell_type in target_cell_types) {
 
+    # Account for case where target cell type is not present in data
+    if (sum(spe[[feature_colname]] == target_cell_type) == 0) {
+      co_occurrence_df[[target_cell_type]] <- NA
+      next
+    }
+
     # Get total number of target cells in radius around reference cell type
     n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
 
