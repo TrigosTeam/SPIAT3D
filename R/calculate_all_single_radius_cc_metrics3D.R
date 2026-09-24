@@ -219,7 +219,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
 
     result[[target_cell_type]] <- target_cell_type_fast_co_occurrence
   }
-  result[["co_occurrence"]] <- fast_co_occurrence_df
+  result[["fast_co_occurrence"]] <- fast_co_occurrence_df
 
   return(result)
 }

@@ -19,8 +19,8 @@ calculate_all_gradient_cc_metrics2D <- function(spatial_df,
                                 "normalised_mixing_score")
   cross_G_df_colnames <- c("observed_cross_G",
                            "expected_cross_G")
-  co_occurrence_df_colnames <- c("reference",
-                                 target_cell_types)
+  fast_co_occurrence_df_colnames <- c("reference",
+                                      target_cell_types)
 
   ## Define result
   result <- list("mixing_score" = list(),
@@ -30,13 +30,13 @@ calculate_all_gradient_cc_metrics2D <- function(spatial_df,
                  "cross_K" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_L" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_G" = list(),
-                 "co_occurrence" = data.frame(matrix(nrow = length(radii), ncol = length(co_occurrence_df_colnames))))
+                 "fast_co_occurrence" = data.frame(matrix(nrow = length(radii), ncol = length(fast_co_occurrence_df_colnames))))
   colnames(result[["neighbourhood_counts"]]) <- target_cell_types
   colnames(result[["cells_in_neighbourhood"]]) <- target_cell_types
   colnames(result[["neighbourhood_entropy"]]) <- target_cell_types
   colnames(result[["cross_K"]]) <- cross_K_df_colnames
   colnames(result[["cross_L"]]) <- cross_K_df_colnames
-  colnames(result[["co_occurrence"]]) <- co_occurrence_df_colnames
+  colnames(result[["fast_co_occurrence"]]) <- fast_co_occurrence_df_colnames
 
   # Define individual data frames for mixing_score and cross_G
   for (target_cell_type in target_cell_types) {
@@ -65,7 +65,7 @@ calculate_all_gradient_cc_metrics2D <- function(spatial_df,
     result[["neighbourhood_entropy"]][i, ] <- apply(df[["neighbourhood_entropy"]][ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
     result[["cross_K"]][i, ] <- df[["cross_K"]]
     result[["cross_L"]][i, ] <- df[["cross_L"]]
-    result[["co_occurrence"]][i, ] <- df[["co_occurrence"]]
+    result[["fast_co_occurrence"]][i, ] <- df[["fast_co_occurrence"]]
 
     for (target_cell_type in names(df[["mixing_score"]])) {
       result[["mixing_score"]][[target_cell_type]][i, ] <- df[["mixing_score"]][[target_cell_type]]
@@ -81,45 +81,12 @@ calculate_all_gradient_cc_metrics2D <- function(spatial_df,
   result[["neighbourhood_entropy"]]$radius <- radii
   result[["cross_K"]]$radius <- radii
   result[["cross_L"]]$radius <- radii
-  result[["co_occurrence"]]$radius <- radii
+  result[["fast_co_occurrence"]]$radius <- radii
   for (target_cell_type in names(df[["mixing_score"]])) {
     result[["mixing_score"]][[target_cell_type]]$radius <- radii
   }
   for (target_cell_type in names(df[["cross_G"]])) {
     result[["cross_G"]][[target_cell_type]]$radius <- radii
-  }
-
-
-  ## Plot
-  if (plot_image) {
-    fig_ANC <- plot_neighbourhood_counts_gradient2D(result[["neighbourhood_counts"]], reference_cell_type)
-    methods::show(fig_ANC)
-
-    fig_ACIN <- plot_cells_in_neighbourhood_gradient2D(result[["cells_in_neighbourhood"]], reference_cell_type)
-    methods::show(fig_ACIN)
-
-    fig_ANE <- plot_neighbourhood_entropy_gradient2D(result[["neighbourhood_entropy"]], reference_cell_type)
-    methods::show(fig_ANE)
-
-    for (target_cell_type in names(result[["mixing_score"]])) {
-      fig_NMS <- plot_mixing_scores_gradient2D(result[["mixing_score"]][[target_cell_type]], "NMS")
-      fig_MS <- plot_mixing_scores_gradient2D(result[["mixing_score"]][[target_cell_type]], "MS")
-      fig_NMS_MS <- cowplot::plot_grid(fig_NMS, fig_MS, nrow = 2)
-      methods::show(fig_NMS_MS)
-    }
-    fig_CK <- plot_cross_K_gradient2D(result[["cross_K"]])
-    methods::show(fig_CK)
-
-    fig_CL <- plot_cross_L_gradient2D(result[["cross_L"]])
-    methods::show(fig_CL)
-
-    for (target_cell_type in names(result[["cross_G"]])) {
-      fig_CG <- plot_cross_G_gradient2D(result[["cross_G"]][[target_cell_type]], reference_cell_type, target_cell_type)
-      methods::show(fig_CG)
-    }
-
-    fig_COO <- plot_co_occurrence_gradient2D(result[["co_occurrence"]])
-    methods::show(fig_COO)
   }
 
   return(result)
@@ -171,7 +138,7 @@ calculate_all_single_radius_cc_metrics2D <- function(spatial_df,
                  "cross_K" = list(),
                  "cross_L" = list(),
                  "cross_G" = list(),
-                 "co_occurrence" = list())
+                 "fast_co_occurrence" = list())
 
   # Define other constants
   mixing_score_df_colnames <- c("ref_cell_type",
@@ -188,8 +155,8 @@ calculate_all_single_radius_cc_metrics2D <- function(spatial_df,
                            target_cell_types)
   cross_G_df_colnames <- c("observed_cross_G",
                            "expected_cross_G")
-  co_occurrence_df_colnames <- c("reference",
-                                 target_cell_types)
+  fast_co_occurrence_df_colnames <- c("reference",
+                                      target_cell_types)
 
   # Get rough dimensions of window for cross_K
   spatial_df_coords <- spatial_df
@@ -269,7 +236,7 @@ calculate_all_single_radius_cc_metrics2D <- function(spatial_df,
   }
 
 
-  ## Co_occurrence ---------------
+  ## Fast_co_occurrence ---------------
   all_cell_types <- unique(spatial_df[[feature_colname]])
   neighbourhood_counts_df <- calculate_neighbourhood_counts2D(spatial_df,
                                                               reference_cell_type,
@@ -279,42 +246,34 @@ calculate_all_single_radius_cc_metrics2D <- function(spatial_df,
 
   neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
 
-  co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(co_occurrence_df_colnames)))
-  colnames(co_occurrence_df) <- co_occurrence_df_colnames
-  co_occurrence_df$reference <- reference_cell_type
+  fast_co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(fast_co_occurrence_df_colnames)))
+  colnames(fast_co_occurrence_df) <- fast_co_occurrence_df_colnames
+  fast_co_occurrence_df$reference <- reference_cell_type
 
   n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
 
-  n_cells_in_all_cell_type_radius <- dbscan::frNN(spatial_df[, c("Cell.X.Position", "Cell.Y.Position")],
-                                                  eps = radius,
-                                                  query = spatial_df[, c("Cell.X.Position", "Cell.Y.Position")],
-                                                  sort = FALSE)
-  n_cells_in_all_cell_type_radius <- sum(rapply(n_cells_in_all_cell_type_radius$id, base::length))
+  n_cells_in_spe <- length(spatial_df[[feature_colname]])
 
   for (target_cell_type in target_cell_types) {
 
-    # Account for case where not enough target cells in the data
     if (sum(spatial_df[[feature_colname]] == target_cell_type) <= 1) {
-      co_occurrence_df[[target_cell_type]] <- NA
+      fast_co_occurrence_df[[target_cell_type]] <- NA
       next
     }
 
     n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
+
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
 
-    n_target_cells_in_all_cell_type_radius <- dbscan::frNN(spatial_df[, c("Cell.X.Position", "Cell.Y.Position")][spatial_df[[feature_colname]] == target_cell_type, ],
-                                                           eps = radius,
-                                                           query = spatial_df[, c("Cell.X.Position", "Cell.Y.Position")],
-                                                           sort = FALSE)
-    n_target_cells_in_all_cell_type_radius <- sum(rapply(n_target_cells_in_all_cell_type_radius$id, base::length))
+    n_target_cells_in_spe <- sum(spatial_df[[feature_colname]] == target_cell_type)
 
-    target_cell_type_proportion_in_all_cell_type_radius <- n_target_cells_in_all_cell_type_radius / n_cells_in_all_cell_type_radius
+    target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe
 
-    target_cell_type_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_all_cell_type_radius
+    target_cell_type_fast_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_spe
 
-    co_occurrence_df[[target_cell_type]] <- target_cell_type_co_occurrence
+    result[[target_cell_type]] <- target_cell_type_fast_co_occurrence
   }
-  result[["co_occurrence"]] <- co_occurrence_df
+  result[["fast_co_occurrence"]] <- fast_co_occurrence_df
 
   return(result)
 }
@@ -1026,6 +985,96 @@ calculate_entropy_grid_metrics2D <- function(spatial_df,
   if (plot_image) {
     fig <- plot_grid_metrics_continuous2D(result, "entropy")
     methods::show(fig)
+  }
+
+  return(result)
+}
+
+calculate_fast_co_occurrence_gradient2D <- function(spatial_df,
+                                                    reference_cell_type,
+                                                    target_cell_types,
+                                                    radii,
+                                                    feature_colname,
+                                                    plot_image = TRUE) {
+
+  if (!(is.numeric(radii) && length(radii) > 1)) {
+    stop("`radii` is not a numeric vector with at least 2 values")
+  }
+
+  result <- data.frame(matrix(nrow = length(radii), ncol = length(target_cell_types) + 1))
+  colnames(result) <- c("reference", target_cell_types)
+
+  for (i in seq(length(radii))) {
+    fast_co_occurrence_df <- calculate_fast_co_occurrence3D(spatial_df,
+                                                            reference_cell_type,
+                                                            target_cell_types,
+                                                            radii[i],
+                                                            feature_colname)
+
+    result[i, ] <- fast_co_occurrence_df
+  }
+
+  # Add a radius column to the result
+  result$radius <- radii
+
+  if (plot_image) {
+    fig <- plot_fast_co_occurrence_gradient3D(result)
+    methods::show(fig)
+  }
+
+  return(result)
+}
+
+calculate_fast_co_occurrence2D <- function(spatial_df,
+                                           reference_cell_type,
+                                           target_cell_types,
+                                           radius,
+                                           feature_colname) {
+
+  result <- data.frame(reference = reference_cell_type)
+
+  # Get all cell types in spe
+  all_cell_types <- unique(spatial_df[[feature_colname]])
+
+  neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spatial_df,
+                                                              reference_cell_type,
+                                                              all_cell_types,
+                                                              radius,
+                                                              feature_colname)
+
+  neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
+
+  # Get total number of cells in radius around reference cell type
+  n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
+
+  # Get total number of cells in spe
+  n_cells_in_spe <- length(spatial_df[[feature_colname]])
+
+  for (target_cell_type in target_cell_types) {
+
+    # Account for case where not enough target cells in the data
+    if (sum(spatial_df[[feature_colname]] == target_cell_type) <= 1) {
+      result[[target_cell_type]] <- NA
+      next
+    }
+
+    # Get total number of target cells in radius around reference cell type
+    n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
+
+    # Get proportion of target cells in radius around reference cell type
+    target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
+
+    # Get total number of target cells in spe
+    n_target_cells_in_spe <- sum(spatial_df[[feature_colname]] == target_cell_type)
+
+    # Get proportion of target cells in spe
+    target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe
+
+    # Get fast co-occurence value for target cell type
+    target_cell_type_fast_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_spe
+
+    # Add to result data frame
+    result[[target_cell_type]] <- target_cell_type_fast_co_occurrence
   }
 
   return(result)

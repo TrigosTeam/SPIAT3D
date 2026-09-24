@@ -63,7 +63,7 @@ calculate_fast_co_occurrence3D <- function(spe,
 
     # Account for case where not enough target cells in the data
     if (sum(spe[[feature_colname]] == target_cell_type) <= 1) {
-      co_occurrence_df[[target_cell_type]] <- NA
+      result[[target_cell_type]] <- NA
       next
     }
 
