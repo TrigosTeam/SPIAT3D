@@ -1,0 +1,56 @@
+#' @title Function to plot fast co-occurrence gradient data.
+#'
+#' @description This function plots the fast co-occurrence gradient data as a
+#'     line graph, showing co-occurrence vs radius.
+#'
+#' @param fast_co_occurrence_gradient_df A data frame obtained from the output
+#'     of the fast_calculate_co_occurrence_gradient3D function.
+#'
+#' @return A ggplot object containing the line graph.
+#'
+#' @importFrom ggplot2 ggplot aes geom_line labs theme_bw scale_colour_discrete
+#'
+#' @examples
+#' # Get simulated SpatialExperiment object to use as an example for analysis
+#' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
+#'
+#' # Calculate co-occurrence gradient from simulated spe
+#' result <- calculate_fast_co_occurrence_gradient3D(
+#'     spe = simulated_spe,
+#'     reference_cell_type = "Tumour",
+#'     target_cell_types = c("Tumour", "Immune"),
+#'     radii = seq(20, 100, 10),
+#'     feature_colname = "Cell.Type",
+#'     plot_image = FALSE
+#' )
+#'
+#' # Plot
+#' fig <- plot_fast_co_occurrence_gradient3D(
+#'     fast_co_occurrence_gradient_df = result
+#' )
+#'
+#' methods::show(fig)
+#'
+#' @export
+
+plot_fast_co_occurrence_gradient3D <- function(fast_co_occurrence_gradient_df) {
+
+  # Get target cell types
+  target_cell_types <- colnames(fast_co_occurrence_gradient_df)
+  target_cell_types <- target_cell_types[!target_cell_types %in% c("reference", "radius")]
+
+  # Add expected co-occurrence column (expected value is 1)
+  fast_co_occurrence_gradient_df$expected <- 1
+
+  # Re-format input data frame
+  plot_result <- reshape2::melt(fast_co_occurrence_gradient_df, "radius", c(target_cell_types, "expected"))
+
+  # Plot
+  fig <- ggplot(plot_result, aes(x = radius, y = value, color = variable)) +
+    geom_line() +
+    labs(title = "Fast co-occurrence gradient", x = "Radius", y = "Fast co-occurrence value") +
+    scale_colour_discrete(name = "") +
+    theme_bw()
+
+  return(fig)
+}

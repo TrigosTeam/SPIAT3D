@@ -1,10 +1,10 @@
-#' @title Calculate co-occurrence gradient on 3D spatial data.
+#' @title Calculate fast co-occurrence gradient on 3D spatial data.
 #'
-#' @description This function calculates the co-occurrence gradient on a 3D
+#' @description This function calculates the fast co-occurrence gradient on a 3D
 #'     SpatialExperiment Object. This metric finds the average proportion of
-#'     target cells around reference cells relative to the average proportion of
-#'     target cells around all cells, for each target cell type, and across all
-#'     radii values.
+#'     target cells around reference cells relative to the proportion of target
+#'     cells in the SpatialExperiment Object, for each target cell type, and
+#'     across all radii values.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -20,14 +20,14 @@
 #' @param plot_image A logical indicating whether to plot co-occurrence gradient
 #'     as a line graph. Defaults to TRUE.
 #'
-#' @return A data frame containing the co-occurrence values for each target cell
-#'     type (columns) across each radii (rows).
+#' @return A data frame containing the fast co-occurrence values for each target
+#'     cell type (columns) across each radii (rows).
 #'
 #' @examples
 #' # Get simulated SpatialExperiment object to use as an example for analysis
 #' simulated_spe <- readRDS(system.file("extdata", "simulated_spe.rds", package = "SPIAT3D"))
 #'
-#' result <- calculate_co_occurrence_gradient3D(
+#' result <- calculate_fast_co_occurrence_gradient3D(
 #'     spe = simulated_spe,
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
@@ -38,12 +38,12 @@
 #'
 #' @export
 
-calculate_co_occurrence_gradient3D <- function(spe,
-                                               reference_cell_type,
-                                               target_cell_types,
-                                               radii,
-                                               feature_colname,
-                                               plot_image = TRUE) {
+calculate_fast_co_occurrence_gradient3D <- function(spe,
+                                                    reference_cell_type,
+                                                    target_cell_types,
+                                                    radii,
+                                                    feature_colname,
+                                                    plot_image = TRUE) {
 
   if (!(is.numeric(radii) && length(radii) > 1)) {
     stop("`radii` is not a numeric vector with at least 2 values")
@@ -53,20 +53,20 @@ calculate_co_occurrence_gradient3D <- function(spe,
   colnames(result) <- c("reference", target_cell_types)
 
   for (i in seq(length(radii))) {
-    co_occurrence_df <- calculate_co_occurrence3D(spe,
-                                                  reference_cell_type,
-                                                  target_cell_types,
-                                                  radii[i],
-                                                  feature_colname)
+    fast_co_occurrence_df <- calculate_fast_co_occurrence3D(spe,
+                                                            reference_cell_type,
+                                                            target_cell_types,
+                                                            radii[i],
+                                                            feature_colname)
 
-    result[i, ] <- co_occurrence_df
+    result[i, ] <- fast_co_occurrence_df
   }
 
   # Add a radius column to the result
   result$radius <- radii
 
   if (plot_image) {
-    fig <- plot_co_occurrence_gradient3D(result)
+    fig <- plot_fast_co_occurrence_gradient3D(result)
     methods::show(fig)
   }
 
