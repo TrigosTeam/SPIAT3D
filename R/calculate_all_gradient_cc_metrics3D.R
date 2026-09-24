@@ -18,8 +18,6 @@
 #' @param feature_colname A string specifying the name of the column in the
 #'     `colData` slot of the SpatialExperiment object that contains the cell
 #'     type information.
-#' @param plot_image A logical indicating whether to plot analysis of all
-#'     metrics. Defaults to TRUE.
 #'
 #' @return A list containing the output of each metric, for each applicable
 #'     reference-target cell pair.
@@ -33,8 +31,7 @@
 #'     reference_cell_type = "Tumour",
 #'     target_cell_types = c("Tumour", "Immune"),
 #'     radii = seq(20, 100, 10),
-#'     feature_colname = "Cell.Type",
-#'     plot_image = TRUE
+#'     feature_colname = "Cell.Type"
 #' )
 #'
 #' @export
@@ -43,8 +40,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
                                                 reference_cell_type,
                                                 target_cell_types,
                                                 radii,
-                                                feature_colname,
-                                                plot_image = T) {
+                                                feature_colname) {
 
   # Define constants
   cross_K_df_colnames <- c("reference",
@@ -128,39 +124,6 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   }
   for (target_cell_type in names(df[["cross_G"]])) {
     result[["cross_G"]][[target_cell_type]]$radius <- radii
-  }
-
-
-  ## Plot
-  if (plot_image) {
-    fig_ANC <- plot_neighbourhood_counts_gradient3D(result[["neighbourhood_counts"]], reference_cell_type)
-    methods::show(fig_ANC)
-
-    fig_ACIN <- plot_cells_in_neighbourhood_gradient3D(result[["cells_in_neighbourhood"]], reference_cell_type)
-    methods::show(fig_ACIN)
-
-    fig_ANE <- plot_neighbourhood_entropy_gradient3D(result[["neighbourhood_entropy"]], reference_cell_type)
-    methods::show(fig_ANE)
-
-    for (target_cell_type in names(result[["mixing_score"]])) {
-      fig_NMS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "NMS")
-      fig_MS <- plot_mixing_scores_gradient3D(result[["mixing_score"]][[target_cell_type]], "MS")
-      fig_NMS_MS <- cowplot::plot_grid(fig_NMS, fig_MS, nrow = 2)
-      methods::show(fig_NMS_MS)
-    }
-    fig_CK <- plot_cross_K_gradient3D(result[["cross_K"]])
-    methods::show(fig_CK)
-
-    fig_CL <- plot_cross_L_gradient3D(result[["cross_L"]])
-    methods::show(fig_CL)
-
-    for (target_cell_type in names(result[["cross_G"]])) {
-      fig_CG <- plot_cross_G_gradient3D(result[["cross_G"]][[target_cell_type]], reference_cell_type, target_cell_type)
-      methods::show(fig_CG)
-    }
-
-    fig_COO <- plot_co_occurrence_gradient3D(result[["co_occurrence"]])
-    methods::show(fig_COO)
   }
 
   return(result)
