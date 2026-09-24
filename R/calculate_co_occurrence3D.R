@@ -2,8 +2,8 @@
 #'
 #' @description This function calculates the co-occurrence on a 3D
 #'     SpatialExperiment Object. This metric finds the average proportion of
-#'     target cells around the reference cells relative to the proportion of
-#'     target cells in the SpatialExperiment Object, for each target cell type
+#'     target cells around the reference cells relative to the average
+#'     proportion of target cells around all cells, for each target cell type
 #'     and for a single radius value.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
