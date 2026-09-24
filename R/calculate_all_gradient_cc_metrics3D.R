@@ -5,7 +5,7 @@
 #'     metrics (gradient version) on a 3D SpatialExperiment Object. Metrics
 #'     include: mixing score, normalized mixing score, neighbourhood counts,
 #'     cells in neighbourhood, neighbourhood entropy, cross K, cross L, cross G,
-#'     co-occurrence.
+#'     fast co-occurrence.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -56,8 +56,8 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
                                 "normalised_mixing_score")
   cross_G_df_colnames <- c("observed_cross_G",
                            "expected_cross_G")
-  co_occurrence_df_colnames <- c("reference",
-                                 target_cell_types)
+  fast_co_occurrence_df_colnames <- c("reference",
+                                      target_cell_types)
 
   ## Define result
   result <- list("mixing_score" = list(),
@@ -67,13 +67,13 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
                  "cross_K" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_L" = data.frame(matrix(nrow = length(radii), ncol = length(cross_K_df_colnames))),
                  "cross_G" = list(),
-                 "co_occurrence" = data.frame(matrix(nrow = length(radii), ncol = length(co_occurrence_df_colnames))))
+                 "fast_co_occurrence" = data.frame(matrix(nrow = length(radii), ncol = length(fast_co_occurrence_df_colnames))))
   colnames(result[["neighbourhood_counts"]]) <- target_cell_types
   colnames(result[["cells_in_neighbourhood"]]) <- target_cell_types
   colnames(result[["neighbourhood_entropy"]]) <- target_cell_types
   colnames(result[["cross_K"]]) <- cross_K_df_colnames
   colnames(result[["cross_L"]]) <- cross_K_df_colnames
-  colnames(result[["co_occurrence"]]) <- co_occurrence_df_colnames
+  colnames(result[["fast_co_occurrence"]]) <- fast_co_occurrence_df_colnames
 
   # Define individual data frames for mixing_score and cross_G
   for (target_cell_type in target_cell_types) {
@@ -102,7 +102,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
     result[["neighbourhood_entropy"]][i, ] <- apply(df[["neighbourhood_entropy"]][ , paste(target_cell_types, "_entropy", sep = "")], 2, mean, na.rm = T)
     result[["cross_K"]][i, ] <- df[["cross_K"]]
     result[["cross_L"]][i, ] <- df[["cross_L"]]
-    result[["co_occurrence"]][i, ] <- df[["co_occurrence"]]
+    result[["fast_co_occurrence"]][i, ] <- df[["fast_co_occurrence"]]
 
     for (target_cell_type in names(df[["mixing_score"]])) {
       result[["mixing_score"]][[target_cell_type]][i, ] <- df[["mixing_score"]][[target_cell_type]]
@@ -118,7 +118,7 @@ calculate_all_gradient_cc_metrics3D <- function(spe,
   result[["neighbourhood_entropy"]]$radius <- radii
   result[["cross_K"]]$radius <- radii
   result[["cross_L"]]$radius <- radii
-  result[["co_occurrence"]]$radius <- radii
+  result[["fast_co_occurrence"]]$radius <- radii
   for (target_cell_type in names(df[["mixing_score"]])) {
     result[["mixing_score"]][[target_cell_type]]$radius <- radii
   }

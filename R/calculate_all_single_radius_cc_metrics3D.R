@@ -3,7 +3,7 @@
 #' @description This function finds the output of all cell colocalization
 #'     metrics on a 3D SpatialExperiment Object. Metrics include: mixing score,
 #'     normalized mixing score, neighbourhood counts, cells in neighbourhood,
-#'     neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
+#'     neighbourhood entropy, cross K, cross L, cross G, fast co-occurrence.
 #'
 #' @param spe A SpatialExperiment object containing 3D spatial information for
 #'     the cells. Naming of spatial coordinates MUST be "Cell.X.Position",
@@ -83,7 +83,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                  "cross_K" = list(),
                  "cross_L" = list(),
                  "cross_G" = list(),
-                 "co_occurrence" = list())
+                 "fast_co_occurrence" = list())
 
   # Define other constants
   mixing_score_df_colnames <- c("ref_cell_type",
@@ -100,8 +100,8 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
                            target_cell_types)
   cross_G_df_colnames <- c("observed_cross_G",
                            "expected_cross_G")
-  co_occurrence_df_colnames <- c("reference",
-                                 target_cell_types)
+  fast_co_occurrence_df_colnames <- c("reference",
+                                      target_cell_types)
 
   # Get rough dimensions of window for cross_K
   spe_coords <- data.frame(SpatialExperiment::spatialCoords(spe))
@@ -182,7 +182,7 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
   }
 
 
-  ## Co_occurrence ---------------
+  ## Fast_co_occurrence ---------------
   all_cell_types <- unique(spe[[feature_colname]])
   neighbourhood_counts_df <- calculate_neighbourhood_counts3D(spe,
                                                               reference_cell_type,
@@ -192,41 +192,34 @@ calculate_all_single_radius_cc_metrics3D <- function(spe,
 
   neighbourhood_counts_df$total <- rowSums(neighbourhood_counts_df[, -1], na.rm = TRUE)
 
-  co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(co_occurrence_df_colnames)))
-  colnames(co_occurrence_df) <- co_occurrence_df_colnames
-  co_occurrence_df$reference <- reference_cell_type
+  fast_co_occurrence_df <- data.frame(matrix(nrow = 1, ncol = length(fast_co_occurrence_df_colnames)))
+  colnames(fast_co_occurrence_df) <- fast_co_occurrence_df_colnames
+  fast_co_occurrence_df$reference <- reference_cell_type
 
   n_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df$total)
 
-  n_cells_in_all_cell_type_radius <- dbscan::frNN(SpatialExperiment::spatialCoords(spe),
-                                                  eps = radius,
-                                                  query = SpatialExperiment::spatialCoords(spe),
-                                                  sort = FALSE)
-  n_cells_in_all_cell_type_radius <- sum(rapply(n_cells_in_all_cell_type_radius$id, base::length))
+  n_cells_in_spe <- length(spe[[feature_colname]])
 
   for (target_cell_type in target_cell_types) {
 
     if (sum(spe[[feature_colname]] == target_cell_type) <= 1) {
-      co_occurrence_df[[target_cell_type]] <- NA
+      fast_co_occurrence_df[[target_cell_type]] <- NA
       next
     }
 
     n_target_cells_in_reference_cell_type_radius <- sum(neighbourhood_counts_df[[target_cell_type]])
+
     target_cell_type_proportion_in_reference_cell_type_radius <- n_target_cells_in_reference_cell_type_radius / n_cells_in_reference_cell_type_radius
 
-    n_target_cells_in_all_cell_type_radius <- dbscan::frNN(SpatialExperiment::spatialCoords(spe)[spe[[feature_colname]] == target_cell_type, ],
-                                                           eps = radius,
-                                                           query = SpatialExperiment::spatialCoords(spe),
-                                                           sort = FALSE)
-    n_target_cells_in_all_cell_type_radius <- sum(rapply(n_target_cells_in_all_cell_type_radius$id, base::length))
+    n_target_cells_in_spe <- sum(spe[[feature_colname]] == target_cell_type)
 
-    target_cell_type_proportion_in_all_cell_type_radius <- n_target_cells_in_all_cell_type_radius / n_cells_in_all_cell_type_radius
+    target_cell_type_proportion_in_spe <- n_target_cells_in_spe / n_cells_in_spe
 
-    target_cell_type_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_all_cell_type_radius
+    target_cell_type_fast_co_occurrence <- target_cell_type_proportion_in_reference_cell_type_radius / target_cell_type_proportion_in_spe
 
-    co_occurrence_df[[target_cell_type]] <- target_cell_type_co_occurrence
+    result[[target_cell_type]] <- target_cell_type_fast_co_occurrence
   }
-  result[["co_occurrence"]] <- co_occurrence_df
+  result[["co_occurrence"]] <- fast_co_occurrence_df
 
   return(result)
 }
