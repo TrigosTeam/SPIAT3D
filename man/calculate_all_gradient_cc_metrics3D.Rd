@@ -10,8 +10,7 @@ calculate_all_gradient_cc_metrics3D(
   reference_cell_type,
   target_cell_types,
   radii,
-  feature_colname,
-  plot_image = T
+  feature_colname
 )
 }
 \arguments{
@@ -30,9 +29,6 @@ radius values used to calculate each metric over a gradient.}
 \item{feature_colname}{A string specifying the name of the column in the
 \code{colData} slot of the SpatialExperiment object that contains the cell
 type information.}
-
-\item{plot_image}{A logical indicating whether to plot analysis of all
-metrics. Defaults to TRUE.}
 }
 \value{
 A list containing the output of each metric, for each applicable
@@ -43,7 +39,7 @@ This function finds the output of all cell colocalization
 metrics (gradient version) on a 3D SpatialExperiment Object. Metrics
 include: mixing score, normalized mixing score, neighbourhood counts,
 cells in neighbourhood, neighbourhood entropy, cross K, cross L, cross G,
-co-occurrence.
+fast co-occurrence.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
@@ -54,8 +50,7 @@ result <- calculate_all_gradient_cc_metrics3D(
     reference_cell_type = "Tumour",
     target_cell_types = c("Tumour", "Immune"),
     radii = seq(20, 100, 10),
-    feature_colname = "Cell.Type",
-    plot_image = TRUE
+    feature_colname = "Cell.Type"
 )
 
 }

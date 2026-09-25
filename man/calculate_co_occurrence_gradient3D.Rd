@@ -40,9 +40,9 @@ type (columns) across each radii (rows).
 \description{
 This function calculates the co-occurrence gradient on a 3D
 SpatialExperiment Object. This metric finds the average proportion of
-target cells around reference cells relative to the proportion of target
-cells in the SpatialExperiment Object, for each target cell type, and
-across all radii values.
+target cells around reference cells relative to the average proportion of
+target cells around all cells, for each target cell type, and across all
+radii values.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis

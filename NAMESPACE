@@ -20,6 +20,8 @@ export(calculate_cross_L3D)
 export(calculate_cross_L_gradient3D)
 export(calculate_entropy_background3D)
 export(calculate_entropy_grid_metrics3D)
+export(calculate_fast_co_occurrence3D)
+export(calculate_fast_co_occurrence_gradient3D)
 export(calculate_minimum_distances_between_cell_types3D)
 export(calculate_minimum_distances_to_clusters3D)
 export(calculate_mixing_scores3D)
@@ -44,6 +46,7 @@ export(plot_cross_G_gradient3D)
 export(plot_cross_K_gradient3D)
 export(plot_cross_L_gradient3D)
 export(plot_distances_between_cell_types_violin3D)
+export(plot_fast_co_occurrence_gradient3D)
 export(plot_grid_based_clusters3D)
 export(plot_grid_metrics_continuous3D)
 export(plot_grid_metrics_discrete3D)
@@ -52,28 +55,32 @@ export(plot_neighbourhood_counts_gradient3D)
 export(plot_neighbourhood_entropy_gradient3D)
 export(summarise_distances_between_cell_types3D)
 export(summarise_neighbourhood_metric3D)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,element_blank)
-importFrom(ggplot2,element_text)
-importFrom(ggplot2,facet_grid)
-importFrom(ggplot2,facet_wrap)
-importFrom(ggplot2,geom_bar)
-importFrom(ggplot2,geom_line)
-importFrom(ggplot2,geom_point)
-importFrom(ggplot2,geom_text)
-importFrom(ggplot2,geom_violin)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,guide_legend)
-importFrom(ggplot2,guides)
-importFrom(ggplot2,labeller)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,scale_colour_discrete)
-importFrom(ggplot2,scale_x_discrete)
-importFrom(ggplot2,stat_summary)
-importFrom(ggplot2,theme)
-importFrom(ggplot2,theme_bw)
-importFrom(ggplot2,ylim)
+importFrom(ggplot2,
+  aes,
+  element_blank,
+  element_text,
+  facet_grid,
+  facet_wrap,
+  geom_bar,
+  geom_line,
+  geom_point,
+  geom_text,
+  geom_violin,
+  ggplot,
+  guide_legend,
+  guides,
+  labeller,
+  labs,
+  scale_colour_discrete,
+  scale_x_discrete,
+  stat_summary,
+  theme,
+  theme_bw,
+  ylim
+)
 importFrom(magrittr,"%>%")
-importFrom(plotly,add_trace)
-importFrom(plotly,layout)
-importFrom(plotly,plot_ly)
+importFrom(plotly,
+  add_trace,
+  layout,
+  plot_ly
+)

@@ -36,7 +36,7 @@ reference-target cell pair.
 This function finds the output of all cell colocalization
 metrics on a 3D SpatialExperiment Object. Metrics include: mixing score,
 normalized mixing score, neighbourhood counts, cells in neighbourhood,
-neighbourhood entropy, cross K, cross L, cross G, co-occurrence.
+neighbourhood entropy, cross K, cross L, cross G, fast co-occurrence.
 }
 \examples{
 # Get simulated SpatialExperiment object to use as an example for analysis
